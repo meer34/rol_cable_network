@@ -78,6 +78,11 @@
   display: block;
 }
 
+.welcome{
+	padding: 1px 14px;
+	background-color: gray;
+	text-align: center;
+}
 .message {
   text-align: center;
 }

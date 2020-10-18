@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Welcome</title>
-<!-- screen elements stylesheet should be here -->
-<link rel="stylesheet" type="text/css" href="css/style.css" />
+	<meta charset="ISO-8859-1">
+	<title>Welcome</title>
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
  	<div class="welcome">
@@ -16,7 +16,7 @@
 			<button class="dropbtn">Customer<i class="fa fa-caret-down"></i>
 			</button>
 			<div class="dropdown-content">
-				<a href="#">Add Customer</a>
+				<a href="add_customer">Add Customer</a>
 				<a href="#">View Customer</a>
 				<a href="#">Modify Customer</a>
 				<a href="#">Delete Customer</a>
@@ -78,7 +78,7 @@
 				<a href="#">Link 3</a>
 			</div>
 		</div>
-		<a href="UserHome.jsp">TBD</a>
+		<a href="#">TBD</a>
 	</div>
 	<div class="message">
 		<br/><br/>

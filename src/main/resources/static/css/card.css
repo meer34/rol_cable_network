@@ -1,0 +1,107 @@
+@charset "ISO-8859-1";
+
+body{
+	padding: 0;
+	margin: 2rem;
+	background: #9053c7;
+  	background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: linear-gradient(-135deg, #c850c0, #4158d0);
+	color: white;
+}
+
+.page-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.card-list{
+	display: flex;
+	margin-top: 2rem;
+	padding: 4rem;
+}
+
+.container {
+	transition: .5s;
+}
+.card1{
+	display: flex;
+	position: absolute;
+	flex-direction: column;
+	height: 280px;
+	width: 185px;
+	padding: 1.5rem;
+	border-radius: 16px;
+	background: #9053c7;
+	background: -webkit-linear-gradient(-135deg, #f5c9f4, #4ea0e6);
+  	background: -o-linear-gradient(-135deg, #f5c9f4, #4ea0e6);
+  	background: -moz-linear-gradient(-135deg, #f5c9f4, #4ea0e6);
+  	background: linear-gradient(-135deg, #f5c9f4, #4ea0e6);
+	box-shadow: -1rem 0 3rem #000;
+	transition: .7s;
+}
+
+.card1:hover {
+	transform: translateY(15rem);
+}
+
+.container:hover~.container {
+	transform: translateX(3rem);
+}
+
+.container:not(:first-child) {
+	margin-left: -3rem;
+}
+
+.card2{
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	height: 220px;
+	width: 185px;
+	padding: 1.5rem;
+	border-radius: 16px;
+	background: #9053c7;
+  	background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+  	background: linear-gradient(-135deg, #c850c0, #4158d0);
+	box-shadow: -1rem 0 3rem #000;
+}
+
+.card-login {
+	position: fixed;
+	top: 5rem;
+	left: 2rem;
+	height: 3rem;
+	width: 6rem;
+	z-index: 1;
+	border-radius: 16px;
+	text-align: center;
+	line-height: 3rem;
+	background: #9053c7;
+	background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: linear-gradient(-135deg, #c850c0, #4158d0);
+	box-shadow: -1rem 0 3rem #000;
+}
+
+.card-logout {
+	position: fixed;
+	top: 5rem;
+	right: 2rem;
+	height: 3rem;
+	width: 6rem;
+	z-index: 1;
+	border-radius: 16px;
+	text-align: center;
+	line-height: 3rem;
+	background: #9053c7;
+	background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+	background: linear-gradient(-135deg, #c850c0, #4158d0);
+	box-shadow: -1rem 0 3rem #000;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;">
+              <legend style="text-align:center; padding-top: 0px;" >View Consumer</legend>
+              <fieldset style="margin-top: 0;" id="printTable">
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Name</label>
+                    <input type="text" class="form-control" name="fullName" th:value="${consumer.fullName}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Nick Name</label>
+                    <input type="text" class="form-control" name="nickName" th:value="${consumer.nickName}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Father's Name</label>
+                    <input type="text" class="form-control" name="fatherName" th:value="${consumer.fatherName}" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Phone No</label>
+                    <input type="text" class="form-control" name="phoneNo" th:value="${consumer.phoneNo}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Area / Locality</label>
+                    <input type="text" class="form-control" name="area" th:value="${consumer.area?.name}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Landmark</label>
+                    <input type="text" class="form-control" name="landmark" th:value="${consumer.landmark}" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-12">
+                    <label>Full Address</label>
+                    <input type="text" class="form-control" name="fullAddress" th:value="${consumer.fullAddress}" readonly>
+                  </div>
+                </div>
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="button" name="submit" class="submit action-button" value="print" onclick="printData()">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

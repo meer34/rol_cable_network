@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+	
+    <main class="app-content">
+         <div id="notfound">
+            <div class="notfound">
+               <div>
+                  <div class="notfound-404">
+                     <h1>!</h1>
+                  </div>
+                  <h2>Error</h2>
+                  <p style="margin-bottom: 0;">Something went wrong</p>
+                  <div class="dashboardicon2" style="text-align: left;">
+                     <a th:href="@{/}"><input type="button" name="goBack" class="submit action-button" value="Go Back"></a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </main>
+	
+	
+    <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

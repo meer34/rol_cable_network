@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/collection/save}" method="post">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<label>Consumer</label>
+                    <select class="form-control" name="consumer" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select Consumer</option>
+                      <option style="color: #333;" th:each="consumer : ${consumerList}" 
+										th:text="${consumer.fullName}" th:value="${consumer.id}" th:selected="${consumer.id==collection.consumer?.id}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Payment Mode</label>
+                    <select class="form-control" name="paymentMode" style="height: 48px;" >
+                      <option selected disabled="disabled" value="">Select Type</option>
+                      <option th:selected="${collection?.paymentMode=='Cash'}">Cash</option>
+                      <option th:selected="${collection?.paymentMode=='Deposit'}">Deposit</option>
+                    </select>
+                  </div>
+				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Date</label>
+                    <input type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}">
+                  </div>
+                </div>
+				<div class="col-lg-12 flexdisplay">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Amount</label>
+                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()">
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Discount</label>
+                    <input type="number" min="0" class="form-control" name="discount" id="discount" placeholder="Discount" th:value="${collection.discount}" onChange="calculateNetAmount()">
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Net Amount</label>
+                    <input type="number" min="0" class="form-control" name="netAmount" id="netAmount" placeholder="Payable Amount" th:value="${collection.netAmount}" readonly>
+                  </div>
+				</div>
+				<div class="col-lg-12 flexdisplay">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Received By</label>
+                    <select class="form-control" name="receivedBy" style="height: 48px;" >
+                      <option selected disabled="disabled" value="">Select Received By</option>
+							<option style="color: #333;" th:each="user : ${users}" 
+								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==collection?.receivedBy?.id}"></option>
+							<!--dropdown to include both admin and moderator--> 
+                    </select>
+                  </div>
+				  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" placeholder="Remarks" th:value="${collection.remarks}">
+                  </div>
+				</div>
+			<input th:if="${collection.id}" type="hidden" name="id" th:value="${collection.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

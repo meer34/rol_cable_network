@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/channel/save}" method="post">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					<label>Channel Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Enter Channel Name" th:value="${channel.name}">
+                  </div>
+				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Base Price</label>
+                    <input type="number" min="0" class="form-control" name="basePrice" id="basePrice" 
+                    	placeholder="Enter Base Price" th:value="${channel.basePrice}" onKeyup="calculateGstPrice()">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>GST / Non GST</label>
+                    <select class="form-control" name="gstNonGst" id="gstNonGst" style="height: 48px;" onChange="calculateGstPrice()">
+                      <option selected disabled="disabled" value="">Select Type</option>
+                      <option th:selected="${channel?.gstNonGst=='GST'}">GST</option>
+                      <option th:selected="${channel?.gstNonGst=='Non GST'}">Non GST</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Final Price</label>
+                    <input type="number" min="0" class="form-control" name="price" id="price" placeholder="Enter Price" th:value="${channel.price}">
+                  </div>
+                </div>
+			<input th:if="${channel.id}" type="hidden" name="id" th:value="${channel.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

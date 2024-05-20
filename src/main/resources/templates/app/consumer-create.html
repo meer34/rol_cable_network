@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/consumer/save}" method="post" enctype="multipart/form-data">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Name</label>
+                    <input type="text" class="form-control" name="fullName" placeholder="Enter Full Name" th:value="${consumer.fullName}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Nick Name</label>
+                    <input type="text" class="form-control" name="nickName" placeholder="Enter Nick Name" th:value="${consumer.nickName}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Father's Name</label>
+                    <input type="text" class="form-control" name="fatherName" placeholder="Enter Father's Name" th:value="${consumer.fatherName}">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Phone No</label>
+                    <input type="text" class="form-control" name="phoneNo" placeholder="Enter Phone No" th:value="${consumer.phoneNo}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Area / Locality</label>
+                    <select class="form-control" name="area" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select Area</option>
+                      <option style="color: #333;" th:each="area : ${areaList}" 
+										th:text="${area.name}" th:value="${area.id}" th:selected="${area.id==consumer.area?.id}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Landmark</label>
+                    <input type="text" class="form-control" name="landmark" placeholder="Enter Landmark" th:value="${consumer.landmark}">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-12">
+                    <label>Full Address</label>
+                    <input type="text" class="form-control" name="fullAddress" placeholder="Enter Full Address Here" th:value="${consumer.fullAddress}">
+                  </div>
+                </div>
+			<input th:if="${consumer.id}" type="hidden" name="id" th:value="${consumer.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

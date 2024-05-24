@@ -11,6 +11,19 @@
             <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/connection/save}" method="post" enctype="multipart/form-data">
               <fieldset style="margin-top: 0;">
 				<legend style="text-align:center; padding-bottom: 60px;" th:text="${header}"></legend>
+				<div class="col-lg-12 flexdisplay" th:if="${connection.id}">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label style="color:#780c2a;">Change Connection State</label>
+                  </div>
+				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <select class="form-control" name="state" style="height: 30px !important;border: 1px solid black;" required>
+             	      <option selected disabled="disabled" value="">Select Type</option>
+                	  <option class="btn btn-success" th:selected="${connection?.state=='Connected'}">Connected</option>
+					  <option class="btn btn-warning" th:selected="${connection?.state=='Suspended'}">Suspended</option>
+                      <option class="btn btn-danger" th:selected="${connection?.state=='Disconnected'}">Disconnected</option>
+                    </select>
+                  </div>
+				</div>
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
 					<label>Consumer</label>
@@ -53,17 +66,10 @@
                     <input type="date" class="form-control" name="dateOfConnExpiry" id="dateOfConnExpiry" placeholder="Expiry Date" 
 						th:value="${connection.dateOfConnExpiry}" readonly>
                   </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Security Deposit</label>
-                    <input type="number" class="form-control" name="securityDeposit" placeholder="Security Deposit Amount" th:value="${connection?.securityDeposit}">
-                  </div>
 				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Connection Charge</label>
-                    <input type="number" class="form-control" name="connectionChange" placeholder="Connection Charge" th:value="${connection?.connectionChange}">
+                    <input type="number" class="form-control" name="connectionCharge" placeholder="Connection Charge" th:value="${connection?.connectionCharge}">
                   </div>
-                </div>
-				
-				<div class="col-lg-12 flexdisplay">
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Select Base Package</label>
                     <select class="form-control" name="channelPackage" id="channelPackage" style="height: 48px !important;" required onChange="calculateSubscriptionAmount()">
@@ -73,15 +79,18 @@
 										th:selected="${channelPackage.id == connection.channelPackage?.id}"></option>
                     </select>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                </div>
+				
+				<div class="col-lg-12 flexdisplay">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Subscription Amount</label>
                     <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" placeholder="0" th:value="${connection?.subscriptionAmount}" readonly>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Previous Due</label>
                     <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}" readonly>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Advance Amount</label>
                     <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}" readonly>
                   </div>
@@ -105,40 +114,6 @@
                     </select>
                   </div>
                 </div>
-				<table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
-                  <thead class="thead-inverse"
-                    style="background-color: #1D2951; color: #FFF;">
-                    <tr>
-                      <th class="table_heading">SL. No</th>
-                      <th class="table_heading">Start Date</th>
-                      <th class="table_heading">End Date</th>
-                      <th class="table_heading">Subscription Charge</th>
-					  <th class="table_heading">Paid Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr style="background-color: #FFF" th:each="bills, iter : ${connection.bills}">
-                      <td th:text="${iter.count}" />
-                      <td th:text="${bills?.startDate}" />
-                      <td th:text="${bills?.endDate}" />
-                      <td th:text="${bills?.billAmount}" />
-					  <td th:text="${bills?.paidAmount}" />
-                    </tr>
-                  </tbody>
-                </table>
-				<div class="col-lg-12 flexdisplay" th:if="${connection.id}">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label style="color:#780c2a;>">Change Connection State</label>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <select class="form-control" name="state" style="height: 30px !important;border: 1px solid black;" required>
-             	      <option selected disabled="disabled" value="">Select Type</option>
-                	  <option class="btn btn-success" th:selected="${connection?.state=='Connected'}">Connected</option>
-					  <option class="btn btn-warning" th:selected="${connection?.state=='Suspended'}">Suspended</option>
-                      <option class="btn btn-danger" th:selected="${connection?.state=='Disconnected'}">Disconnected</option>
-                    </select>
-                  </div>
-				</div>
 			<input th:if="${connection.id}" type="hidden" name="id" th:value="${connection.id}">
 			<!--<input type="hidden" name="currentBill" th:value="${connection.currentBill?.id}">-->
             <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >

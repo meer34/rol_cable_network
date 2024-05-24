@@ -46,6 +46,8 @@
                       <input type="submit" th:formaction="@{/consumer/view}" class="submit action-button" value="View">
                       <input type="submit" th:formaction="@{/consumer/edit}" class="submit action-button" value="Edit">
 					  <input type="submit" th:formaction="@{/connection}" class="submit action-button" value="Connection">
+					  <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" class="submit action-button" value="Billing">
+					  <input type="submit" th:formaction="@{/due/add}" class="submit action-button" value="Add Due">
                       <input type="button" class="submit action-button" value="Print" onclick="printData()">
                       <input type="submit" th:formaction="@{/consumer/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()">
                     </div>

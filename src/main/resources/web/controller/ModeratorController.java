@@ -9,90 +9,90 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.hunter.web.model.Moderator;
+import com.hunter.web.model.App User;
 import com.hunter.web.model.User;
-import com.hunter.web.service.ModeratorService;
+import com.hunter.web.service.appUserService;
 
 @Controller
-public class ModeratorController {
+public class App UserController {
 
-	@Autowired ModeratorService moderatorService;
+	@Autowired appUserService appUserService;
 
-	@GetMapping("/moderator")
-	public String showModeratorPage(Model model) {
-		model.addAttribute("moderatorList", moderatorService.getAllUsers());
-		return "moderator";
+	@GetMapping("/appUser")
+	public String showApp UserPage(Model model) {
+		model.addAttribute("appUserList", appUserService.getAllUsers());
+		return "app-user";
 	}
 
-	@GetMapping("/addModeratorPage")
-	public String showAddModeratorPage(Model model) {
-		model.addAttribute("moderator", new Moderator());
-		model.addAttribute("header", "Create Moderator");
-		return "moderator-create";
+	@GetMapping("/addApp UserPage")
+	public String showAddApp UserPage(Model model) {
+		model.addAttribute("appUser", new App User());
+		model.addAttribute("header", "Create App User");
+		return "app-user-create";
 	}
 
-	@RequestMapping(value = "/createModerator",
+	@RequestMapping(value = "/createAppUser",
 			method = RequestMethod.POST)
-	public String createModerator(Model model, Moderator moderator, 
+	public String createAppUser(Model model, App User appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
 		
-		if(moderator.getId() == null) {
-			moderator.setUser(new User(moderator.getName(), moderator.getPhone(), true, "MODERATOR"));
-			moderator = moderatorService.saveUserToDB(moderator);
+		if(appUser.getId() == null) {
+			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, "MODERATOR"));
+			appUser = appUserService.saveUserToDB(appUser);
 			
 		} else {
-			Moderator tempModerator = moderatorService.findUserById(moderator.getId());
+			App User tempAppUser = appUserService.findUserById(appUser.getId());
 			
-			tempModerator.setName(moderator.getName());
-			tempModerator.setPhone(moderator.getPhone());
-			tempModerator.setAddress(moderator.getAddress());
+			tempAppUser.setName(appUser.getName());
+			tempAppUser.setPhone(appUser.getPhone());
+			tempAppUser.setAddress(appUser.getAddress());
 			
-			tempModerator.getUser().setUsername(moderator.getName());
-			tempModerator.getUser().setPhone(moderator.getPhone());
+			tempAppUser.getUser().setUsername(appUser.getName());
+			tempAppUser.getUser().setPhone(appUser.getPhone());
 			
-			moderator = moderatorService.saveUserToDB(tempModerator);
+			appUser = appUserService.saveUserToDB(tempAppUser);
 		}
 
-		redirectAttributes.addFlashAttribute("successMessage", "New user " + moderator.getName() + " added successfully as Moderator!");
-		return "redirect:/moderator";
+		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
+		return "redirect:/appUser";
 
 	}
 
-	@RequestMapping(value = "/viewModerator",
+	@RequestMapping(value = "/viewAppUser",
 			method = RequestMethod.GET)
-	public String viewModerator(RedirectAttributes redirectAttributes, Model model,
+	public String viewAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got view request for moderator id " + id);
-		model.addAttribute("moderator", moderatorService.findUserById(Long.parseLong(id)));
-		return "view-moderator";
+		System.out.println("Got view request for appUser id " + id);
+		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		return "view-appUser";
 		
 	}
 	
-	@RequestMapping(value = "/editModerator",
+	@RequestMapping(value = "/editAppUser",
 			method = RequestMethod.GET)
-	public String editModerator(RedirectAttributes redirectAttributes, Model model,
+	public String editAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 		
-		System.out.println("Got edit request for moderator id " + id);
-		model.addAttribute("moderator", moderatorService.findUserById(Long.parseLong(id)));
-		model.addAttribute("header", "Edit Moderator");
-		return "moderator-create";
+		System.out.println("Got edit request for appUser id " + id);
+		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("header", "Edit App User");
+		return "app-user-create";
 		
 	}
 	
-	@RequestMapping(value = "/deleteModerator",
+	@RequestMapping(value = "/deleteAppUser",
 			method = RequestMethod.GET)
-	public String deleteModerator(RedirectAttributes redirectAttributes, Model model,
+	public String deleteAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request moderator for id " + id);
-		moderatorService.deleteUserById(Long.parseLong(id));
-		redirectAttributes.addFlashAttribute("successMessage", "Moderator with id " + id + " deleted successfully!");
-		return "redirect:/moderator";
+		System.out.println("Got delete request appUser for id " + id);
+		appUserService.deleteUserById(Long.parseLong(id));
+		redirectAttributes.addFlashAttribute("successMessage", "App User with id " + id + " deleted successfully!");
+		return "redirect:/appUser";
 		
 	}
 	

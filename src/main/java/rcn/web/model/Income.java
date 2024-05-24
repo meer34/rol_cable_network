@@ -45,7 +45,7 @@ public class Income {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="receivedBy")
-	private Moderator receivedBy;
+	private AppUser receivedBy;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

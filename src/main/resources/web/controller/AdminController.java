@@ -14,13 +14,13 @@ import com.hunter.web.model.Admin;
 import com.hunter.web.model.User;
 import com.hunter.web.repo.UserRepo;
 import com.hunter.web.service.AdminService;
-import com.hunter.web.service.ModeratorService;
+import com.hunter.web.service.appUserService;
 
 @Controller
 public class AdminController {
 
 	@Autowired AdminService adminService;
-	@Autowired ModeratorService moderatorService;
+	@Autowired appUserService appUserService;
 	@Autowired UserRepo userRepository;
 
 	@GetMapping("/admin")
@@ -106,7 +106,7 @@ public class AdminController {
 	public String checkIfNumberExistsForOtherAdmins(@RequestParam String phone, @RequestParam Long id) {
 		
 		if(adminService.getAdminsByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
-				moderatorService.getModeratorsByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
+				appUserService.getApp UsersByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
 			return "Exist";
 		}
 		
@@ -114,11 +114,11 @@ public class AdminController {
 		
 	}
 	
-	@GetMapping("/checkIfNumberExistsForOtherModerators")
+	@GetMapping("/checkIfNumberExistsForOtherAppUsers")
 	@ResponseBody
-	public String checkIfNumberExistsForOtherModerators(@RequestParam String phone, @RequestParam Long id) {
+	public String checkIfNumberExistsForOtherAppUsers(@RequestParam String phone, @RequestParam Long id) {
 		
-		if(moderatorService.getModeratorsByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
+		if(appUserService.getApp UsersByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
 				adminService.getAdminsByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
 			return "Exist";
 		}

@@ -50,7 +50,7 @@ public class Expense {
 	
 	@ManyToOne
 	@JoinColumn(name ="spentBy")
-	private Moderator spentBy;
+	private App User spentBy;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

@@ -1,15 +1,6 @@
 package rcn.web.controller;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,125 +9,116 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import rcn.web.model.Connection;
-import rcn.web.service.ConnectionService;
-import rcn.web.service.ConsumerService;
-import rcn.web.service.SubscriptionService;
+import rcn.security.Role;
+import rcn.security.User;
+import rcn.web.model.AppUser;
+import rcn.web.service.AppUserService;
 
 @Controller
 @RequestMapping("/settlement")
 public class SettlementController {
 
-	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
-	@Autowired ConnectionService connectionService;
-	@Autowired ConsumerService consumerService;
-	@Autowired SubscriptionService subscriptionService;
+	@Autowired AppUserService appUserService;
 
-	@GetMapping
-	public String showBasePage(Model model,
-			@RequestParam("page") Optional<Integer> page,
-			@RequestParam("size") Optional<Integer> size,
-			@RequestParam(value="fromDate", required = false) String fromDate,
-			@RequestParam(value="toDate", required = false) String toDate,
-			@RequestParam(value="keyword", required = false) String keyword,
-			@RequestParam(value="consumerId", required = false) Long consumerId) {
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("Add Connection"))) {
-			return "app/my-settlement";
-		}
-
-		Page<Connection> listPage = null;
-
-		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Connection home page");
-			if(consumerId != null) listPage = connectionService.getPageByConsumerId(consumerId, page.orElse(1) - 1, size.orElse(initialPageSize));
-			else listPage = connectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
-
-		} else {
-			System.out.println("Searching Connection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
-			listPage = connectionService.searchByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
-
-			model.addAttribute("fromDate", fromDate);
-			model.addAttribute("toDate", toDate);
-			model.addAttribute("keyword", keyword);
-
-		}
-
-		model.addAttribute("listPage", listPage);
-		int totalPages = listPage.getTotalPages();
-		if (totalPages > 0) {
-			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-					.boxed()
-					.collect(Collectors.toList());
-			model.addAttribute("pageNumbers", pageNumbers);
-		}
-
-		return "app/connection";
-
+	public String basePage(Model model) {
+		model.addAttribute("appUserList", appUserService.getAllUsers());
+		return "app-user";
 	}
 
-	@GetMapping("/add")
-	public String add(Model model, Connection connection) {
-		model.addAttribute("header", "Create Connection");
-		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("packageList", subscriptionService.getAllPackages());
-		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
-		model.addAttribute("channelList", subscriptionService.getAllChannels());
-		return "app/connection-create";
+	@GetMapping("/settleAmount")
+	public String settleAmount(Model model,
+			@RequestParam(value="consumerId", required = true) Long consumerId) {
+		model.addAttribute("appUser", new AppUser());
+		model.addAttribute("header", "Create App User");
+		return "app-user-create";
 	}
 
-	@RequestMapping(value = "/save",
+	@RequestMapping(value = "/createAppUser",
 			method = RequestMethod.POST)
-	public String save(Model model, Connection connection, RedirectAttributes redirectAttributes) throws Exception{
-		connection = connectionService.save(connection);
-		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " saved successfully!");
-		return "redirect:/connection";
+	public String createAppUser(Model model, AppUser appUser, 
+			RedirectAttributes redirectAttributes) throws Exception{
 
-	}
+		if(appUser.getId() == null) {
+			//			System.out.println("$$$ - " + appUser.toString());
+			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, null));
+			if(appUser.getRoles() != null) {
+				for (String role : appUser.getRoles()) {
+					appUser.getUser().getRoles().add(new Role(role));
+				}
+			}
 
-	@RequestMapping(value = "/view",
-			method = RequestMethod.GET)
-	public String view(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam(value="id", required = false) String id,
-			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
+			appUser = appUserService.saveUserToDB(appUser);
 
-		System.out.println("Got view request for connection id " + id);
-		if(consumerId != null) {
-			model.addAttribute("connection", connectionService.getByConsumerId(Long.parseLong(consumerId)));
 		} else {
-			model.addAttribute("connection", connectionService.getById(Long.parseLong(id)));
+			AppUser tempAppUser = appUserService.findUserById(appUser.getId());
+
+			tempAppUser.setName(appUser.getName());
+			tempAppUser.setPhone(appUser.getPhone());
+			tempAppUser.setAddress(appUser.getAddress());
+
+			tempAppUser.getUser().setUsername(appUser.getName());
+			tempAppUser.getUser().setPhone(appUser.getPhone());
+
+			tempAppUser.getUser().getRoles().clear();
+			if(appUser.getRoles() != null) {
+				for (String role : appUser.getRoles()) {
+					tempAppUser.getUser().getRoles().add(new Role(role));
+				}
+			}
+
+			appUser = appUserService.saveUserToDB(tempAppUser);
 		}
-		return "app/connection-view";
+
+		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
+		return "redirect:/appUser";
+
 	}
 
-	@RequestMapping(value = "/edit",
+	@RequestMapping(value = "/viewAppUser",
 			method = RequestMethod.GET)
-	public String edit(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam(value="id", required = false) String id,
-			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
-
-		System.out.println("Got edit request for connection id " + id);
-		if(consumerId != null) {
-			model.addAttribute("connection", connectionService.getByConsumerId(Long.parseLong(consumerId)));
-		} else {
-			model.addAttribute("connection", connectionService.getById(Long.parseLong(id)));
-		}
-		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("header", "Edit Connection");
-		return "app/connection-create";
-	}
-
-	@RequestMapping(value = "/delete",
-			method = RequestMethod.GET)
-	public String delete(RedirectAttributes redirectAttributes, Model model,
+	public String viewAppUser(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for connection id " + id);
+		System.out.println("Got view request for appUser id " + id);
+		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		return "view-appUser";
 
-		connectionService.deleteById(Long.parseLong(id));
-		redirectAttributes.addFlashAttribute("successMessage", "Connection with id " + id + " deleted successfully!");
-		return "redirect:/connection";
+	}
+
+	@RequestMapping(value = "/editAppUser",
+			method = RequestMethod.GET)
+	public String editAppUser(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam("action") String action,
+			@RequestParam("id") String id) throws Exception{
+
+		System.out.println("Got edit request for appUser id " + id);
+		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("header", "Edit App User");
+		return "app-user-create";
+
+	}
+
+	@RequestMapping(value = "/deleteAppUser",
+			method = RequestMethod.GET)
+	public String deleteAppUser(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam("action") String action,
+			@RequestParam("id") String id) throws Exception{
+
+		System.out.println("Got delete request appUser for id " + id);
+		AppUser appUser = appUserService.findUserById(Long.parseLong(id));
+
+		/*if(appUser != null) {
+			if(appUser.getStockOutList().isEmpty()) {
+				appUserService.deleteUserById(Long.parseLong(id));
+				redirectAttributes.addFlashAttribute("successMessage", "App User with id " + id + " deleted successfully!");
+			} else {
+				redirectAttributes.addFlashAttribute("successMessage", appUser.getStockOutList().size() + " Stock Out entries present this App User!");
+			}
+		}*/
+
+		return "redirect:/appUser";
+
 	}
 
 }

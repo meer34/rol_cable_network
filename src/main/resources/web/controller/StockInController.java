@@ -24,7 +24,7 @@ import com.google.gson.Gson;
 import com.hunter.web.model.Product;
 import com.hunter.web.model.StockIn;
 import com.hunter.web.service.CustomerService;
-import com.hunter.web.service.ModeratorService;
+import com.hunter.web.service.appUserService;
 import com.hunter.web.service.PartyService;
 import com.hunter.web.service.StockInService;
 
@@ -35,7 +35,7 @@ public class StockInController {
 	@Autowired StockInService stockInService;
 	@Autowired PartyService mahajanService;
 	@Autowired CustomerService customerService;
-	@Autowired ModeratorService moderatorService;
+	@Autowired appUserService appUserService;
 
 	@Value("${INITIAL_PAGE_SIZE}")
 	private Integer initialPageSize;
@@ -218,7 +218,7 @@ public class StockInController {
 		model.addAttribute("submitValue", "Save");
 
 		model.addAttribute("parties", mahajanService.getAllUsers());
-		model.addAttribute("moderators", moderatorService.getAllUsers());
+		model.addAttribute("appUsers", appUserService.getAllUsers());
 
 		return "stock-in-view";
 

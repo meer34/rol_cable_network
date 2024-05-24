@@ -21,21 +21,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rcn.web.model.Expense;
 import rcn.web.model.ExpenseType;
 import rcn.web.repo.ExpenseTypeRepo;
+import rcn.web.service.AppUserService;
 import rcn.web.service.ExpenseService;
-import rcn.web.service.ModeratorService;
 
 @Controller
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class ExpenseController {
 
 	@Autowired ExpenseService expenseService;
 	@Autowired ExpenseTypeRepo expenseTypeRepo;
-	@Autowired ModeratorService moderatorService;
+	@Autowired AppUserService appUserService;
 
 	@Value("${INITIAL_PAGE_SIZE}")
 	private Integer initialPageSize;
 
-	static String expenseBillPath = "/files/imperial_elevator/bill/expense/";
+	static String expenseBillPath = "/files/rol_cable_network/bill/expense/";
 
 	@GetMapping("/expense-type")
 	public String showExpenseTypes(Model model) {
@@ -116,7 +116,7 @@ public class ExpenseController {
 	@GetMapping("/addExpensePage")
 	public String showAddExpensePage(Model model) {
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Add Expense");
 
@@ -130,7 +130,7 @@ public class ExpenseController {
 
 		System.out.println("Got edit request for expense with id " + id);
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Edit Expense");
 

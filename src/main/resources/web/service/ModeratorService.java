@@ -5,62 +5,62 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hunter.web.model.Moderator;
+import com.hunter.web.model.App User;
 import com.hunter.web.model.User;
-import com.hunter.web.repo.ModeratorRepo;
+import com.hunter.web.repo.App UserRepo;
 import com.hunter.web.repo.UserRepo;
 
 @Service
-public class ModeratorService {
+public class appUserService {
 
-	@Autowired private ModeratorRepo moderatorRepo;
+	@Autowired private App UserRepo appUserRepo;
 	@Autowired private UserRepo userRepo;
 
-	public Moderator saveUserToDB(Moderator moderator) {
-		moderator.setSynced(false);
-		return moderatorRepo.save(moderator);
+	public App User saveUserToDB(App User appUser) {
+		appUser.setSynced(false);
+		return appUserRepo.save(appUser);
 	}
 	
-	public Moderator findUserById(Long id) {
-		return moderatorRepo.findById(id).get();
+	public App User findUserById(Long id) {
+		return appUserRepo.findById(id).get();
 	}
 
-	public List<Moderator> getAllUsers() {
-		return moderatorRepo.findAll();
+	public List<App User> getAllUsers() {
+		return appUserRepo.findAll();
 	}
 
 	public void deleteUserById(Long id) {
-		moderatorRepo.deleteById(id);
+		appUserRepo.deleteById(id);
 	}
 
-	public List<Moderator> getModeratorsByPhoneNumberAndIdNotMatching(String phone, Long id) {
-		return moderatorRepo.findByPhoneAndIdNot(phone, id);
+	public List<App User> getApp UsersByPhoneNumberAndIdNotMatching(String phone, Long id) {
+		return appUserRepo.findByPhoneAndIdNot(phone, id);
 	}
 	
-	public List<Moderator> findAllNotSyncedData() {
-		return moderatorRepo.findAllNotSyncedData();
+	public List<App User> findAllNotSyncedData() {
+		return appUserRepo.findAllNotSyncedData();
 	}
 	
-	public Moderator saveRemoteData(Moderator moderator) {
-		moderator.setSynced(true);
+	public App User saveRemoteData(App User appUser) {
+		appUser.setSynced(true);
 		
-		Long tempModeratorId = moderator.getId();
-		if(moderator.getRemoteId() != null) moderator.setId(moderator.getRemoteId());
-		else moderator.setId(0L);
-		moderator.setRemoteId(tempModeratorId);
+		Long tempAppUserId = appUser.getId();
+		if(appUser.getRemoteId() != null) appUser.setId(appUser.getRemoteId());
+		else appUser.setId(0L);
+		appUser.setRemoteId(tempAppUserId);
 		
-		User tempUser = userRepo.getUserByPhoneNumber(moderator.getUser().getPhone());
+		User tempUser = userRepo.getUserByPhoneNumber(appUser.getUser().getPhone());
 		if(tempUser != null) {
-			moderator.getUser().setId(tempUser.getId());
-			moderator.getUser().setRoles(tempUser.getRoles());
+			appUser.getUser().setId(tempUser.getId());
+			appUser.getUser().setRoles(tempUser.getRoles());
 		}
 		
-		System.out.println("Saving Moderator with id: " + moderator.getId() + " remote id: " + moderator.getRemoteId());
-		return moderatorRepo.saveAndFlush(moderator);
+		System.out.println("Saving App User with id: " + appUser.getId() + " remote id: " + appUser.getRemoteId());
+		return appUserRepo.saveAndFlush(appUser);
 	}
 
 	public void markAsSynced(Long id, Long serverId) {
-		moderatorRepo.markAsSynced(id, serverId);
+		appUserRepo.markAsSynced(id, serverId);
 	}
 
 }

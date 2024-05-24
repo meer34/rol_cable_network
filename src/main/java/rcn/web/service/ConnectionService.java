@@ -1,5 +1,7 @@
 package rcn.web.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,15 +18,15 @@ public class ConnectionService {
 
 	@Autowired private ConnectionRepo connectionRepo;
 
-	public Connection save(Connection admin) {
-		return connectionRepo.save(admin);
+	public Connection save(Connection conn) {
+		return connectionRepo.save(conn);
 	}
 	
 	public Connection getById(Long id) {
 		return connectionRepo.findById(id).orElse(null);
 	}
 	
-	public Connection getByConsumerId(Long consumerId) {
+	public List<Connection> getByConsumerId(Long consumerId) {
 		return connectionRepo.findByConsumerId(consumerId);
 	}
 	

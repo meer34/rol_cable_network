@@ -2038,3 +2038,6 @@ audio, canvas, progress, video {
 	padding-top: 10px;
 }
 
+.displayNone {
+  display: none;
+}

@@ -33,6 +33,7 @@ public class Collection {
 	@JoinColumn(name="consumer")
 	private Consumer consumer;
 	
+	private String billType;
 	private Double amount;
 	private Double discount;
 	private Double netAmount;
@@ -41,7 +42,7 @@ public class Collection {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="receivedBy")
-	private Moderator receivedBy;
+	private AppUser receivedBy;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

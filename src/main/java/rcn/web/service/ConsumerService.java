@@ -31,7 +31,7 @@ public class ConsumerService {
 	}
 
 	public Page<Consumer> getAll(Integer pageNo, Integer pageSize) {
-		return consumerRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+		return consumerRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").ascending()));
 	}
 
 	public void deleteById(Long id) {

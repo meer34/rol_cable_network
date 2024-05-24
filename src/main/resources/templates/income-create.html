@@ -54,7 +54,7 @@
                       <option selected disabled="disabled" value="">Select Received By</option>
 							<option style="color: #333;" th:each="user : ${users}" 
 								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==income?.receivedBy?.id}"></option>
-							<!--dropdown managed by admin and moderator--> 
+							<!--dropdown managed by admin and appUser--> 
                     </select>
                   </div>
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">

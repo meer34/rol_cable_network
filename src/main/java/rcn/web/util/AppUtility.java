@@ -3,15 +3,18 @@ package rcn.web.util;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class AppUtility {
-	
+
 	@Value("${fast2sms.api.url}")
 	private String apiURL;
 
@@ -20,11 +23,31 @@ public class AppUtility {
 
 	@Value("${fast2sms.api.request.contentType}")
 	private String contentType;
+
+	public Date getTodaysDateWithoutTime() {
+		try{
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(formatter.format(new Date()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
+	public Date formatDate(Date date) {
+		try{
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			return formatter.parse(formatter.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public String sendSMS(String phone, String message) throws Exception {
-		
+
 		System.out.println("Sending message to - " + phone);
-		
+
 		String requestBody = new StringBuilder("sender_id=")
 				.append("FTWSMS")
 				.append("&message=")

@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hunter.web.model.Admin;
-import com.hunter.web.model.Moderator;
+import com.hunter.web.model.App User;
 import com.hunter.web.model.User;
 import com.hunter.web.repo.AdminRepo;
-import com.hunter.web.repo.ModeratorRepo;
+import com.hunter.web.repo.App UserRepo;
 import com.hunter.web.repo.UserRepo;
 import com.hunter.web.util.AppUtility;
 
@@ -26,7 +26,7 @@ public class OTPController {
 
 	@Autowired UserRepo userRepo;
 	@Autowired AdminRepo adminRepo;
-	@Autowired ModeratorRepo moderatorRepo;
+	@Autowired App UserRepo appUserRepo;
 	@Autowired AppUtility utility;
 	
 	@GetMapping("/generatePin")
@@ -44,10 +44,10 @@ public class OTPController {
 				user.setPinGenerationTime(new Date());
 				userRepo.save(user);
 				
-				Moderator moderator = moderatorRepo.findByUser(user).orElse(null);
-				if(moderator != null) {
-					moderator.setSynced(false);
-					moderatorRepo.save(moderator);
+				App User appUser = appUserRepo.findByUser(user).orElse(null);
+				if(appUser != null) {
+					appUser.setSynced(false);
+					appUserRepo.save(appUser);
 				} else {
 					Admin admin = adminRepo.findByUser(user).orElse(null);
 					if(admin != null) {

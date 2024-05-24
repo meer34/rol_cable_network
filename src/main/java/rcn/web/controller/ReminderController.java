@@ -24,7 +24,7 @@ import rcn.web.service.ReminderService;
 import rcn.web.util.AppUtility;
 
 @Controller
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class ReminderController {
 
 	@Autowired ReminderService reminderService;

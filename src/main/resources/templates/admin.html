@@ -11,7 +11,7 @@
 			<div class="col-md-12">
 				<div class="dashboardicon2" style="text-align: left;">
 					<input type="button" name="addAdmin" class="submit action-button" value="Add New Admin" th:attr="onclick=|location.href='@{/addAdminPage}'|" 
-						sec:authorize="hasAuthority('ADMIN')" >
+						 ><!-- sec:authorize="hasAuthority('ADMIN')" -->
 				</div>
 
 				<div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
@@ -52,8 +52,7 @@
 											
 											<input type="submit" th:formaction="@{/viewAdmin}" name="action" class="submit action-button" value="View">
 											
-											<input type="submit" th:formaction="@{/editAdmin}" name="action" class="submit action-button" value="Edit" 
-																								sec:authorize="hasAuthority('ADMIN')" >
+											<input type="submit" th:formaction="@{/editAdmin}" name="action" class="submit action-button" value="Edit">
 											<!-- 
 											<input type="button" name="action" class="submit action-button2" value="New Pin" th:attr="onClick=|generatePin(${admin.phone})|"
 																								sec:authorize="hasAuthority('ADMIN')" >

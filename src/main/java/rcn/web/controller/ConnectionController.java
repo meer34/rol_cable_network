@@ -97,6 +97,10 @@ public class ConnectionController {
 		
 		connection.setCurrentBill(bill);*/
 		
+		if(connection.getId() == null) {
+			connection.setState("Connected");
+		}
+
 		connection = connectionService.save(connection);
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " saved successfully!");
@@ -116,6 +120,12 @@ public class ConnectionController {
 		} else {
 			model.addAttribute("connection", connectionService.getById(Long.parseLong(id)));
 		}
+		model.addAttribute("consumerList", consumerService.getAll());
+		model.addAttribute("packageList", subscriptionService.getAllPackages());
+		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
+		model.addAttribute("channelList", subscriptionService.getAllChannels());
+		model.addAttribute("header", "View Connection");
+		
 		return "app/connection-view";
 	}
 
@@ -160,7 +170,8 @@ public class ConnectionController {
 	@RequestMapping(value = "/renew",
 			method = RequestMethod.GET)
 	public String renew(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam("id") String id) throws Exception{
+			@RequestParam("id") String id,
+			@RequestParam("date") String date) throws Exception{
 		
 		System.out.println("Got renew request for connection id " + id);
 		Connection connection = connectionService.getById(Long.parseLong(id));

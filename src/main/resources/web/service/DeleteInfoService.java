@@ -25,7 +25,7 @@ import com.hunter.web.model.Expense;
 import com.hunter.web.model.ExpenseType;
 import com.hunter.web.model.Income;
 import com.hunter.web.model.IncomeType;
-import com.hunter.web.model.Moderator;
+import com.hunter.web.model.App User;
 import com.hunter.web.model.Party;
 import com.hunter.web.model.Product;
 import com.hunter.web.model.Reminder;
@@ -76,7 +76,7 @@ public class DeleteInfoService {
 					Expense.class,
 					IncomeType.class,
 					ExpenseType.class,
-					Moderator.class,
+					App User.class,
 					Admin.class,
 					User.class
 			};

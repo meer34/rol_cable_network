@@ -55,7 +55,7 @@
                       <option selected disabled="disabled" value="">Select Expense By</option>
 							<option style="color: #333;" th:each="user : ${users}" 
 								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==expense?.spentBy?.id}"></option>
-							<!--dropdown managed by admin and moderator--> 
+							<!--dropdown managed by admin and appUser--> 
                     </select>
                   </div>
                   <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">

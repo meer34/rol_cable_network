@@ -9,7 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class HunterGarmentsUtility {
 	
 	@Value("${fast2sms.api.url}")

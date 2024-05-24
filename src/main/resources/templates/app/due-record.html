@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dashboardicon2" style="text-align: left;">
+              <div th:if="${successMessage}" th:text="${successMessage}"
+                class="alert alert-success" role="alert"></div>
+              <div class="tile">
+                <h3 class="tile-title"></h3>
+                <div class="table-responsive table_size" style="margin-top: 50px;">
+                  <form th:action="@{/bill-record}" method="get">
+                    <div class="dashboardicon2" style="text-align: left;" >
+                      <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
+                    </div>
+                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+                      <thead class="thead-inverse"
+                        style="background-color: #1D2951; color: #FFF;">
+                        <tr>
+                          <th class="table_heading noPrint"></th>
+						  <th class="table_heading">Name</th>
+						  <th class="table_heading">Due Type</th>
+                          <th class="table_heading">Due Amount</th>
+                          <th class="table_heading">Paid Amount</th>
+						  <th class="table_heading">Current Due</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color: #FFF" th:each="due : ${listPage.content}">
+                          <td class="noPrint" ><input type='radio' class="radioBtn" name='billId' th:value="${due.id}"></td>
+                          <td th:text="${due.consumer?.fullName}" />
+						  <td th:text="${due.dueType}" />
+                          <td th:text="${due.dueAmount}" />
+                          <td th:text="${due.paidAmount}" />
+                          <td th:text="${due.dueAmount - due.paidAmount}" />
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+      <div th:replace="fragments :: table_search_script"></div>
+  </body>
+</html>

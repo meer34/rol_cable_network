@@ -1,5 +1,7 @@
 package rcn.web.controller;
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,19 +17,21 @@ import rcn.web.model.AppUser;
 import rcn.web.service.AppUserService;
 
 @Controller
-@RequestMapping("/settlement")
-public class SettlementController {
+public class AppUserController {
 
 	@Autowired AppUserService appUserService;
 
-	public String basePage(Model model) {
-		model.addAttribute("appUserList", appUserService.getAllUsers());
+	@GetMapping("/appUser")
+	public String showAppUserPage(Model model) {
+		model.addAttribute("appUserList", 
+				appUserService.getAllUsers().stream()
+				.filter(appUser -> "APP_USER".equals(appUser.getUserType()))
+				.collect(Collectors.toList()));
 		return "app-user";
 	}
 
-	@GetMapping("/settleAmount")
-	public String settleAmount(Model model,
-			@RequestParam(value="consumerId", required = true) Long consumerId) {
+	@GetMapping("/addAppUserPage")
+	public String showAddAppUserPage(Model model) {
 		model.addAttribute("appUser", new AppUser());
 		model.addAttribute("header", "Create App User");
 		return "app-user-create";
@@ -46,7 +50,8 @@ public class SettlementController {
 					appUser.getUser().getRoles().add(new Role(role));
 				}
 			}
-
+			
+			appUser.setUserType("APP_USER");
 			appUser = appUserService.saveUserToDB(appUser);
 
 		} else {
@@ -70,7 +75,7 @@ public class SettlementController {
 		}
 
 		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
-		return "redirect:/appUser";
+		return "redirect:/app-user";
 
 	}
 
@@ -82,7 +87,7 @@ public class SettlementController {
 
 		System.out.println("Got view request for appUser id " + id);
 		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
-		return "view-appUser";
+		return "view-app-user";
 
 	}
 
@@ -107,6 +112,8 @@ public class SettlementController {
 
 		System.out.println("Got delete request appUser for id " + id);
 		AppUser appUser = appUserService.findUserById(Long.parseLong(id));
+		
+		//TODO
 
 		/*if(appUser != null) {
 			if(appUser.getStockOutList().isEmpty()) {
@@ -117,7 +124,7 @@ public class SettlementController {
 			}
 		}*/
 
-		return "redirect:/appUser";
+		return "redirect:/app-user";
 
 	}
 

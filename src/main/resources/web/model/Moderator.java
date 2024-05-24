@@ -23,7 +23,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @EntityListeners(DeleteEventListener.class)
-public class Moderator {
+public class App User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

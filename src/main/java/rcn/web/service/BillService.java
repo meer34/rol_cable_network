@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import rcn.web.model.Bill;
 import rcn.web.repo.BillRepo;
-import rcn.web.specification.BillSearchSpecification;
-import rcn.web.util.SearchSpecificationBuilder;
 
 @Service
 public class BillService {
@@ -27,25 +25,15 @@ public class BillService {
 	}
 	
 	public List<Bill> getAll() {
-		return billRepo.findAll();
+		return billRepo.findAll(Sort.by("endDate").descending());
 	}
 
 	public Page<Bill> getAll(Integer pageNo, Integer pageSize) {
-		return billRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+		return billRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("endDate").ascending()));
 	}
 
 	public void deleteById(Long id) {
 		billRepo.deleteById(id);
-	}
-
-	public Page<Bill> getPageByConnectionId(Long connectionId, Integer pageNo, Integer pageSize) {
-		return billRepo.findPageByConnection(connectionId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
-	}
-	
-	public Page<Bill> getPageByDateAndConsumer(String fromDate, String toDate, 
-			Long consumerId, Integer pageNo, Integer pageSize) {
-		BillSearchSpecification spec = (BillSearchSpecification) SearchSpecificationBuilder.build(fromDate, toDate, String.valueOf(consumerId), Bill.class);
-		return billRepo.findAll(spec, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
 	
 }

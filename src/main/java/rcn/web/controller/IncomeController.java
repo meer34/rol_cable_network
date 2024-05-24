@@ -30,22 +30,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rcn.web.model.Income;
 import rcn.web.model.IncomeType;
 import rcn.web.repo.IncomeTypeRepo;
+import rcn.web.service.AppUserService;
 import rcn.web.service.IncomeService;
-import rcn.web.service.ModeratorService;
 
 @Controller
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class IncomeController {
 
 	@Autowired IncomeService incomeService;
 	@Autowired IncomeTypeRepo incomeTypeRepo;
-	@Autowired ModeratorService moderatorService;
+	@Autowired AppUserService appUserService;
 
 	@Value("${INITIAL_PAGE_SIZE}")
 	private Integer initialPageSize;
 
-	static String incomeBillPath = "/files/imperial_elevator/bill/income/";
-	static String downloadBasePath = "/files/imperial_elevator/";
+	static String incomeBillPath = "/files/rol_cable_network/bill/income/";
+	static String downloadBasePath = "/files/rol_cable_network/";
 
 	@GetMapping("/income-type")
 	public String showIncomeTypes(Model model) {
@@ -129,7 +129,7 @@ public class IncomeController {
 	@GetMapping("/addIncomePage")
 	public String showAddIncomePage(Model model) {
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Add Income");
 
@@ -143,7 +143,7 @@ public class IncomeController {
 
 		System.out.println("Got edit request for income with id " + id);
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Edit Income");
 

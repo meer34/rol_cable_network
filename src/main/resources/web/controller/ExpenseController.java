@@ -29,7 +29,7 @@ import com.hunter.web.model.Expense;
 import com.hunter.web.model.ExpenseType;
 import com.hunter.web.repo.ExpenseTypeRepo;
 import com.hunter.web.service.ExpenseService;
-import com.hunter.web.service.ModeratorService;
+import com.hunter.web.service.appUserService;
 
 @Controller
 @PropertySource("classpath:hunter_garments.properties")
@@ -37,7 +37,7 @@ public class ExpenseController {
 
 	@Autowired ExpenseService expenseService;
 	@Autowired ExpenseTypeRepo expenseTypeRepo;
-	@Autowired ModeratorService moderatorService;
+	@Autowired appUserService appUserService;
 
 	@Value("${INITIAL_PAGE_SIZE}")
 	private Integer initialPageSize;
@@ -121,7 +121,7 @@ public class ExpenseController {
 	@GetMapping("/addExpensePage")
 	public String showAddExpensePage(Model model) {
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Add Expense");
 
@@ -135,7 +135,7 @@ public class ExpenseController {
 
 		System.out.println("Got edit request for expense with id " + id);
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Edit Expense");
 

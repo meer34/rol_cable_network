@@ -1,5 +1,7 @@
 package rcn.web.controller;
 
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,22 +12,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import rcn.security.Role;
 import rcn.security.User;
 import rcn.security.UserRepo;
 import rcn.web.model.Admin;
-import rcn.web.service.AdminService;
-import rcn.web.service.ModeratorService;
+import rcn.web.model.AppUser;
+import rcn.web.service.AppUserService;
 
 @Controller
 public class AdminController {
 
-	@Autowired AdminService adminService;
-	@Autowired ModeratorService moderatorService;
+	@Autowired AppUserService appUserService;
 	@Autowired UserRepo userRepository;
 
 	@GetMapping("/admin")
 	public String showAdminPage(Model model) {
-		model.addAttribute("adminList", adminService.getAllUsers());
+		model.addAttribute("adminList", 
+				appUserService.getAllUsers().stream()
+				.filter(appUser -> "ADMIN".equals(appUser.getUserType()))
+				.collect(Collectors.toList()));
 		return "admin";
 	}
 
@@ -38,27 +43,29 @@ public class AdminController {
 
 	@RequestMapping(value = "/createAdmin",
 			method = RequestMethod.POST)
-	public String createAdmin(Model model, Admin admin, 
+	public String createAdmin(Model model, AppUser appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
 
-		if(admin.getId() == null) {
-			admin.setUser(new User(admin.getName(), admin.getPhone(), true, "ADMIN"));
-			admin = adminService.saveUserToDB(admin);
-
+		if(appUser.getId() == null) {
+			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, "ADMIN"));
+			appUser.setUserType("ADMIN");
+			appUser = appUserService.saveUserToDB(appUser);
+			
 		} else {
-			Admin tempAdmin = adminService.findUserById(admin.getId());
+			AppUser tempAppUser = appUserService.findUserById(appUser.getId());
 
-			tempAdmin.setName(admin.getName());
-			tempAdmin.setPhone(admin.getPhone());
-			tempAdmin.setAddress(admin.getAddress());
+			tempAppUser.setName(appUser.getName());
+			tempAppUser.setPhone(appUser.getPhone());
+			tempAppUser.setAddress(appUser.getAddress());
+			appUser.setUserType("ADMIN");
+			
+			tempAppUser.getUser().setUsername(appUser.getName());
+			tempAppUser.getUser().setPhone(appUser.getPhone());
 
-			tempAdmin.getUser().setUsername(admin.getName());
-			tempAdmin.getUser().setPhone(admin.getPhone());
-
-			admin = adminService.saveUserToDB(tempAdmin);
+			appUser = appUserService.saveUserToDB(tempAppUser);
 		}
 
-		redirectAttributes.addFlashAttribute("successMessage", "New user " + admin.getName() + " added successfully as Admin!");
+		redirectAttributes.addFlashAttribute("successMessage", "New Admin user " + appUser.getName() + " added successfully as App User!");
 		return "redirect:/admin";
 
 	}
@@ -71,7 +78,7 @@ public class AdminController {
 
 		System.out.println("Got view request for admin id " + id);
 
-		model.addAttribute("admin", adminService.findUserById(Long.parseLong(id)));
+		model.addAttribute("admin", appUserService.findUserById(Long.parseLong(id)));
 		return "view-admin";
 	}
 
@@ -83,8 +90,8 @@ public class AdminController {
 
 		System.out.println("Got edit request for admin id " + id);
 
-		model.addAttribute("admin", adminService.findUserById(Long.parseLong(id)));
-		model.addAttribute("header", "Edit Admin");
+		model.addAttribute("admin", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("header", "Edit Admin Details");
 		return "admin-create";
 	}
 	
@@ -96,30 +103,17 @@ public class AdminController {
 
 		System.out.println("Got delete request for admin id " + id);
 
-		adminService.deleteUserById(Long.parseLong(id));
+		appUserService.deleteUserById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Admin with id " + id + " deleted successfully!");
 		return "redirect:/admin";
 	}
 
-	@GetMapping("/checkIfNumberExistsForOtherAdmins")
+	@GetMapping("/checkIfNumberExistsForOtherAppUsers")
 	@ResponseBody
-	public String checkIfNumberExistsForOtherAdmins(@RequestParam String phone, @RequestParam Long id) {
+	public String checkIfNumberExistsForOtherAppUsers(@RequestParam String phone, @RequestParam Long id) {
 		
-		if(adminService.getAdminsByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
-				moderatorService.getModeratorsByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
-			return "Exist";
-		}
-		
-		return "Not Exist";
-		
-	}
-	
-	@GetMapping("/checkIfNumberExistsForOtherModerators")
-	@ResponseBody
-	public String checkIfNumberExistsForOtherModerators(@RequestParam String phone, @RequestParam Long id) {
-		
-		if(moderatorService.getModeratorsByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
-				adminService.getAdminsByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
+		if(appUserService.getAppUsersByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
+				appUserService.getAppUsersByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
 			return "Exist";
 		}
 		

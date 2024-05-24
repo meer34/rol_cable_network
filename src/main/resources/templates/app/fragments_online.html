@@ -10,8 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/icon" href="/images/favicon.jpeg" />
     <link rel="stylesheet" type="text/css" href="/css/main.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
 </head>
 
 <body class="app sidebar-mini rtl">
@@ -190,17 +190,17 @@
 
 
 	<!-- Essential javascripts for application to work-->
-	<script th:fragment="main_scripts" src="/js/jquery.min.js"></script>
-	<script th:fragment="main_scripts" src="/js/jquery-ui.min.js"></script>
-	<script th:fragment="main_scripts" src="/js/bootstrap.min.js"></script>
-	<script th:fragment="main_scripts" src="/js/popper.min.js"></script>
+	<script th:fragment="main_scripts" src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script th:fragment="main_scripts" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script th:fragment="main_scripts" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script th:fragment="main_scripts" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 	<script th:fragment="main_scripts" src="/js/main.js"></script>
-	<script th:fragment="main_scripts" src="/js/pace.min.js"></script>
+	<script th:fragment="main_scripts" src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script>
 	
 	<script th:fragment="main_scripts" src="/js/calculate.js"></script>
 	<script th:fragment="add_edit_scripts" src="/js/dynaDrop.js"></script>
 	<script th:fragment="add_edit_scripts" src="/js/html5-qrcode.js"></script>
-	<script th:fragment="add_edit_scripts" src="/js/select2.min.js"></script>
+	<script th:fragment="add_edit_scripts" src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 	<script th:fragment="add_edit_scripts">
 		$("#mahajan").select2();
 	</script>

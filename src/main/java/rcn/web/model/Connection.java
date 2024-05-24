@@ -20,7 +20,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
@@ -41,8 +40,7 @@ public class Connection {
 	private String state;
 	private String connectionType;
 	private String connectionFor;
-	private double connectionChange;
-	private double securityDeposit;
+	private double connectionCharge;
 	
 	private double subscriptionAmount;
 	private double previousDue;

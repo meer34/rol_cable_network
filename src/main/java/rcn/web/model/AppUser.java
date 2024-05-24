@@ -24,7 +24,7 @@ import rcn.security.User;
 @Setter
 @Entity
 @ToString
-public class Moderator {
+public class AppUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,6 +32,8 @@ public class Moderator {
 	private String name;
 	private String phone;
 	private String address;
+	
+	private String userType;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="user_id", unique=true)

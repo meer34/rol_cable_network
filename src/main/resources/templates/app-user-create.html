@@ -13,11 +13,11 @@
 				<div class="tile">
 					<h1 class="tile-title text-center" style="font-size: 16px;" th:text="${header}" ></h1>
 					<div class="dashboardicon">
-					  <form th:action="@{createModerator}" method="post" onsubmit="return checkIfNumberExistForOthers('MODERATOR')" >
-						<input type="text" name="name" placeholder="Name" th:value="${moderator.name}" required >
-						<input type="number" name="phone" id="phone" placeholder="Phone" th:value="${moderator.phone}" required >
-						<input type="text" name="address" placeholder="Address" th:value="${moderator.address}" >
-						<input type="hidden" name="id" id="userId" th:value="${moderator.id}">
+					  <form th:action="@{createAppUser}" method="post" onsubmit="return checkIfNumberExistForOthers()" >
+						<input type="text" name="name" placeholder="Name" th:value="${appUser.name}" required >
+						<input type="number" name="phone" id="phone" placeholder="Phone" th:value="${appUser.phone}" required >
+						<input type="text" name="address" placeholder="Address" th:value="${appUser.address}" >
+						<input type="hidden" name="id" id="userId" th:value="${appUser.id}">
 						
 						<select class="form-control" name="addItem" id="addItem" style="height: 48px;" >
 							<option selected disabled="disabled" value="">Select Role</option>
@@ -29,7 +29,7 @@
 						<input type="button" id="rowAdder" value = "Add Role">
 						<div id="newinput"></div>
 						
-						<div id="row" th:each="role : ${moderator.user?.roles}">
+						<div id="row" th:each="role : ${appUser.user?.roles}">
 							<div class="input-group add-item-group">
 								<div class="input-group-prepend"><button class="btn btn-danger" id="DeleteRow" type="button"><i class="bi bi-trash"></i> Delete</button></div>
 								<input type="text" name="roles" class="form-control m-input add-item" th:value="${role.name}" readonly>

@@ -13,7 +13,7 @@
 				<div class="tile">
 					<h1 class="tile-title text-center" style="font-size: 16px;" th:text="${header}" ></h1>
 					<div class="dashboardicon">
-					  <form th:action="@{createAdmin}" onsubmit="return checkIfNumberExistForOthers('ADMIN')" method="post" >
+					  <form th:action="@{createAdmin}" onsubmit="return checkIfNumberExistForOthers()" method="post" >
 						<input type="text" name="name" placeholder="Name" th:value="${admin.name}" required>
 						<input type="number" name="phone" id="phone" placeholder="Phone" th:value="${admin.phone}" required>
 						<input type="text" name="address" placeholder="Address" th:value="${admin.address}">

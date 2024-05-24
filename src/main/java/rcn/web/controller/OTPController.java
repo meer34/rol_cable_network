@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import rcn.security.User;
 import rcn.security.UserRepo;
 import rcn.web.repo.AdminRepo;
-import rcn.web.repo.ModeratorRepo;
+import rcn.web.repo.AppUserRepo;
 import rcn.web.util.AppUtility;
 
 @Controller
@@ -24,7 +24,7 @@ public class OTPController {
 
 	@Autowired UserRepo userRepo;
 	@Autowired AdminRepo adminRepo;
-	@Autowired ModeratorRepo moderatorRepo;
+	@Autowired AppUserRepo appUserRepo;
 	@Autowired AppUtility utility;
 	
 	@GetMapping("/generatePin")

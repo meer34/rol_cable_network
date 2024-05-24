@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Collection;
+import rcn.web.model.Consumer;
+import rcn.web.service.AppUserService;
 import rcn.web.service.CollectionService;
 import rcn.web.service.ConsumerService;
-import rcn.web.service.ModeratorService;
 
 @Controller
 @RequestMapping("/collection")
@@ -28,7 +29,7 @@ public class CollectionController {
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
 	@Autowired CollectionService collectionService;
 	@Autowired ConsumerService consumerService;
-	@Autowired ModeratorService moderatorService;
+	@Autowired AppUserService appUserService;
 
 	@GetMapping
 	public String showBasePage(Model model,
@@ -65,18 +66,70 @@ public class CollectionController {
 
 	}
 
-	@GetMapping("/add")
-	public String add(Model model, Collection collection) {
-		model.addAttribute("header", "Add Collection");
+	@GetMapping("/collectSubscriptionDue")
+	public String collectSubscriptionDue(Model model, Collection collection, 
+			@RequestParam(value="consumerId", required = true) Long consumerId,
+			@RequestParam(value="action", required = true) String action) {
+		model.addAttribute("header", "Collect Subscription Due, Pending Amount - ");
 		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("consumerId", consumerId);
+		
+		if(action.equals("Collect Subscription Due")) {
+			model.addAttribute("billType", "subscription");
+		}
+		
+		Consumer consumer = consumerService.getById(consumerId);
+		consumer.calculateTotalSubscriptionBill();
+		model.addAttribute("pendingAmount", consumer.getSubscriptionBill());
+		
+		return "app/collection-create";
+	}
+	
+	@GetMapping("/collectOtherDue")
+	public String collectOtherDue(Model model, Collection collection,
+			@RequestParam(value="consumerId", required = true) Long consumerId,
+			@RequestParam(value="action", required = true) String action) {
+		model.addAttribute("header", "Collect Other Due, Pending Amount - ");
+		model.addAttribute("consumerList", consumerService.getAll());
+		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("consumerId", consumerId);
+		
+		if(action.equals("Collect Other Due")) {
+			model.addAttribute("billType", "otherDue");
+		}
+		
+		Consumer consumer = consumerService.getById(consumerId);
+		consumer.calculateTotalOtherDueBill();
+		model.addAttribute("pendingAmount", consumer.getOtherDueBill());
 		return "app/collection-create";
 	}
 
-	@RequestMapping(value = "/save",
+	@RequestMapping(value = "/saveSubscriptionCollection",
 			method = RequestMethod.POST)
-	public String save(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
+	public String saveSubscriptionCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
+		collection.setBillType("Subscription");
 		collection = collectionService.save(collection);
+		
+		Consumer consumer = collection.getConsumer();
+		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
+		consumerService.save(consumer);
+		
+		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
+		return "redirect:/collection";
+
+	}
+	
+	@RequestMapping(value = "/saveOtherDueCollection",
+			method = RequestMethod.POST)
+	public String saveOtherDueCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
+		collection.setBillType("Other Due");
+		collection = collectionService.save(collection);
+		
+		Consumer consumer = collection.getConsumer();
+		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
+		consumerService.save(consumer);
+		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
 
@@ -91,17 +144,24 @@ public class CollectionController {
 		model.addAttribute("collection", collectionService.getById(Long.parseLong(id)));
 		return "app/collection-view";
 	}
-
+	
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
 		System.out.println("Got edit request for collection id " + id);
-		model.addAttribute("header", "Edit Collection");
-		model.addAttribute("collection", collectionService.getById(Long.parseLong(id)));
+		Collection collection = collectionService.getById(Long.parseLong(id));
+		
+		if(collection.getBillType().equals("Subscription")) {
+			model.addAttribute("header", "Edit Subscription Collection for - " + collection.getConsumer().getFullName());
+		} else {
+			model.addAttribute("header", "Edit Other Due Collection for - " + collection.getConsumer().getFullName());
+		}
+		model.addAttribute("collection", collection);
 		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("consumerId", collection.getConsumer().getId());
 		return "app/collection-create";
 	}
 

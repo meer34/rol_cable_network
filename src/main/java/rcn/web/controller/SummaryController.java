@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import rcn.web.service.SummaryService;
 
 @Controller
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class SummaryController {
 
 	@Autowired SummaryService summaryService;

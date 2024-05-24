@@ -10,13 +10,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,34 +23,23 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Expense {
+public class Due {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name="expenseType")
-	private ExpenseType expenseType;
-	
-	private Double amount;
-	private Double tax;
-	private Double totalAmount;
-	private String paymentMode;
+	private String dueType;
+	private double dueAmount;
+	private double paidAmount;
 	private String remarks;
-	
-	@ManyToOne
-	@JoinColumn(name ="spentBy")
-	private AppUser spentBy;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@JsonFormat(pattern="yyyy-MM-dd")
-	private Date date;
+	private Date dateOfDueEntry;
 	
-	@Transient
-	@JsonIgnore
-	private MultipartFile billFile;
-	private String billFileName;
-	
+	@ManyToOne
+	@JoinColumn(name="consumer")
+	private Consumer consumer;
 	
 }

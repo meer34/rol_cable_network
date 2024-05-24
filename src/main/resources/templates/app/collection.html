@@ -35,6 +35,7 @@
                           <th class="table_heading">ID</th>
 						  <th class="table_heading">Date</th>
                           <th class="table_heading">Consumer Name</th>
+                          <th class="table_heading">Bill Type</th>
                           <th class="table_heading">Collection Amount</th>
                           <th class="table_heading">Payment Mode</th>
 						  <th class="table_heading">Received By</th>
@@ -46,6 +47,7 @@
                           <td th:text="${collection.id}" />
                           <td th:text="${collection.date}" />
                           <td th:text="${collection?.consumer?.fullName}" />
+                          <td th:text="${collection?.billType}" />
                           <td th:text="${collection.amount}" />
                           <td th:text="${collection.paymentMode}" />
 						  <td th:text="${collection.receivedBy?.name}" />

@@ -13,12 +13,6 @@
                 class="alert alert-success" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
-                  <div class="dashboardicon form-group col-lg-12">
-                  	<div class="col-lg-12">
-                      <label>Search</label>
-                      <input type="text" name="Search" id="searchTable" placeholder="Type Here">
-                    </div>
-                  </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/bill-record}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" >
@@ -30,24 +24,20 @@
                         <tr>
                           <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
-						  <th class="table_heading">Connection Type</th>
-						  <th class="table_heading">Due Date</th>
-                          <th class="table_heading">Bill Amount</th>
+						  <th class="table_heading">Due Type</th>
+                          <th class="table_heading">Due Amount</th>
                           <th class="table_heading">Paid Amount</th>
 						  <th class="table_heading">Current Due</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <!-- <tr style="background-color: #FFF" th:each="billRecord : ${listPage.content}"> -->
-                        <tr style="background-color: #FFF" th:each="i : ${#numbers.sequence(listPage.content.size() - 1, 0, -1)}"
-     												th:with="billRecord=${listPage.content[i]}">
-                          <td class="noPrint" ><input type='radio' class="radioBtn" name='billId' th:value="${billRecord.id}"></td>
-                          <td th:text="${billRecord.connection?.consumer?.fullName}" />
-						  <td th:text="${billRecord.connection?.connectionType}" />
-                          <td th:text="${billRecord.endDate}" />
-                          <td th:text="${billRecord.billAmount}" />
-                          <td th:text="${billRecord.paidAmount}" />
-                          <td th:text="${billRecord.billAmount - billRecord.paidAmount}" />
+                        <tr style="background-color: #FFF" th:each="due : ${listPage.content}">
+                          <td class="noPrint" ><input type='radio' class="radioBtn" name='billId' th:value="${due.id}"></td>
+                          <td th:text="${due.consumer?.fullName}" />
+						  <td th:text="${due.dueType}" />
+                          <td th:text="${due.dueAmount}" />
+                          <td th:text="${due.paidAmount}" />
+                          <td th:text="${due.dueAmount - due.paidAmount}" />
                         </tr>
                       </tbody>
                     </table>

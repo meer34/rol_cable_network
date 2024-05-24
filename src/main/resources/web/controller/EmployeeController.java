@@ -22,7 +22,7 @@ import rcn.web.model.Employee;
 import rcn.web.service.EmployeeService;
 
 @Controller
-@PropertySource("classpath:imperial_elevator.properties")
+@PropertySource("classpath:rol_cable_network.properties")
 public class EmployeeController {
 	
 	@Autowired EmployeeService employeeService;

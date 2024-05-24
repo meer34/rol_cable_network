@@ -14,7 +14,7 @@
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<label>Channel Name</label>
-                    <input type="text" class="form-control" name="name" placeholder="Enter Channel Name" th:value="${channel.name}">
+                    <input type="text" class="form-control" name="name" placeholder="Enter Channel Name" th:value="${channel.name}" required>
                   </div>
 				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Base Price</label>
@@ -25,7 +25,7 @@
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>GST / Non GST</label>
-                    <select class="form-control" name="gstNonGst" id="gstNonGst" style="height: 48px;" onChange="calculateGstPrice()">
+                    <select class="form-control" name="gstNonGst" id="gstNonGst" style="height: 48px;" onChange="calculateGstPrice()" required>
                       <option selected disabled="disabled" value="">Select Type</option>
                       <option th:selected="${channel?.gstNonGst=='GST'}">GST</option>
                       <option th:selected="${channel?.gstNonGst=='Non GST'}">Non GST</option>
@@ -33,7 +33,7 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Final Price</label>
-                    <input type="number" min="0" class="form-control" name="price" id="price" placeholder="Enter Price" th:value="${channel.price}">
+                    <input type="number" min="0" class="form-control" name="price" id="price" th:value="${channel.price}" readonly>
                   </div>
                 </div>
 			<input th:if="${channel.id}" type="hidden" name="id" th:value="${channel.id}">

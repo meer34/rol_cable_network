@@ -120,7 +120,7 @@ public class ConsumerController {
 		return "redirect:/consumer";
 	}
 
-	@RequestMapping(value = "/connection",
+	/*@RequestMapping(value = "/connection",
 			method = RequestMethod.GET)
 	public String connection(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
@@ -137,7 +137,7 @@ public class ConsumerController {
 			return "redirect:/consumer";
 		}
 		
-	}
+	}*/
 
 	@GetMapping("/area")
 	public String area(Model model) {

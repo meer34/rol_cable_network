@@ -46,18 +46,12 @@ function printData() {
 	printWindow.document.close();
 }
 
-function checkIfNumberExistForOthers(userType) {
+function checkIfNumberExistForOthers() {
 	let phone = document.getElementById("phone").value;
 	let userId = document.getElementById("userId").value;
 
 	var retVal = true;
-	var url;
-
-	if(userType == 'ADMIN') {
-		url = '/checkIfNumberExistsForOtherAdmins';
-	} else if(userType == 'MODERATOR') {
-		url = '/checkIfNumberExistsForOtherModerators';
-	}
+	var url = '/checkIfNumberExistsForOtherAppUsers';
 
 	$.ajax({
 		url : url,
@@ -169,7 +163,29 @@ function getUrlParameter(sParam) {
     return false;
 };
 
-function confirmRenew() {
-	return confirm('Sure you want to renew this connection?');
+function openRenew() {
+	const renewConnection = document.getElementById("renewConnection");
+    renewConnection.classList.remove("displayNone");
 }
+
+
+function performRenewal() {
+	const dateRangeSelection = document.getElementById("dateRange");
+	
+	if(dateRangeSelection.value == "Today"){
+		if(confirm('Sure you want to renew this connection for Today?')){
+			alert("Sent Request for " + new Date().toISOString().split('T')[0]);
+		}
+	} else{
+		const specificDayRenew = document.getElementById("js_datePickerToggle");
+		if(specificDayRenew.value == null || specificDayRenew.value == ''){
+			alert("Please select a date!");
+			return false;
+		}
+		if(confirm('Sure you want to renew this connection for ' + specificDayRenew.value + '?')){
+			alert("Sent Request for " + specificDayRenew.value);
+		}
+	}
+}
+
 

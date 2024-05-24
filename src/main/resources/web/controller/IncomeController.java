@@ -36,7 +36,7 @@ import com.hunter.web.model.Income;
 import com.hunter.web.model.IncomeType;
 import com.hunter.web.repo.IncomeTypeRepo;
 import com.hunter.web.service.IncomeService;
-import com.hunter.web.service.ModeratorService;
+import com.hunter.web.service.appUserService;
 
 @Controller
 @PropertySource("classpath:hunter_garments.properties")
@@ -44,7 +44,7 @@ public class IncomeController {
 
 	@Autowired IncomeService incomeService;
 	@Autowired IncomeTypeRepo incomeTypeRepo;
-	@Autowired ModeratorService moderatorService;
+	@Autowired appUserService appUserService;
 
 	@Value("${INITIAL_PAGE_SIZE}")
 	private Integer initialPageSize;
@@ -132,7 +132,7 @@ public class IncomeController {
 	@GetMapping("/addIncomePage")
 	public String showAddIncomePage(Model model) {
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Add Income");
 
@@ -146,7 +146,7 @@ public class IncomeController {
 
 		System.out.println("Got edit request for income with id " + id);
 
-		model.addAttribute("users", moderatorService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Edit Income");
 

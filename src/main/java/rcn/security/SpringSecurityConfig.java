@@ -45,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 		.headers().frameOptions().disable();
 
-		processAuthorization(http, false)
+		processAuthorization(http, true)
 		.and()
 		.formLogin()
 		.loginPage("/login")
@@ -65,24 +65,28 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		if(!enableSecurity) return urlRegistry.anyRequest().permitAll();
 		
 		String[] allPermitUrls = environment.getProperty("all-permit-urls").split("~");
-		String[] authPermitUrls = environment.getProperty("authentication-based-urls").split("~");
-		String[] restrictedUrls = environment.getProperty("authority-based-urls").split("~");
+//		String[] authPermitUrls = environment.getProperty("authentication-based-urls").split("~");
+//		String[] restrictedUrls = environment.getProperty("authority-based-urls").split("~");
 
 		urlRegistry.antMatchers("/rest-login").permitAll();
 		urlRegistry.antMatchers("/get_*").authenticated();
 
+		/*
 		for (String restrictedUrl : restrictedUrls) {
+			System.out.println("###############" + restrictedUrl);
 
 			String[] authorities = environment.getProperty(restrictedUrl).split(",");
 			if(authorities == null) continue;
 
 			urlRegistry.antMatchers("/" + restrictedUrl + "/**").hasAnyAuthority(authorities);
 
-		}
+		}*/
 
+		/*
 		for (String auth : authPermitUrls) {
 			urlRegistry.antMatchers("/" + auth).authenticated();
 		}
+		*/
 
 		for (String all : allPermitUrls) {
 			urlRegistry.antMatchers("/" + all).permitAll();

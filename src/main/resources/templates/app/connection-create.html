@@ -9,19 +9,33 @@
         <div class="row">
           <div class="col-md-12">
             <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/connection/save}" method="post" enctype="multipart/form-data">
+              <legend style="text-align:center; padding-top: 0px;" th:text="${header}"></legend>
               <fieldset style="margin-top: 0;">
-				<legend style="text-align:center; padding-bottom: 60px;" th:text="${header}"></legend>
 				<div class="col-lg-12 flexdisplay" th:if="${connection.id}">
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label style="color:#780c2a;">Change Connection State</label>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <select class="form-control" name="state" style="height: 30px !important;border: 1px solid black;" required>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <select class="form-control" name="state" style="height: 30px !important;  width: 120px; border: 1px solid black;" onChange="return openRenew()" required>
              	      <option selected disabled="disabled" value="">Select Type</option>
                 	  <option class="btn btn-success" th:selected="${connection?.state=='Connected'}">Connected</option>
 					  <option class="btn btn-warning" th:selected="${connection?.state=='Suspended'}">Suspended</option>
                       <option class="btn btn-danger" th:selected="${connection?.state=='Disconnected'}">Disconnected</option>
                     </select>
+                  </div>
+				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <!-- Start Renew Date Picker -->
+               	 	<div class="displayNone" id="renewConnection" style="border: 1px;">
+  						<label style="color: #0f0c78; height:30px;">State Change Date</label>
+  						<select name="stateChangeDate" id="stateChangeDate" style="width:120px;height: 30px;border: 1px solid black;">
+    						<option value="Today" id="todayRenew">Today</option>
+    						<option type="date" value="Specific date" id="specificDayRenew">
+    							Specific Date
+    							<input type="date" id="js_datePickerToggle" class="displayNone" style="margin-left:10px; width:120px;height: 30px;border: 1px solid black;" onChange="setStateChangeValue()">
+    						</option>
+  						</select>
+				</div>
+                <!-- End Renew Date Picker -->
                   </div>
 				</div>
                 <div class="col-lg-12 flexdisplay">
@@ -131,5 +145,35 @@
 			$('.multiple-select-pillbox').select2();
 		});
 	  </script>
+	  <script>
+                const datePickerEl = document.getElementById("js_datePickerToggle");
+
+                const hideDatePicker = () => {
+                  datePickerEl.classList.add("displayNone");
+                };
+
+                const getstateChangeDate = (option) => {
+                  if (option === 'Today') {
+                    hideDatePicker();
+                  } else {
+                    // display datepicker
+                    datePickerEl.classList.remove("displayNone");
+
+                    /*
+                      * Below is what I have tried to open the date picker calendar
+                      * datePickerEl.focus();
+                      * datePickerEl.click();
+                      * datePickerEl.select();
+                    */
+                  }
+                }
+
+                const dateOptionEls = document.getElementsByName("stateChangeDate");
+
+                dateOptionEls[0].addEventListener('change', (event) => {
+                  const optionValue = dateOptionEls[0].options[dateOptionEls[0].selectedIndex].text;
+                  var selectedDate = getstateChangeDate(optionValue);
+                });
+         </script>
   </body>
 </html>

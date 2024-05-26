@@ -10,14 +10,13 @@
 		<div class="row">
 			<div
 				class="col-lg-5 col-md-5 col-xs-12 col-sm-6 col-lg-offset-3 col-sm-offset-3 col-xs-offset-0  marginl">
-				<div class="tile" id="printTable">
+				<div class="tile">
 					<h1 class="tile-title text-center" style="font-size: 16px;">View Admin</h1>
 					<div class="dashboardicon">
 						<input type="text" name="name" th:value="${admin.name}" readonly>
 						<input type="text" name="phone" th:value="${admin.phone}" readonly>
 						<input type="text" name="address" th:value="${admin.address}" readonly>
-						<input type="button" name="cancel" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
-						<input type="button" name="print" class="submit action-button" value="Print" onclick="printData()">
+						<input type="button" name="back" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
 					</div>
 				</div>
 			</div>

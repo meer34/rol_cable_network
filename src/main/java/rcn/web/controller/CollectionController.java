@@ -72,7 +72,7 @@ public class CollectionController {
 			@RequestParam(value="action", required = true) String action) {
 		model.addAttribute("header", "Collect Subscription Due, Pending Amount - ");
 		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", consumerId);
 		
 		if(action.equals("Collect Subscription Due")) {
@@ -92,7 +92,7 @@ public class CollectionController {
 			@RequestParam(value="action", required = true) String action) {
 		model.addAttribute("header", "Collect Other Due, Pending Amount - ");
 		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", consumerId);
 		
 		if(action.equals("Collect Other Due")) {
@@ -160,7 +160,7 @@ public class CollectionController {
 		}
 		model.addAttribute("collection", collection);
 		model.addAttribute("consumerList", consumerService.getAll());
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());
 		return "app/collection-create";
 	}

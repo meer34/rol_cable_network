@@ -1,5 +1,6 @@
 package rcn.web.controller;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +15,31 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import rcn.security.Role;
 import rcn.security.User;
 import rcn.web.model.AppUser;
+import rcn.web.repo.RoleRepo;
 import rcn.web.service.AppUserService;
 
 @Controller
 public class AppUserController {
 
 	@Autowired AppUserService appUserService;
+	@Autowired RoleRepo roleRepo;
 
 	@GetMapping("/appUser")
 	public String showAppUserPage(Model model) {
 		model.addAttribute("appUserList", 
-				appUserService.getAllUsers().stream()
-				.filter(appUser -> "APP_USER".equals(appUser.getUserType()))
+				appUserService.getAllAppUsers().stream()
+				.filter(appUser -> "APP_USER".equals(appUser.getUserType()) & appUser.getUser().getEnabled())
 				.collect(Collectors.toList()));
 		return "app-user";
+	}
+	
+	@GetMapping("/disabledAppUser")
+	public String showDisabledAppUserPage(Model model) {
+		model.addAttribute("appUserList", 
+				appUserService.getAllAppUsers().stream()
+				.filter(appUser -> "APP_USER".equals(appUser.getUserType()) & !appUser.getUser().getEnabled())
+				.collect(Collectors.toList()));
+		return "disabled-app-user";
 	}
 
 	@GetMapping("/addAppUserPage")
@@ -43,7 +55,6 @@ public class AppUserController {
 			RedirectAttributes redirectAttributes) throws Exception{
 
 		if(appUser.getId() == null) {
-			//			System.out.println("$$$ - " + appUser.toString());
 			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, null));
 			if(appUser.getRoles() != null) {
 				for (String role : appUser.getRoles()) {
@@ -52,10 +63,10 @@ public class AppUserController {
 			}
 			
 			appUser.setUserType("APP_USER");
-			appUser = appUserService.saveUserToDB(appUser);
+			appUser = appUserService.saveAppUserToDB(appUser);
 
 		} else {
-			AppUser tempAppUser = appUserService.findUserById(appUser.getId());
+			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
 
 			tempAppUser.setName(appUser.getName());
 			tempAppUser.setPhone(appUser.getPhone());
@@ -63,7 +74,12 @@ public class AppUserController {
 
 			tempAppUser.getUser().setUsername(appUser.getName());
 			tempAppUser.getUser().setPhone(appUser.getPhone());
-
+			
+			List<Long> roleIds = tempAppUser.getUser().getRoles()
+									.stream()
+									.map(Role::getId)
+									.collect(Collectors.toList());
+			
 			tempAppUser.getUser().getRoles().clear();
 			if(appUser.getRoles() != null) {
 				for (String role : appUser.getRoles()) {
@@ -71,11 +87,12 @@ public class AppUserController {
 				}
 			}
 
-			appUser = appUserService.saveUserToDB(tempAppUser);
+			appUser = appUserService.saveAppUserToDB(tempAppUser);
+			roleRepo.deleteAllById(roleIds);
 		}
 
 		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
-		return "redirect:/app-user";
+		return "redirect:/appUser";
 
 	}
 
@@ -86,7 +103,7 @@ public class AppUserController {
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got view request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		return "view-app-user";
 
 	}
@@ -98,34 +115,42 @@ public class AppUserController {
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got edit request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit App User");
 		return "app-user-create";
 
 	}
 
-	@RequestMapping(value = "/deleteAppUser",
+	@RequestMapping(value = "/disableAppUser",
 			method = RequestMethod.GET)
-	public String deleteAppUser(RedirectAttributes redirectAttributes, Model model,
+	public String disableAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got delete request appUser for id " + id);
-		AppUser appUser = appUserService.findUserById(Long.parseLong(id));
-		
-		//TODO
+		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
+		appUser.getUser().setEnabled(false);
+		appUserService.saveAppUserToDB(appUser);
 
-		/*if(appUser != null) {
-			if(appUser.getStockOutList().isEmpty()) {
-				appUserService.deleteUserById(Long.parseLong(id));
-				redirectAttributes.addFlashAttribute("successMessage", "App User with id " + id + " deleted successfully!");
-			} else {
-				redirectAttributes.addFlashAttribute("successMessage", appUser.getStockOutList().size() + " Stock Out entries present this App User!");
-			}
-		}*/
-
-		return "redirect:/app-user";
+		return "redirect:/appUser";
 
 	}
+	
+	@RequestMapping(value = "/enableAppUser",
+			method = RequestMethod.GET)
+	public String enableAppUser(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam("action") String action,
+			@RequestParam("id") String id) throws Exception{
+
+		System.out.println("Got delete request appUser for id " + id);
+		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
+		appUser.getUser().setEnabled(true);
+		appUserService.saveAppUserToDB(appUser);
+
+		return "redirect:/appUser";
+
+	}
+	
+	
 
 }

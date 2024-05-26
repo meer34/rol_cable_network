@@ -27,13 +27,13 @@ function printData() {
 	var printWindow = window.open("Print");
 	printWindow.document.write('<head>')
 	printWindow.document.write('<meta name="description" content="">');
-	printWindow.document.write('<title>Print Page</title>');
+	printWindow.document.write('<title>ROL CABLE NETWORK</title>');
 	printWindow.document.write('<meta charset="utf-8">');
 	printWindow.document.write('<meta http-equiv="X-UA-Compatible" content="IE=edge">');
 	printWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1">');
 	printWindow.document.write('<link rel="shortcut icon" type="image/icon" href="/images/favicon.png" />');
-	printWindow.document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">')
-	printWindow.document.write('<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">')
+	printWindow.document.write('<link rel="stylesheet" href="/css/bootstrap.min.css">')
+//	printWindow.document.write('<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">')
 	printWindow.document.write('<link rel="stylesheet" type="text/css" href="/css/print_style.css">')
 	printWindow.document.write('</head>');
 	printWindow.document.write('<body onload="window.print()">');
@@ -52,6 +52,7 @@ function checkIfNumberExistForOthers() {
 
 	var retVal = true;
 	var url = '/checkIfNumberExistsForOtherAppUsers';
+	if(userId == '') userId = 0;
 
 	$.ajax({
 		url : url,
@@ -188,4 +189,7 @@ function performRenewal() {
 	}
 }
 
+function setStateChangeValue(){
+	document.getElementById("specificDayRenew").value = document.getElementById("js_datePickerToggle").value;
+}
 

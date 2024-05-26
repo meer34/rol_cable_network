@@ -43,7 +43,7 @@
                           <td class="noPrint" ><input type='radio' th:value="${channel.id}" class="radioBtn" name='id'></td>
                           <td th:text="${channel.id}" />
                           <td th:text="${channel.name}" />
-                          <td th:text="${channel.price}" />
+                          <td th:text="${#numbers.formatDecimal(channel.price, 1, 2)}" />
                           <td th:text="${channel.gstNonGst}" />
                         </tr>
                       </tbody>

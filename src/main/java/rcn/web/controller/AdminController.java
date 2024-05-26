@@ -28,7 +28,7 @@ public class AdminController {
 	@GetMapping("/admin")
 	public String showAdminPage(Model model) {
 		model.addAttribute("adminList", 
-				appUserService.getAllUsers().stream()
+				appUserService.getAllAppUsers().stream()
 				.filter(appUser -> "ADMIN".equals(appUser.getUserType()))
 				.collect(Collectors.toList()));
 		return "admin";
@@ -49,10 +49,10 @@ public class AdminController {
 		if(appUser.getId() == null) {
 			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, "ADMIN"));
 			appUser.setUserType("ADMIN");
-			appUser = appUserService.saveUserToDB(appUser);
+			appUser = appUserService.saveAppUserToDB(appUser);
 			
 		} else {
-			AppUser tempAppUser = appUserService.findUserById(appUser.getId());
+			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
 
 			tempAppUser.setName(appUser.getName());
 			tempAppUser.setPhone(appUser.getPhone());
@@ -62,7 +62,7 @@ public class AdminController {
 			tempAppUser.getUser().setUsername(appUser.getName());
 			tempAppUser.getUser().setPhone(appUser.getPhone());
 
-			appUser = appUserService.saveUserToDB(tempAppUser);
+			appUser = appUserService.saveAppUserToDB(tempAppUser);
 		}
 
 		redirectAttributes.addFlashAttribute("successMessage", "New Admin user " + appUser.getName() + " added successfully as App User!");
@@ -78,7 +78,7 @@ public class AdminController {
 
 		System.out.println("Got view request for admin id " + id);
 
-		model.addAttribute("admin", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("admin", appUserService.findAppUserById(Long.parseLong(id)));
 		return "view-admin";
 	}
 
@@ -90,7 +90,7 @@ public class AdminController {
 
 		System.out.println("Got edit request for admin id " + id);
 
-		model.addAttribute("admin", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("admin", appUserService.findAppUserById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit Admin Details");
 		return "admin-create";
 	}
@@ -103,7 +103,7 @@ public class AdminController {
 
 		System.out.println("Got delete request for admin id " + id);
 
-		appUserService.deleteUserById(Long.parseLong(id));
+		appUserService.deleteAppUserById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Admin with id " + id + " deleted successfully!");
 		return "redirect:/admin";
 	}
@@ -112,9 +112,14 @@ public class AdminController {
 	@ResponseBody
 	public String checkIfNumberExistsForOtherAppUsers(@RequestParam String phone, @RequestParam Long id) {
 		
-		if(appUserService.getAppUsersByPhoneNumberAndIdNotMatching(phone, id).size() > 0 ||
-				appUserService.getAppUsersByPhoneNumberAndIdNotMatching(phone, 0L).size() > 0) {
-			return "Exist";
+		if(id == 0L) {
+			if(appUserService.getAppUsersByPhoneNumber(phone).size() > 0) {
+				return "Exist";
+			}
+		} else {
+			if(appUserService.getAppUsersByPhoneNumberAndIdNotMatching(phone, id).size() > 0) {
+				return "Exist";
+			}
 		}
 		
 		return "Not Exist";

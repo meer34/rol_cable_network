@@ -51,10 +51,10 @@
                           <td th:text="${consumer.id}" />
 						  <td th:text="${consumer.fullName}" />
                           <td th:text="${consumer.fullAddress}" />
-						  <td th:text="${consumer.subscriptionBill}" />
-						  <td th:text="${consumer.otherDueBill}" />
-						  <td th:text="${consumer.totalPaid}" />
-						  <td th:text="${consumer.subscriptionBill + consumer.otherDueBill - consumer.totalPaid}" />
+						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}" />
+						  <td th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}" />
+						  <td th:text="${#numbers.formatDecimal(consumer.totalPaid, 1, 2)}" />
+						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill + consumer.otherDueBill - consumer.totalPaid, 1, 2)}" />
                         </tr>
                       </tbody>
                     </table>

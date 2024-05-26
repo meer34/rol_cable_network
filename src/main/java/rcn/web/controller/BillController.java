@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -177,7 +178,7 @@ public class BillController {
 
 
 //	@Scheduled(cron = "0 30 9 * * *")
-//		@Scheduled(fixedRate = 5000)
+//		@Scheduled(fixedRate = 30000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
 		System.out.println("Reminder scheduler: Job running at - " + strDate);
@@ -187,7 +188,6 @@ public class BillController {
 		for (Consumer consumer : listOfConsumers) {
 			List<Connection> listOfConnection = connectionService.getByConsumerId(consumer.getId());
 			for(Connection connection : listOfConnection) {
-				System.out.println("Consumer Name: " + connection.getConsumer().getFullName());
 				//generate new bill if connection expired
 				if(!"Disconnected".equals(connection.getState())) {
 					if(connection.getDateOfConnExpiry().before(utility.getTodaysDateWithoutTime())) {

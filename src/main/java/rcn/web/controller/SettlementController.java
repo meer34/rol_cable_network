@@ -21,7 +21,7 @@ public class SettlementController {
 	@Autowired AppUserService appUserService;
 
 	public String basePage(Model model) {
-		model.addAttribute("appUserList", appUserService.getAllUsers());
+		model.addAttribute("appUserList", appUserService.getAllAppUsers());
 		return "app-user";
 	}
 
@@ -47,10 +47,10 @@ public class SettlementController {
 				}
 			}
 
-			appUser = appUserService.saveUserToDB(appUser);
+			appUser = appUserService.saveAppUserToDB(appUser);
 
 		} else {
-			AppUser tempAppUser = appUserService.findUserById(appUser.getId());
+			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
 
 			tempAppUser.setName(appUser.getName());
 			tempAppUser.setPhone(appUser.getPhone());
@@ -66,7 +66,7 @@ public class SettlementController {
 				}
 			}
 
-			appUser = appUserService.saveUserToDB(tempAppUser);
+			appUser = appUserService.saveAppUserToDB(tempAppUser);
 		}
 
 		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
@@ -81,7 +81,7 @@ public class SettlementController {
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got view request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		return "view-appUser";
 
 	}
@@ -93,7 +93,7 @@ public class SettlementController {
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got edit request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findUserById(Long.parseLong(id)));
+		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit App User");
 		return "app-user-create";
 
@@ -106,7 +106,7 @@ public class SettlementController {
 			@RequestParam("id") String id) throws Exception{
 
 		System.out.println("Got delete request appUser for id " + id);
-		AppUser appUser = appUserService.findUserById(Long.parseLong(id));
+		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
 
 		/*if(appUser != null) {
 			if(appUser.getStockOutList().isEmpty()) {

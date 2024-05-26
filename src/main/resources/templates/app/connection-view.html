@@ -9,20 +9,20 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon" style="margin-top: 0; text-align: left;">
-              <fieldset style="margin-top: 0;">
-				<legend style="text-align:center; padding-bottom: 60px;" th:text="${header}"></legend>
+              <legend style="text-align:center; padding-top: 0px;" >View Connection</legend>
+              <fieldset style="margin-top: 0;" id="printTable">
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
 					<label>Consumer</label>
-					<input type="text" class="form-control" name="consumer" th:value="${${connection.consumer?.fullName}" readonly>
+					<input type="text" class="form-control" name="consumer" th:value="${connection.consumer?.fullName}" readonly>
                   </div>
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Connection Type</label>
-                    <input type="text" class="form-control" name="connectionType" th:value="${${connection.connectionType}" readonly>
+                    <input type="text" class="form-control" name="connectionType" th:value="${connection.connectionType}" readonly>
                   </div>
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Connection For</label>
-                    <input type="text" class="form-control" name="connectionFor" th:value="${${connection.connectionFor}" readonly>
+                    <input type="text" class="form-control" name="connectionFor" th:value="${connection.connectionFor}" readonly>
                   </div>
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Date of Joining</label>
@@ -55,11 +55,11 @@
 				<div class="col-lg-12 flexdisplay">
 				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Subscription Amount</label>
-                    <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" th:value="${connection?.subscriptionAmount}" readonly>
+                    <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" th:value="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}" readonly>
                   </div>
 				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Previous Due</label>
-                    <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}" readonly>
+                    <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${#numbers.formatDecimal(connection?.previousDue, 1, 2)}" readonly>
                   </div>
 				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Advance Amount</label>
@@ -103,8 +103,8 @@
                       <td th:text="${iter.count}" />
                       <td th:text="${bills?.startDate}" />
                       <td th:text="${bills?.endDate}" />
-                      <td th:text="${bills?.billAmount}" />
-					  <td th:text="${bills?.paidAmount}" />
+                      <td th:text="${#numbers.formatDecimal(bills?.billAmount, 1, 2)}" />
+					  <td th:text="${#numbers.formatDecimal(bills?.paidAmount, 1, 2)}" />
                     </tr>
                   </tbody>
                 </table>

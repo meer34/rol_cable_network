@@ -20,10 +20,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Bill;
 import rcn.web.model.Connection;
+import rcn.web.model.Due;
 import rcn.web.service.BillService;
 import rcn.web.service.ConnectionService;
 import rcn.web.service.ConsumerService;
+import rcn.web.service.DueService;
 import rcn.web.service.SubscriptionService;
+import rcn.web.util.AppUtility;
 
 @Controller
 @RequestMapping("/connection")
@@ -34,6 +37,8 @@ public class ConnectionController {
 	@Autowired ConsumerService consumerService;
 	@Autowired SubscriptionService subscriptionService;
 	@Autowired BillService billService;
+	@Autowired DueService dueService;
+	@Autowired AppUtility utility;
 
 	@GetMapping
 	public String showBasePage(Model model,
@@ -86,19 +91,49 @@ public class ConnectionController {
 
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
-	public String save(Model model, Connection connection, RedirectAttributes redirectAttributes) throws Exception{
-		
-		/*Bill bill = billService.getById(connection.getCurrentBill() != null ? connection.getCurrentBill().getId() : 0);
-		bill.setConnection(connection);
-		bill.setStartDate(connection.getDateOfConnStart());
-		bill.setEndDate(connection.getDateOfConnExpiry());
-		bill.setBillAmount(connection.getSubscriptionAmount());
-		bill.setPaidAmount(0.0);
-		
-		connection.setCurrentBill(bill);*/
+	public String save(Model model, Connection connection, RedirectAttributes redirectAttributes,
+			@RequestParam(value="stateChangeDate", required=false) String stateChangeDate) throws Exception{
 		
 		if(connection.getId() == null) {
 			connection.setState("Connected");
+			Due due = new Due();
+			due.setDueType("Connection Charge");
+			due.setDueAmount(connection.getConnectionCharge());
+			due.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+			due.setRemarks("Auto entry for fresh connection");
+			due.setConsumer(connection.getConsumer());
+			
+			dueService.saveDue(due);
+			
+		} else {
+			Connection savedConn = connectionService.getById(connection.getId());
+			
+			if(connection.getState().equals("Disconnected") & !savedConn.getState().equals("Disconnected")) {
+				Date disconnectedDate = null;
+
+				if("Today".equals(stateChangeDate)) {
+					disconnectedDate = utility.getTodaysDateWithoutTime();
+				} else {
+					disconnectedDate = utility.formatStringToDate(stateChangeDate);
+				}
+				generateBillForDiconnectedConnection(connection, disconnectedDate);
+				connection.setState("Disconnected");
+				connection.setDateOfConnExpiry(disconnectedDate);
+
+			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
+				Date reConnectedDate = null;
+
+				if("Today".equals(stateChangeDate)) reConnectedDate = utility.getTodaysDateWithoutTime();
+				else reConnectedDate = utility.formatStringToDate(stateChangeDate);
+
+				connection.setDateOfConnStart(reConnectedDate);
+
+				Calendar c = Calendar.getInstance();
+				c.setTime(connection.getDateOfConnStart());
+				c.add(Calendar.DATE, 30);
+
+				connection.setDateOfConnExpiry(c.getTime());
+			}
 		}
 
 		connection = connectionService.save(connection);
@@ -106,6 +141,23 @@ public class ConnectionController {
 		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/connection";
 
+	}
+
+	private void generateBillForDiconnectedConnection(Connection connection, Date disconnectedDate) {
+		System.out.println("Generating bill for disconnected connection id " + connection.getId());
+		
+		Bill bill = new Bill();
+		bill.setConnection(connection);
+		bill.setStartDate(connection.getDateOfConnStart());
+		bill.setEndDate(disconnectedDate);
+		bill.setBillAmount(connection.getSubscriptionAmount()
+				/utility.getDifferenceDays(connection.getDateOfConnStart(), disconnectedDate));
+		bill.setPaidAmount(0.0);
+		
+		billService.save(bill);
+		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
+									+ connection.getConsumer().getFullName());
+		billService.save(bill);
 	}
 
 	@RequestMapping(value = "/view",

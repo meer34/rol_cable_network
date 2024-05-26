@@ -129,7 +129,7 @@ public class IncomeController {
 	@GetMapping("/addIncomePage")
 	public String showAddIncomePage(Model model) {
 
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Add Income");
 
@@ -143,7 +143,7 @@ public class IncomeController {
 
 		System.out.println("Got edit request for income with id " + id);
 
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
 		model.addAttribute("header", "Edit Income");
 

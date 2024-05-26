@@ -32,7 +32,8 @@ public class MyUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return new BCryptPasswordEncoder().encode("1234"); //user.getPin();
+		System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ------------ " + new BCryptPasswordEncoder().encode("1234"));
+		return user.getPassword(); //user.getPin();
 	}
 
 	@Override
@@ -52,9 +53,7 @@ public class MyUserDetails implements UserDetails {
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		if(user.isOtpNonExpired(30L)) return true;
-		System.out.println("Entered OTP for " + user.getPhone() + " has expired!");
-		return false;
+		return true;
 	}
 
 	@Override

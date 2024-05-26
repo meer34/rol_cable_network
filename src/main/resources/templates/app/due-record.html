@@ -22,9 +22,9 @@
                       <thead class="thead-inverse"
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
-                          <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
 						  <th class="table_heading">Due Type</th>
+						  <th class="table_heading">Due Date</th>
                           <th class="table_heading">Due Amount</th>
                           <th class="table_heading">Paid Amount</th>
 						  <th class="table_heading">Current Due</th>
@@ -32,12 +32,12 @@
                       </thead>
                       <tbody>
                         <tr style="background-color: #FFF" th:each="due : ${listPage.content}">
-                          <td class="noPrint" ><input type='radio' class="radioBtn" name='billId' th:value="${due.id}"></td>
                           <td th:text="${due.consumer?.fullName}" />
 						  <td th:text="${due.dueType}" />
-                          <td th:text="${due.dueAmount}" />
-                          <td th:text="${due.paidAmount}" />
-                          <td th:text="${due.dueAmount - due.paidAmount}" />
+						  <td th:text="${due.dateOfDueEntry}" />
+                          <td th:text="${#numbers.formatDecimal(due.dueAmount, 1, 2)}" />
+                          <td th:text="${#numbers.formatDecimal(due.paidAmount, 1, 2)}" />
+                          <td th:text="${#numbers.formatDecimal(due.dueAmount - due.paidAmount, 1, 2)}" />
                         </tr>
                       </tbody>
                     </table>

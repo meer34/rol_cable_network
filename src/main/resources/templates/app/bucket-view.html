@@ -10,7 +10,7 @@
           <div class="col-md-12">
             <form class="dashboardicon" style="margin-top: 0; text-align: left;">
               <legend style="text-align:center; padding-top: 0px;" >View Bucket</legend>
-			  <fieldset style="margin-top: 0;" id="printTable">
+			  <fieldset style="margin-top: 0;">
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					<label>Bucket Name</label>
@@ -22,17 +22,20 @@
                   </div>
                 </div>
                 <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                    <label>Price</label>
-                    <input type="number" class="form-control" name="price" th:value="${bucket.price}" readonly>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Base Price</label>
+                    <input type="number" class="form-control" name="basePrice" th:value="${bucket.basePrice}" readonly>
                   </div>
-				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>GST / Non GST</label>
                     <input type="text" class="form-control" name="gstNonGst" th:value="${bucket.gstNonGst}" readonly>
                   </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Final Price</label>
+                    <input type="number" class="form-control" name="price" th:value="${#numbers.formatDecimal(bucket.price, 1, 2)}" readonly>
+                  </div>
                 </div>
-            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
-            <input type="button" name="submit" class="submit action-button" value="print" onclick="printData()">
+            <input type="button" name="back" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
             </fieldset>
             </form>
           </div>

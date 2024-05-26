@@ -116,7 +116,7 @@ public class ExpenseController {
 	@GetMapping("/addExpensePage")
 	public String showAddExpensePage(Model model) {
 
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Add Expense");
 
@@ -130,7 +130,7 @@ public class ExpenseController {
 
 		System.out.println("Got edit request for expense with id " + id);
 
-		model.addAttribute("users", appUserService.getAllUsers());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
 		model.addAttribute("header", "Edit Expense");
 

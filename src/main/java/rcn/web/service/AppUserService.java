@@ -13,25 +13,28 @@ public class AppUserService {
 
 	@Autowired private AppUserRepo appUserRepo;
 
-	public AppUser saveUserToDB(AppUser appUser) {
+	public AppUser saveAppUserToDB(AppUser appUser) {
 		return appUserRepo.save(appUser);
 	}
 	
-	public AppUser findUserById(Long id) {
+	public AppUser findAppUserById(Long id) {
 		return appUserRepo.findById(id).get();
 	}
 
-	public List<AppUser> getAllUsers() {
+	public List<AppUser> getAllAppUsers() {
 		return appUserRepo.findAll();
 	}
 
-	public void deleteUserById(Long id) {
+	public void deleteAppUserById(Long id) {
 		appUserRepo.deleteById(id);
+	}
+	
+	public List<AppUser> getAppUsersByPhoneNumber(String phone) {
+		 return appUserRepo.findByPhone(phone);
 	}
 
 	public List<AppUser> getAppUsersByPhoneNumberAndIdNotMatching(String phone, Long id) {
 		return appUserRepo.findByPhoneAndIdNot(phone, id);
 	}
-	
 
 }

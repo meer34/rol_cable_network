@@ -28,7 +28,6 @@
                       <thead class="thead-inverse"
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
-                          <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
 						  <th class="table_heading">Connection Type</th>
 						  <th class="table_heading">Due Date</th>
@@ -41,13 +40,12 @@
                         <!-- <tr style="background-color: #FFF" th:each="billRecord : ${listPage.content}"> -->
                         <tr style="background-color: #FFF" th:each="i : ${#numbers.sequence(listPage.content.size() - 1, 0, -1)}"
      												th:with="billRecord=${listPage.content[i]}">
-                          <td class="noPrint" ><input type='radio' class="radioBtn" name='billId' th:value="${billRecord.id}"></td>
                           <td th:text="${billRecord.connection?.consumer?.fullName}" />
 						  <td th:text="${billRecord.connection?.connectionType}" />
                           <td th:text="${billRecord.endDate}" />
-                          <td th:text="${billRecord.billAmount}" />
-                          <td th:text="${billRecord.paidAmount}" />
-                          <td th:text="${billRecord.billAmount - billRecord.paidAmount}" />
+                          <td th:text="${#numbers.formatDecimal(billRecord.billAmount, 1, 2)}" />
+                          <td th:text="${#numbers.formatDecimal(billRecord.paidAmount, 1, 2)}" />
+                          <td th:text="${#numbers.formatDecimal(billRecord.billAmount - billRecord.paidAmount, 1, 2)}" />
                         </tr>
                       </tbody>
                     </table>

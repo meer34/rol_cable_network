@@ -24,8 +24,10 @@
           aria-label="Hide Sidebar"></a>
         <!-- Navbar Right Menu-->
         <ul class="app-nav">
+          <li><a class="app-nav__product" th:href="@{'/change-password?phone=' + ${#authentication.name}}"><i
+            class="fa fa-exchange fa-lg" title="CHANGE PASSWORD"> Change Password</i></a></li>
           <li><a class="app-nav__product" th:href="@{/logout}"><i
-            class="fa fa-sign-out fa-lg" title="LOG OUT"></i></a></li>
+            class="fa fa-sign-out fa-lg" title="LOG OUT"> Log Out</i></a></li>
         </ul>
       </header>
       <!-- Sidebar menu-->
@@ -39,7 +41,8 @@
               <span sec:authentication="principal.user.username">User</span>
             </p>
             <p class="app-sidebar__user-name">
-              <span style="white-space: normal;" sec:authentication="principal.authorities">Role</span>
+              <span style="white-space: normal;" sec:authentication="principal.authorities" sec:authorize="hasAuthority('ADMIN')">Role</span>
+              <span style="white-space: normal;" sec:authorize="!hasAuthority('ADMIN')">[APP USER]</span>
             </p>
           </div>
         </div>
@@ -54,9 +57,11 @@
               class="treeview-indicator fa fa-angle-right"></i></a>
             <ul class="treeview-menu">
               <li><a class="treeview-product" th:href="@{/admin}"><i
-                class="icon fa fa-user"></i> Admin</a></li>
+                class="icon fa fa-user-circle"></i> Admin</a></li>
               <li><a class="treeview-product" th:href="@{/appUser}"><i
                 class="icon fa fa-user-plus"></i>App User </a></li>
+              <li><a class="treeview-product" th:href="@{/disabledAppUser}"><i
+                class="icon fa fa-user-times"></i>Disabled App Users </a></li>
             </ul>
           </li>
           <li class="treeview">

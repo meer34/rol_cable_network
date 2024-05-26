@@ -15,5 +15,7 @@ public interface AppUserRepo extends JpaRepository<AppUser, Long>{
 	
 	@Query("FROM AppUser a WHERE a.user = :user")
 	Optional<AppUser> findByUser(User user);
+
+	List<AppUser> findByPhone(String phone);
 	
 }

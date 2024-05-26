@@ -45,7 +45,7 @@
                           <td th:text="${channelPackage.id}" />
                           <td th:text="${channelPackage.name}" />
                           <td th:text="${channelPackage.channelCount}" />
-                          <td th:text="${channelPackage.price}" />
+                          <td th:text="${#numbers.formatDecimal(channelPackage.price, 1, 2)}" />
                           <td th:text="${channelPackage.gstNonGst}" />
                         </tr>
                       </tbody>

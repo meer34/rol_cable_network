@@ -6,6 +6,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -23,6 +24,11 @@ public class AppUtility {
 
 	@Value("${fast2sms.api.request.contentType}")
 	private String contentType;
+	
+	public long getDifferenceDays(Date d1, Date d2) {
+	    long diff = d2.getTime() - d1.getTime();
+	    return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+	}
 
 	public Date getTodaysDateWithoutTime() {
 		try{
@@ -38,6 +44,16 @@ public class AppUtility {
 		try{
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return formatter.parse(formatter.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Date formatStringToDate(String stateChangeDate) {
+		try{
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			return formatter.parse(stateChangeDate);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

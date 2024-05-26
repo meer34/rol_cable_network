@@ -1,6 +1,5 @@
 package rcn.security;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,8 +14,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,13 +35,8 @@ public class User {
 	private String username;
 	@Column(unique=true)
 	private String phone;
-	private String pin;
+	private String password;
 	private Boolean enabled;
-	
-	@JsonFormat(pattern="yyyy-MM-dd")
-    private Date pinGenerationTime;
-    
-    private static final long MIN_TO_LONG = 24L*60L*60L * 1000L;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name="users_roles", joinColumns=@JoinColumn(name ="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
@@ -56,16 +48,5 @@ public class User {
 		this.enabled = enabled;
 		if(role != null) this.roles.add(new Role(role));
 	}
-	
-    public boolean isOtpNonExpired(Long days) {
-        if (this.pinGenerationTime == null) return true;
-        
-        if(System.currentTimeMillis() > this.pinGenerationTime.getTime() + days*MIN_TO_LONG) {
-        	System.out.println("Entered PIN for " + this.phone + " has expired!");
-        	return false;
-        	
-        } else return true;
-        
-    }
 	
 }

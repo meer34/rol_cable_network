@@ -1,7 +1,6 @@
 package rcn.web.model;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,39 +24,18 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Collection {
+public class Settlement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name="consumer")
-	private Consumer consumer;
-	
-	private String billType;
 	private Double amount;
-	private Double discount;
-	private Double netAmount;
-	private String paymentMode;
 	private String remarks;
+	private String settledTo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name ="collectedBy")
-	private AppUser collectedBy;
-	
-	@ManyToMany
-	@JoinTable(
-	  name = "collection_bill", 
-	  joinColumns = @JoinColumn(name = "collection_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "bill_id"))
-	private List<Bill> bills;
-	
-	@ManyToMany
-	@JoinTable(
-	  name = "collection_due", 
-	  joinColumns = @JoinColumn(name = "collection_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "due_id"))
-	private List<Due> dues;
+	@JoinColumn(name ="settledBy")
+	private AppUser settledBy;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

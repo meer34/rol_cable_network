@@ -37,6 +37,8 @@ public class Connection {
 	@JoinColumn(name="consumer")
 	private Consumer consumer;
 	
+	private boolean autoRenewal;
+	
 	private String state;
 	private String connectionType;
 	private String connectionFor;

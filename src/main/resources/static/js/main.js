@@ -172,9 +172,11 @@ function openRenew() {
 
 function performRenewal() {
 	const dateRangeSelection = document.getElementById("dateRange");
+	var connId = $("input[type='radio'][name='id']:checked").val();
 	
 	if(dateRangeSelection.value == "Today"){
 		if(confirm('Sure you want to renew this connection for Today?')){
+			window.open('/connection/renew?id=' + connId + '&date=' + new Date().toISOString().split('T')[0],"_self");
 			alert("Sent Request for " + new Date().toISOString().split('T')[0]);
 		}
 	} else{
@@ -184,6 +186,7 @@ function performRenewal() {
 			return false;
 		}
 		if(confirm('Sure you want to renew this connection for ' + specificDayRenew.value + '?')){
+			window.open('/connection/renew?id=' + connId + '&date=' + specificDayRenew.value,"_self");
 			alert("Sent Request for " + specificDayRenew.value);
 		}
 	}

@@ -1797,13 +1797,13 @@ margin-top:10px;
   padding: 4px;
   margin-top: 20px;
   margin-bottom: 0;
-  margin-right: 9%;
+  margin-right: 16%;
 }
 .order-style {
   text-align: center;
   padding-top: 26px !important;
 }
-.dashboardicon2 .action-button {
+.dashboardicon2 .action-button {r
   width: auto;
   background: #1D2951;
   font-weight: bold;

@@ -23,11 +23,9 @@
         <a class="app-sidebar__toggle" href="#" data-toggle="sidebar"
           aria-label="Hide Sidebar"></a>
         <!-- Navbar Right Menu-->
-        <ul class="app-nav">
-          <li><a class="app-nav__product" th:href="@{'/change-password?phone=' + ${#authentication.name}}"><i
-            class="fa fa-exchange fa-lg" title="CHANGE PASSWORD"> Change Password</i></a></li>
+        <ul class="app-nav" style="margin-right:40px;">
           <li><a class="app-nav__product" th:href="@{/logout}"><i
-            class="fa fa-sign-out fa-lg" title="LOG OUT"> Log Out</i></a></li>
+            class="fa fa-sign-out fa-lg" title="LOG OUT"></i></a></li>
         </ul>
       </header>
       <!-- Sidebar menu-->
@@ -121,6 +119,10 @@
           <li><a class="app-menu__product" th:href="@{/reminder}"><i
             class="app-menu__icon fa fa-bell"></i><span
             class="app-menu__label">Reminder</span></a>
+          </li>
+		  <li><a class="app-menu__product" th:href="@{'/change-password?phone=' + ${#authentication.name}}"><i
+            class="app-menu__icon fa fa-exchange"></i><span
+            class="app-menu__label">Change Password</span></a>
           </li>
         </ul>
       </aside>

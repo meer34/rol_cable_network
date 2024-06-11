@@ -1,8 +1,8 @@
 package rcn.web.controller;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -122,7 +122,7 @@ public class BillController {
 	public String getSubscriptionBillsByConsumerId(Model model,
 			@RequestParam(value="consumerId", required = true) Long consumerId) throws ParseException {
 
-		System.out.println("Subscription Bill Home Page for consumerId: " + consumerId);
+		System.out.println("Get Subscription Bill Page for consumerId: " + consumerId);
 
 		List<Bill> listOfBills = new ArrayList<>();
 		Consumer consumer = consumerService.getById(consumerId);
@@ -152,7 +152,7 @@ public class BillController {
 	public String getDuesByConsumerId(Model model,
 			@RequestParam(value="consumerId", required = true) Long consumerId) throws ParseException {
 
-		System.out.println("Subscription Bill Home Page for consumerId: " + consumerId);
+		System.out.println("Get due records page for consumerId: " + consumerId);
 
 		List<Due> listOfDues = new ArrayList<>();
 		Consumer consumer = consumerService.getById(consumerId);
@@ -161,7 +161,7 @@ public class BillController {
 			listOfDues.add(due);
 		}
 
-		Page<Due> listPage = new PageImpl<>(listOfDues);
+		Page<Due> listPage = new PageImpl<>(listOfDues); 
 
 		model.addAttribute("listPage", listPage);
 		int totalPages = listPage.getTotalPages();
@@ -178,7 +178,7 @@ public class BillController {
 
 
 //	@Scheduled(cron = "0 30 9 * * *")
-//		@Scheduled(fixedRate = 30000)
+//	@Scheduled(fixedRate = 30000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
 		System.out.println("Reminder scheduler: Job running at - " + strDate);
@@ -189,12 +189,12 @@ public class BillController {
 			List<Connection> listOfConnection = connectionService.getByConsumerId(consumer.getId());
 			for(Connection connection : listOfConnection) {
 				//generate new bill if connection expired
-				if(!"Disconnected".equals(connection.getState())) {
+				if(connection.isAutoRenewal() && !"Disconnected".equals(connection.getState())) {
 					if(connection.getDateOfConnExpiry().before(utility.getTodaysDateWithoutTime())) {
 						System.out.println("Connection Expired and disconnected for consumer: " 
-										+ connection.getConsumer().getFullName());
+								+ connection.getConsumer().getFullName());
 						generateBill(connection);
-				}
+					}
 				};
 			}
 		}
@@ -204,14 +204,7 @@ public class BillController {
 		System.out.println("Generating bill for connection id " + connection.getId());
 		
 		connection.setDateOfConnStart(connection.getDateOfConnExpiry());
-		
-		Calendar c = Calendar.getInstance();
-        c.setTime(connection.getDateOfConnStart());
-        c.add(Calendar.DATE, 30);
-        
-		connection.setDateOfConnExpiry(c.getTime());
-		
-		
+		connection.setDateOfConnExpiry(utility.getOneMonthAheadDate(connection.getDateOfConnStart()));
 		
 		Bill bill = new Bill();
 		bill.setConnection(connection);

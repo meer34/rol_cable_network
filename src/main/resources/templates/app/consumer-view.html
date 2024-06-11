@@ -10,7 +10,7 @@
           <div class="col-md-12">
             <form class="dashboardicon" style="margin-top: 0; text-align: left;">
               <legend style="text-align:center; padding-top: 0px;" >View Consumer</legend>
-              <fieldset style="margin-top: 0;" id="printTable">
+              <fieldset style="margin-top: 0;">
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 					<label>Name</label>
@@ -40,17 +40,30 @@
                   </div>
                 </div>
                 <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Security Deposit</label>
-                    <input type="number" class="form-control" name="securityDeposit"  th:value="${consumer?.securityDeposit}" readonly>
-                  </div>
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Full Address</label>
                     <input type="text" class="form-control" name="fullAddress" th:value="${consumer.fullAddress}" readonly>
                   </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <label>Security Deposit</label>
+                    <input type="number" class="form-control" name="securityDeposit"  th:value="${consumer.securityDeposit}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" th:value="${consumer.remarks}" readonly>
+                  </div>
                 </div>
-            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
-            <input type="button" name="submit" class="submit action-button" value="print" onclick="printData()">
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="button" class="btn-primary" value="Subscription Bills" style="font-weight: bold;color:black;"
+                            th:attr="onclick=|location.href='/bill/getSubscriptionBillRecordsForConsumer?consumerId=${consumer.id}'|" >
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <input type="button" class="btn-primary" value="Other Due Bills" style="font-weight: bold;color:black;"
+                            th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumer.id}'|" >
+                  </div>
+                </div>
+                <input type="button" name="cancel" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
             </fieldset>
             </form>
           </div>

@@ -45,6 +45,40 @@ function calculateSubscriptionAmount(){
 
 }
 
+function calculateSubscriptionBillAmount(){
+	var amount = 0;
+
+	$("#bills option:selected").each(function () {
+		var $this = $(this);
+		if ($this.length) {
+			var selText = $this.text();
+			var billAmount = selText.split("₹")[1];
+			amount = amount + Number(billAmount);
+		}
+	});
+
+	$('#amount').val(amount);
+	calculateNetAmount();
+
+}
+
+function calculateOtherDueAmount(){
+	var amount = 0;
+
+	$("#dues option:selected").each(function () {
+		var $this = $(this);
+		if ($this.length) {
+			var selText = $this.text();
+			var dueAmount = selText.split("₹")[1];
+			amount = amount + Number(dueAmount);
+		}
+	});
+	
+	$('#amount').val(amount);
+	calculateNetAmount();
+
+}
+
 function calculateGstPrice(){
 	let basePrice = Number(document.getElementById("basePrice").value);
 	let gstNonGst = document.getElementById("gstNonGst").value;

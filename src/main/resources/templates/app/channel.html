@@ -23,9 +23,9 @@
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
                       <input type="submit" th:formaction="@{/channel/view}" name="action" class="submit action-button" value="View">
-                      <input type="submit" th:formaction="@{/channel/edit}" name="action" class="submit action-button" value="Edit">
+                      <input type="submit" th:formaction="@{/channel/edit}" name="action" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/channel/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()">
+                      <input type="submit" th:formaction="@{/channel/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"

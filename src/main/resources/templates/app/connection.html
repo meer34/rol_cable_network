@@ -25,23 +25,40 @@
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
                       <input type="submit" th:formaction="@{/connection/view}" class="submit action-button" value="View">
-                      <input type="submit" th:formaction="@{/connection/edit}" class="submit action-button" value="Edit">
+                      <input type="submit" th:formaction="@{/connection/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/connection/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()">
-					  <input type="button" class="submit action-button" value="Renew" onClick="return openRenew()">
+                      <input type="submit" th:formaction="@{/connection/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
+					  <input type="button" id="renewButton" class="submit action-button" value="Renew">
                     </div>
                     
-                <!-- Start Renew Date Picker -->
+                  <div class="modal fade" id="fileUploadModal" role="dialog">
+					<div class="modal-dialog">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Renew Date</h4>
+						</div>
+						<div class="modal-body">
+							<select name="dateRange" id="dateRange" dateRange='' style="height: 25px;">
+								<option value="Today" id="todayRenew">Today</option>
+								<option type="date" value="Specific date" id="specificDayRenew">
+									Specific Date
+									<input type="date" id="js_datePickerToggle" class="displayNone" style="height: 25px;">
+								</option>
+							</select>
+						</div>
+						<div class="modal-footer">
+						<input type="button" class="btn btn-success" value="Renew Connection" onclick="performRenewal()">
+						</div>
+					</div>
+					</div>
+				</div>
+  
+				<!-- Start Renew Date Picker -->
                 <div class="displayNone" id="renewConnection" style="border: 1px;">
   					<label style="color: #0f0c78; height:30px;">Renew Date</label>
-  					<select name="dateRange" id="dateRange" dateRange='' style="height: 25px;">
-    					<option value="Today" id="todayRenew">Today</option>
-    					<option type="date" value="Specific date" id="specificDayRenew">
-    						Specific Date
-    						<input type="date" id="js_datePickerToggle" class="displayNone" style="height: 25px;">
-    					</option>
-    					<input type="button" class="btn btn-success" value="Renew Connection" style="height: 28px;" onclick="performRenewal()">
-  					</select>
+  					
 				</div>
                 <!-- End Renew Date Picker -->
                 
@@ -79,6 +96,14 @@
         </div>
       </main>
       <div th:replace="fragments :: main_scripts"></div>
+	  <script>
+	  $(document).ready(function() {
+			$( "#renewButton" ).click(function() {
+				$('#fileUploadModal').modal('show')
+			});
+		});
+	  </script>
+	  
       <script>
                 const datePickerEl = document.getElementById("js_datePickerToggle");
 

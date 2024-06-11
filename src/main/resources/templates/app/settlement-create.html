@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/settlement/save}" method="post">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Settled By</label>
+                    <select class="form-control" name="settledBy" id="settledBy" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select App User</option>
+                      <option style="color: #333;" th:each="appUser : ${appUsers}" 
+										th:text="${appUser.name}" th:value="${appUser.id}" th:selected="${appUser.id==settlement.settledBy?.id}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Settled To</label>
+                    <select class="form-control" name="settledTo" id="settledTo" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select Admin</option>
+                      <option style="color: #333;" th:each="admin : ${admins}" 
+						th:text="${admin.name}" th:value="${admin.name}" th:selected="${#strings.equals(admin.name, settlement.settledTo)}"></option>
+                    </select>
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Date</label>
+                    <input type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${settlement.date}">
+                  </div>
+                </div>
+				<div class="col-lg-12 flexdisplay">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Amount</label>
+                    <input type="number" min="0" step="0.5" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${settlement.amount}">
+                  </div>
+				  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" placeholder="Remarks" th:value="${settlement.remarks}">
+                  </div>
+				</div>
+			<input th:if="${settlement.id}" type="hidden" name="id" th:value="${settlement.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </main>
+      <div th:replace="fragments :: main_scripts"></div>
+      <script>
+      $("form").submit(function() {
+    	    $("#consumer").prop("disabled", false);
+    	});
+      </script>
+  </body>
+</html>

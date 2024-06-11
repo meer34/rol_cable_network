@@ -1,6 +1,13 @@
 package rcn.web.controller;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,116 +16,125 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import rcn.security.Role;
-import rcn.security.User;
 import rcn.web.model.AppUser;
+import rcn.web.model.Collection;
+import rcn.web.model.Settlement;
 import rcn.web.service.AppUserService;
+import rcn.web.service.SettlementService;
 
 @Controller
 @RequestMapping("/settlement")
 public class SettlementController {
 
+	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
+	@Autowired SettlementService settlementService;
 	@Autowired AppUserService appUserService;
 
-	public String basePage(Model model) {
-		model.addAttribute("appUserList", appUserService.getAllAppUsers());
-		return "app-user";
-	}
+	@GetMapping
+	public String showBasePage(Model model,
+			@RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size,
+			@RequestParam(value="keyword", required = false) String keyword,
+			@RequestParam(value="appUserId", required = false) Long appUserId) {
 
-	@GetMapping("/settleAmount")
-	public String settleAmount(Model model,
-			@RequestParam(value="consumerId", required = true) Long consumerId) {
-		model.addAttribute("appUser", new AppUser());
-		model.addAttribute("header", "Create App User");
-		return "app-user-create";
-	}
+		Page<Settlement> listPage = null;
 
-	@RequestMapping(value = "/createAppUser",
-			method = RequestMethod.POST)
-	public String createAppUser(Model model, AppUser appUser, 
-			RedirectAttributes redirectAttributes) throws Exception{
-
-		if(appUser.getId() == null) {
-			//			System.out.println("$$$ - " + appUser.toString());
-			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, null));
-			if(appUser.getRoles() != null) {
-				for (String role : appUser.getRoles()) {
-					appUser.getUser().getRoles().add(new Role(role));
-				}
-			}
-
-			appUser = appUserService.saveAppUserToDB(appUser);
+		if(keyword == null) {
+			System.out.println("Settlement home page");
+			if(appUserId == null) listPage = settlementService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
+			else listPage = settlementService.getPageByAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
+			System.out.println("Searching Settlements for keyword:" + keyword);
+			//TODO
+			model.addAttribute("keyword", keyword);
 
-			tempAppUser.setName(appUser.getName());
-			tempAppUser.setPhone(appUser.getPhone());
-			tempAppUser.setAddress(appUser.getAddress());
-
-			tempAppUser.getUser().setUsername(appUser.getName());
-			tempAppUser.getUser().setPhone(appUser.getPhone());
-
-			tempAppUser.getUser().getRoles().clear();
-			if(appUser.getRoles() != null) {
-				for (String role : appUser.getRoles()) {
-					tempAppUser.getUser().getRoles().add(new Role(role));
-				}
-			}
-
-			appUser = appUserService.saveAppUserToDB(tempAppUser);
 		}
 
-		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
-		return "redirect:/appUser";
+		model.addAttribute("listPage", listPage);
+		int totalPages = listPage.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+					.boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
+
+		return "app/settlement";
 
 	}
 
-	@RequestMapping(value = "/viewAppUser",
-			method = RequestMethod.GET)
-	public String viewAppUser(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam("action") String action,
-			@RequestParam("id") String id) throws Exception{
-
-		System.out.println("Got view request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
-		return "view-appUser";
+	@GetMapping("/add")
+	public String addSettlement (Model model, Settlement settlement, 
+			@RequestParam(value="appUserId", required = false) Long appUserId) {
+		
+		List<AppUser> appUsers = appUserService.getAllAppUsers();
+		
+		model.addAttribute("header", "Settle Amount");
+		model.addAttribute("appUsers", appUsers.stream()
+											   .filter(appUser -> !"ADMIN".equals(appUser.getUserType()))
+											   .collect(Collectors.toList()));
+		model.addAttribute("admins", appUsers.stream()
+											 .filter(appUser -> "ADMIN".equals(appUser.getUserType()))
+											 .collect(Collectors.toList()));
+		model.addAttribute("appUserId", appUserId);
+		
+		return "app/settlement-create";
+	}
+	
+	@RequestMapping(value = "/save",
+			method = RequestMethod.POST)
+	public String saveSettlement(Model model, Settlement settlement, RedirectAttributes redirectAttributes) throws Exception{
+		
+		settlementService.save(settlement);
+		
+		redirectAttributes.addFlashAttribute("successMessage", "Settlement from " + settlement.getSettledBy().getName() + " saved successfully!");
+		return "redirect:/settlement";
 
 	}
 
-	@RequestMapping(value = "/editAppUser",
+	@RequestMapping(value = "/view",
 			method = RequestMethod.GET)
-	public String editAppUser(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam("action") String action,
-			@RequestParam("id") String id) throws Exception{
+	public String view(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got edit request for appUser id " + id);
-		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
-		model.addAttribute("header", "Edit App User");
-		return "app-user-create";
+		System.out.println("Got view request for settlement id " + id);
+		model.addAttribute("header", " View Settlement");
+		model.addAttribute("settlement", settlementService.getById(Long.parseLong(id)));
+		return "app/settlement-view";
+	}
+	
+	@RequestMapping(value = "/edit",
+			method = RequestMethod.GET)
+	public String edit(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam(value="id", required = false) String id) throws Exception{
 
+		System.out.println("Got edit request for settlement id " + id);
+		Settlement settlement = settlementService.getById(Long.parseLong(id));
+		
+		List<AppUser> appUsers = appUserService.getAllAppUsers();
+		model.addAttribute("header", " Edit Settlement");
+		model.addAttribute("appUsers", appUsers.stream()
+											   .filter(appUser -> !"ADMIN".equals(appUser.getUserType()))
+											   .collect(Collectors.toList()));
+		model.addAttribute("admins", appUsers.stream()
+											 .filter(appUser -> "ADMIN".equals(appUser.getUserType()))
+											 .collect(Collectors.toList()));
+		
+		model.addAttribute("settlement", settlement);
+		return "app/settlement-create";
 	}
 
-	@RequestMapping(value = "/deleteAppUser",
+	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
-	public String deleteAppUser(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam("action") String action,
+	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request appUser for id " + id);
-		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
+		System.out.println("Got delete request for settlement id " + id);
 
-		/*if(appUser != null) {
-			if(appUser.getStockOutList().isEmpty()) {
-				appUserService.deleteUserById(Long.parseLong(id));
-				redirectAttributes.addFlashAttribute("successMessage", "App User with id " + id + " deleted successfully!");
-			} else {
-				redirectAttributes.addFlashAttribute("successMessage", appUser.getStockOutList().size() + " Stock Out entries present this App User!");
-			}
-		}*/
-
-		return "redirect:/appUser";
-
+		settlementService.deleteById(Long.parseLong(id));
+		redirectAttributes.addFlashAttribute("successMessage", "Settlement with id " + id + " deleted successfully!");
+		return "redirect:/settlement";
 	}
 
 }

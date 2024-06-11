@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,7 +56,9 @@ public class AppUserController {
 			RedirectAttributes redirectAttributes) throws Exception{
 
 		if(appUser.getId() == null) {
-			appUser.setUser(new User(appUser.getName(), appUser.getPhone(), true, null));
+			User user = new User(appUser.getName(), appUser.getPhone(), true, null);
+			user.setPassword(new BCryptPasswordEncoder().encode("Rcnuser@1234"));
+			appUser.setUser(user);
 			if(appUser.getRoles() != null) {
 				for (String role : appUser.getRoles()) {
 					appUser.getUser().getRoles().add(new Role(role));
@@ -64,6 +67,8 @@ public class AppUserController {
 			
 			appUser.setUserType("APP_USER");
 			appUser = appUserService.saveAppUserToDB(appUser);
+			
+			redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User! Default password:Rcnuser@1234");
 
 		} else {
 			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
@@ -89,9 +94,10 @@ public class AppUserController {
 
 			appUser = appUserService.saveAppUserToDB(tempAppUser);
 			roleRepo.deleteAllById(roleIds);
+			
+			redirectAttributes.addFlashAttribute("successMessage", "Edited details for App User " + appUser.getName() + " saved successfully!");
 		}
 
-		redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User!");
 		return "redirect:/appUser";
 
 	}

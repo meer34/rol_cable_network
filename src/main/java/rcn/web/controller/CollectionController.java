@@ -16,11 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import rcn.web.model.Bill;
 import rcn.web.model.Collection;
 import rcn.web.model.Consumer;
+import rcn.web.model.Due;
 import rcn.web.service.AppUserService;
+import rcn.web.service.BillService;
 import rcn.web.service.CollectionService;
 import rcn.web.service.ConsumerService;
+import rcn.web.service.DueService;
 
 @Controller
 @RequestMapping("/collection")
@@ -30,24 +34,32 @@ public class CollectionController {
 	@Autowired CollectionService collectionService;
 	@Autowired ConsumerService consumerService;
 	@Autowired AppUserService appUserService;
+	@Autowired BillService billService;
+	@Autowired DueService dueService;
 
 	@GetMapping
 	public String showBasePage(Model model,
 			@RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size,
+			@RequestParam(value="fromDate", required = false) String fromDate,
+			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="keyword", required = false) String keyword,
 			@RequestParam(value="consumerId", required = false) Long consumerId) {
 
 		Page<Collection> listPage = null;
 
-		if(keyword == null) {
+		if(keyword == null && fromDate == null && toDate == null) {
 			System.out.println("Bucket home page");
 			if(consumerId == null) listPage = collectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = collectionService.getPageByConsumer(consumerId, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Collection for keyword:" + keyword);
-//			listPage = collectionService.searchAllByKeyword(keyword, page.orElse(1) - 1, size.orElse(initialPageSize));
+			System.out.println("Searching Collection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			listPage = collectionService.searchCollectionByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
+
+			model.addAttribute("fromDate", fromDate);
+			model.addAttribute("toDate", toDate);
+			model.addAttribute("keyword", keyword);
 
 			model.addAttribute("keyword", keyword);
 
@@ -70,18 +82,21 @@ public class CollectionController {
 	public String collectSubscriptionDue(Model model, Collection collection, 
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
-		model.addAttribute("header", "Collect Subscription Due, Pending Amount - ");
+		model.addAttribute("header", "Collect Subscription Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", consumerId);
 		
 		if(action.equals("Collect Subscription Due")) {
-			model.addAttribute("billType", "subscription");
+			model.addAttribute("billType", "Subscription");
 		}
 		
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalSubscriptionBill();
 		model.addAttribute("pendingAmount", consumer.getSubscriptionBill());
+		model.addAttribute("bills", consumer.getConnections().stream().flatMap(connection -> connection.getBills().stream())
+				.filter(bill -> bill.getBillAmount() - bill.getPaidAmount() > 0)
+				.collect(Collectors.toList()));
 		
 		return "app/collection-create";
 	}
@@ -90,18 +105,23 @@ public class CollectionController {
 	public String collectOtherDue(Model model, Collection collection,
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
-		model.addAttribute("header", "Collect Other Due, Pending Amount - ");
+		model.addAttribute("header", "Collect Other Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", consumerId);
 		
 		if(action.equals("Collect Other Due")) {
-			model.addAttribute("billType", "otherDue");
+			model.addAttribute("billType", "Other Due");
 		}
 		
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalOtherDueBill();
 		model.addAttribute("pendingAmount", consumer.getOtherDueBill());
+		model.addAttribute("dues", consumer.getDues()
+				.stream()
+				.filter(due -> due.getDueAmount() - due.getPaidAmount() > 0)
+				.collect(Collectors.toList()));
+		
 		return "app/collection-create";
 	}
 
@@ -115,6 +135,13 @@ public class CollectionController {
 		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
 		consumerService.save(consumer);
 		
+		Bill tempBill = null;
+		for (Bill bill : collection.getBills()) {
+			tempBill = billService.getById(bill.getId());
+			tempBill.setPaidAmount(tempBill.getBillAmount());
+			billService.save(tempBill);
+		}
+		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
 
@@ -126,9 +153,16 @@ public class CollectionController {
 		collection.setBillType("Other Due");
 		collection = collectionService.save(collection);
 		
-		Consumer consumer = collection.getConsumer();
-		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
-		consumerService.save(consumer);
+//		Consumer consumer = collection.getConsumer();
+//		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
+//		consumerService.save(consumer);
+		
+		Due tempDue = null;
+		for (Due due : collection.getDues()) {
+			tempDue = dueService.getDueById(due.getId());
+			tempDue.setPaidAmount(tempDue.getDueAmount());
+			dueService.saveDue(tempDue);
+		}
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
@@ -162,6 +196,16 @@ public class CollectionController {
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());
+		model.addAttribute("billType", collection.getBillType());
+		model.addAttribute("bills", collection.getConsumer().getConnections()
+				.stream()
+				.flatMap(connection -> connection.getBills().stream())
+				.filter(bill -> bill.getBillAmount() > 0)
+				.collect(Collectors.toList()));
+		model.addAttribute("dues", collection.getConsumer().getDues()
+				.stream()
+				.filter(due -> due.getDueAmount() > 0)
+				.collect(Collectors.toList()));
 		return "app/collection-create";
 	}
 

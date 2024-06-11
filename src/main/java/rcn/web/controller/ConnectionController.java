@@ -96,14 +96,24 @@ public class ConnectionController {
 		
 		if(connection.getId() == null) {
 			connection.setState("Connected");
-			Due due = new Due();
-			due.setDueType("Connection Charge");
-			due.setDueAmount(connection.getConnectionCharge());
-			due.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
-			due.setRemarks("Auto entry for fresh connection");
-			due.setConsumer(connection.getConsumer());
 			
-			dueService.saveDue(due);
+			Due connChargeDue = new Due();
+			connChargeDue.setDueType("Connection Charge");
+			connChargeDue.setDueAmount(connection.getConnectionCharge());
+			connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+			connChargeDue.setRemarks("Auto entry for fresh connection");
+			connChargeDue.setConsumer(connection.getConsumer());
+			
+			dueService.saveDue(connChargeDue);
+			
+			Due prevDue = new Due();
+			prevDue.setDueType("Previous Due");
+			prevDue.setDueAmount(connection.getPreviousDue());
+			prevDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+			prevDue.setRemarks("Auto entry for fresh connection");
+			prevDue.setConsumer(connection.getConsumer());
+			
+			dueService.saveDue(prevDue);
 			
 		} else {
 			Connection savedConn = connectionService.getById(connection.getId());
@@ -225,16 +235,11 @@ public class ConnectionController {
 			@RequestParam("id") String id,
 			@RequestParam("date") String date) throws Exception{
 		
-		System.out.println("Got renew request for connection id " + id);
+		System.out.println("Got renew request for connection id - " + id + ", renewal date - " + date);
 		Connection connection = connectionService.getById(Long.parseLong(id));
 		
-		connection.setDateOfConnStart(new Date());
-		
-		Calendar c = Calendar.getInstance();
-        c.setTime(connection.getDateOfConnStart());
-        c.add(Calendar.DATE, 30);
-        
-		connection.setDateOfConnExpiry(c.getTime());
+		connection.setDateOfConnStart( utility.formatStringToDate(date));
+		connection.setDateOfConnExpiry(utility.getOneMonthAheadDate(connection.getDateOfConnStart()));
 		
 		Bill bill = new Bill();
 		bill.setConnection(connection);

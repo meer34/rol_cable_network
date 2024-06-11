@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +25,10 @@ public class AppUtility {
 
 	@Value("${fast2sms.api.request.contentType}")
 	private String contentType;
-	
+
 	public long getDifferenceDays(Date d1, Date d2) {
-	    long diff = d2.getTime() - d1.getTime();
-	    return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+		long diff = d2.getTime() - d1.getTime();
+		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
 	}
 
 	public Date getTodaysDateWithoutTime() {
@@ -39,7 +40,7 @@ public class AppUtility {
 		}
 		return null;
 	}
-	
+
 	public Date formatDate(Date date) {
 		try{
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -49,7 +50,7 @@ public class AppUtility {
 		}
 		return null;
 	}
-	
+
 	public Date formatStringToDate(String stateChangeDate) {
 		try{
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -58,6 +59,13 @@ public class AppUtility {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public Date getOneMonthAheadDate(Date currentDate) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(currentDate);
+		c.add(Calendar.DATE, 30);
+		return c.getTime();
 	}
 
 	public String sendSMS(String phone, String message) throws Exception {

@@ -44,6 +44,14 @@ public class AppUser {
 	@ElementCollection
 	private List<String> roles;
 	
+	@OneToMany(mappedBy="collectedBy")
+	@JsonIgnore
+	private List<Collection> collectionList;
+	
+	@OneToMany(mappedBy="settledBy")
+	@JsonIgnore
+	private List<Settlement> settlementList;
+	
 	@OneToMany(mappedBy="receivedBy")
 	@JsonIgnore
 	private List<Income> incomeList;
@@ -51,6 +59,20 @@ public class AppUser {
 	@OneToMany(mappedBy="spentBy")
 	@JsonIgnore
 	private List<Expense> expenseList;
+
+	public long getPendingSettlementAmount() {
+		
+		long amount= 0;
+		
+		for (Collection collection : collectionList) {
+			amount += collection.getAmount();
+		}
+		
+		for (Settlement settlement : settlementList) {
+			amount -= settlement.getAmount();
+		}
+		return amount;
+	}
 
 	
 

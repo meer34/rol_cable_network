@@ -8,7 +8,7 @@
     <main class="app-content">
         <div class="row">
           <div class="col-md-12">
-            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="${billType == 'subscription'} ? @{/collection/saveSubscriptionCollection} : @{/collection/saveOtherDueCollection}" method="post">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="${billType == 'Subscription'} ? @{/collection/saveSubscriptionCollection} : @{/collection/saveOtherDueCollection}" method="post">
               <fieldset style="margin-top: 0;">
 				<legend style="text-align:center; padding-top: 50px;" th:text="${header} + ${pendingAmount != null ? pendingAmount : ''}"></legend>
                 <div class="col-lg-12 flexdisplay">
@@ -34,9 +34,27 @@
                   </div>
                 </div>
 				<div class="col-lg-12 flexdisplay">
+				  <div th:if="${billType == 'Subscription'}" class="col-lg-12">
+                    <label>Select Bills</label>
+					<select class="form-control multiple-select-pillbox" name="bills" id="bills" style="height: 48px !important;" multiple onChange="calculateSubscriptionBillAmount()">
+                      <option style="color: #333;" th:each="bill : ${bills}" 
+										th:text="${bill.endDate + '&nbsp&nbsp&nbsp₹' + bill.billAmount}" th:value="${bill.id}"
+										th:selected="${collection.bills?.contains(bill)}"></option>
+                    </select>
+				  </div>
+				  <div th:if="${billType == 'Other Due'}" class="col-lg-12">
+                    <label>Select Dues</label>
+					<select class="form-control multiple-select-pillbox" name="dues" id="dues" style="height: 48px !important;" multiple onChange="calculateOtherDueAmount()">
+                      <option style="color: #333;" th:each="due : ${dues}" 
+										th:text="${due.dueType + '&nbsp&nbsp&nbsp₹' + due.dueAmount}" th:value="${due.id}"
+										th:selected="${collection.dues?.contains(due)}"></option>
+                    </select>
+				  </div>
+				</div>
+				<div class="col-lg-12 flexdisplay">
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Amount</label>
-                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()">
+                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()" readonly required>
                   </div>
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Discount</label>
@@ -50,10 +68,10 @@
 				<div class="col-lg-12 flexdisplay">
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Received By</label>
-                    <select class="form-control" name="receivedBy" style="height: 48px;" >
+                    <select class="form-control" name="collectedBy" style="height: 48px;" required>
                       <option selected disabled="disabled" value="">Select Received By</option>
 							<option style="color: #333;" th:each="user : ${users}" 
-								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==collection?.receivedBy?.id}"></option>
+								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==collection?.collectedBy?.id}"></option>
 							<!--dropdown to include both admin and appUser--> 
                     </select>
                   </div>
@@ -71,7 +89,14 @@
         </div>
       </main>
       <div th:replace="fragments :: main_scripts"></div>
-      <script>
+      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	  <script>
+		$(document).ready(function() {
+			$('.multiple-select-pillbox').select2();
+		});
+	  </script>
+	  <script>
       $("form").submit(function() {
     	    $("#consumer").prop("disabled", false);
     	});

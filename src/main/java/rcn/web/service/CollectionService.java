@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import rcn.web.model.Collection;
 import rcn.web.repo.CollectionRepo;
+import rcn.web.specification.CollectionSearchSpecification;
+import rcn.web.util.SearchSpecificationBuilder;
 
 @Service
 public class CollectionService {
@@ -42,6 +44,13 @@ public class CollectionService {
 	
 	public Page<Collection> getPageByConsumer(Long consumerId, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForConsumer(consumerId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+	}
+
+	public Page<Collection> searchCollectionByDateAndKeyword(String keyword, 
+			String fromDate, String toDate, int pageNo, Integer pageSize) {
+		PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+		CollectionSearchSpecification spec = (CollectionSearchSpecification) SearchSpecificationBuilder.build(fromDate, toDate, keyword, Collection.class);
+		return collectionRepo.findAll(spec, pageRequest);
 	}
 	
 }

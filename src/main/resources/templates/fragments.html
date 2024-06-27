@@ -76,44 +76,38 @@
           </li>
           <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Package')" -->
             <a class="app-menu__product" href="#"
-              data-toggle="treeview"><i class="app-menu__icon fa fa-file-text-o"></i><span
+              data-toggle="treeview"><i class="app-menu__icon fa fa-book"></i><span
               class="app-menu__label">Package Management</span><i
               class="treeview-indicator fa fa-angle-right"></i></a>
 			<ul class="treeview-menu">
               <li><a class="treeview-product" th:href="@{/channelPackage}"><i
-                class="icon fa fa-file-text"></i>Package</a></li>
+                class="icon fa fa-tag"></i>Package</a></li>
               <li><a class="treeview-product" th:href="@{/bucket}"><i
-                class="icon fa fa-file-text"></i>Bucket </a></li>
+                class="icon fa fa-tag"></i>Bucket </a></li>
               <li><a class="treeview-product" th:href="@{/channel}"><i
-                class="icon fa fa-file-text"></i>Channel </a></li>
+                class="icon fa fa-tag"></i>Channel </a></li>
             </ul>
           </li>
-          <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Package')" -->
-            <a class="app-menu__product" href="#"
-              data-toggle="treeview"><i class="app-menu__icon fa fa-file-text-o"></i><span
-              class="app-menu__label">Billing</span><i
-              class="treeview-indicator fa fa-angle-right"></i></a>
-			<ul class="treeview-menu">
-              <li><a class="treeview-product" th:href="@{/bill}"><i
-                class="icon fa fa-file-text"></i>Consumer Bill</a></li>
-              <li><a class="treeview-product" th:href="@{/collection}"><i
-                class="icon fa fa-file-text"></i>Collection </a></li>
-              <li><a class="treeview-product" th:href="@{/settlement}"><i
-                class="icon fa fa-file-text"></i>Settlement </a></li>
-            </ul>
+          <li><a class="app-menu__product" th:href="@{/bill}"><i
+            class="app-menu__icon fa fa-file-text"></i><span
+            class="app-menu__label">Consumer Bill</span></a>
           </li>
           <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Accounts')" -->
             <a class="app-menu__product" href="#"
-              data-toggle="treeview"><i class="app-menu__icon fa fa-file-text-o"></i><span
+              data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span
               class="app-menu__label">Account Management</span><i
               class="treeview-indicator fa fa-angle-right"></i></a>
 			<ul class="treeview-menu">
+              <li><a class="treeview-product" th:href="@{/collection}"><i
+                class="icon fa fa-file-text-o"></i>Collection </a></li>
+              <li><a class="treeview-product" th:href="@{/settlement}"><i
+                class="icon fa fa-file-text-o"></i>Settlement </a></li>
               <li><a class="treeview-product" th:href="@{/income}"><i
-                class="icon fa fa-file-text"></i>Income</a></li>
+                class="icon fa fa-file-text-o"></i>Income</a></li>
               <li><a class="treeview-product" th:href="@{/expense}"><i
-                class="icon fa fa-file-text"></i>Expense </a></li>
+                class="icon fa fa-file-text-o"></i>Expense </a></li>
               <li><a class="treeview-product" th:href="@{/account-report}"><i
-                class="icon fa fa-file-text"></i>Account Report </a></li>
+                class="icon fa fa-file-text-o"></i>Account Report </a></li>
             </ul>
           </li>
           <li><a class="app-menu__product" th:href="@{/reminder}"><i

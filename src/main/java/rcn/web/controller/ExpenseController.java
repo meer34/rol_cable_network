@@ -80,7 +80,8 @@ public class ExpenseController {
 			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="keyword", required = false) String keyword,
 			@RequestParam(value="expenseTypeId", required = false) Long expenseTypeId,
-			@RequestParam(value="category", required = false) String expenseType) throws ParseException {
+			@RequestParam(value="category", required = false) String expenseType,
+			@RequestParam(value="appUserId", required = false) Long appUserId) throws ParseException {
 
 		Page<Expense> listPage = null;
 
@@ -88,6 +89,7 @@ public class ExpenseController {
 			System.out.println("Expense home page");
 			if(expenseTypeId != null) listPage = expenseService.getAllExpensesForType(expenseTypeId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(expenseType != null) listPage = expenseService.getAllExpensesForTypeName(expenseType, page.orElse(1) - 1, size.orElse(initialPageSize));
+			else if(appUserId != null) listPage = expenseService.getAllExpensesForAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = expenseService.getAllExpenses(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {

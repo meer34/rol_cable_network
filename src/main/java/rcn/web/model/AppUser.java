@@ -65,12 +65,21 @@ public class AppUser {
 		long amount= 0;
 		
 		for (Collection collection : collectionList) {
-			amount += collection.getAmount();
+			amount += collection.getNetAmount();
+		}
+		
+		for (Income income : incomeList) {
+			amount += income.getTotalAmount();
+		}
+		
+		for (Expense expense : expenseList) {
+			amount -= expense.getTotalAmount();
 		}
 		
 		for (Settlement settlement : settlementList) {
 			amount -= settlement.getAmount();
 		}
+		
 		return amount;
 	}
 

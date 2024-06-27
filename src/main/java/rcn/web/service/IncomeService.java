@@ -37,6 +37,10 @@ public class IncomeService {
 	public Page<Income> getAllIncomesForTypeName(String incomeType, Integer pageNo, Integer pageSize) {
 		return incomeRepo.findAllForTypeName(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()), incomeType);
 	}
+	
+	public Page<Income> getAllIncomesForAppUser(Long appUserId, Integer pageNo, Integer pageSize) {
+		return incomeRepo.findAllForAppUser(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()), appUserId);
+	}
 
 	public void deleteIncomeById(Long id) {
 		incomeRepo.deleteById(id);

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.AppUser;
-import rcn.web.model.Collection;
 import rcn.web.model.Settlement;
 import rcn.web.service.AppUserService;
 import rcn.web.service.SettlementService;
@@ -135,6 +134,22 @@ public class SettlementController {
 		settlementService.deleteById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Settlement with id " + id + " deleted successfully!");
 		return "redirect:/settlement";
+	}
+	
+	@RequestMapping(value = "/user",
+			method = RequestMethod.GET)
+	public String userSettlemets(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam(value="id", required = false) String id) throws Exception{
+
+		System.out.println("Settlement user page");
+
+		model.addAttribute("appUserList", 
+				appUserService.getAllAppUsers().stream()
+				.filter(appUser -> "APP_USER".equals(appUser.getUserType()))
+				.collect(Collectors.toList()));
+
+		return "app/settlement-user";
+
 	}
 
 }

@@ -93,7 +93,8 @@ public class IncomeController {
 			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="keyword", required = false) String keyword,
 			@RequestParam(value="incomeTypeId", required = false) Long incomeTypeId,
-			@RequestParam(value="category", required = false) String incomeType) throws ParseException {
+			@RequestParam(value="category", required = false) String incomeType,
+			@RequestParam(value="appUserId", required = false) Long appUserId) throws ParseException {
 
 		Page<Income> listPage = null;
 
@@ -101,6 +102,7 @@ public class IncomeController {
 			System.out.println("Income home page");
 			if(incomeTypeId != null) listPage = incomeService.getAllIncomesForTypeId(incomeTypeId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(incomeType != null) listPage = incomeService.getAllIncomesForTypeName(incomeType, page.orElse(1) - 1, size.orElse(initialPageSize));
+			else if(appUserId != null) listPage = incomeService.getAllIncomesForAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = incomeService.getAllIncomes(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {

@@ -15,5 +15,8 @@ public interface ExpenseRepo extends JpaRepository<Expense, Long>, JpaSpecificat
 	
 	@Query("FROM Expense expense WHERE expense.expenseType = (FROM ExpenseType expenseType WHERE expenseType.name = :expenseType)")
 	Page<Expense> findAllForTypeName(Pageable pageable, String expenseType);
+	
+	@Query("FROM Expense expense WHERE expense.spentBy = (FROM AppUser appUser WHERE appUser.id = :appUserId)")
+	Page<Expense> findAllForAppUser(Pageable pageable, Long appUserId);
 
 }

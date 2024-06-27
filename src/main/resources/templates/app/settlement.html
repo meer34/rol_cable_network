@@ -10,6 +10,7 @@
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
               <input type="button" class="submit action-button" value="Add New Settlement" th:attr="onclick=|location.href='@{/settlement/add}'|" >
+              <input type="button" class="submit action-button" value="User Settlements" th:attr="onclick=|location.href='@{/settlement/user}'|" >
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">

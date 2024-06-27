@@ -15,5 +15,8 @@ public interface IncomeRepo extends JpaRepository<Income, Long>, JpaSpecificatio
 	
 	@Query("FROM Income income WHERE income.incomeType = (FROM IncomeType incomeType WHERE incomeType.name = :incomeType)")
 	Page<Income> findAllForTypeName(Pageable pageable, String incomeType);
+	
+	@Query("FROM Income income WHERE income.receivedBy = (FROM AppUser appUser WHERE appUser.id = :appUserId)")
+	Page<Income> findAllForAppUser(Pageable pageable, Long appUserId);
 
 }

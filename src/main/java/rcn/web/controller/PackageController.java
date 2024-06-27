@@ -57,7 +57,7 @@ public class PackageController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		return "app/package";
+		return "app/package-home";
 
 	}
 
@@ -81,7 +81,7 @@ public class PackageController {
 	public String view(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got view request for connection id " + id);
+		System.out.println("Got view request for package id " + id);
 		model.addAttribute("channelPackage", subscriptionService.getPackageById(Long.parseLong(id)));
 		return "app/package-view";
 	}
@@ -91,7 +91,7 @@ public class PackageController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got edit request for connection id " + id);
+		System.out.println("Got edit request for package id " + id);
 		model.addAttribute("channelPackage", subscriptionService.getPackageById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit Package");
 		return "app/package-create";
@@ -102,11 +102,11 @@ public class PackageController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for connection id " + id);
+		System.out.println("Got delete request for package id " + id);
 
 		subscriptionService.deletePackageById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Package with id " + id + " deleted successfully!");
-		return "redirect:/package";
+		return "redirect:/channelPackage";
 	}
 
 }

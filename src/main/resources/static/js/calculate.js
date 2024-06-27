@@ -83,7 +83,7 @@ function calculateGstPrice(){
 	let basePrice = Number(document.getElementById("basePrice").value);
 	let gstNonGst = document.getElementById("gstNonGst").value;
 	if(gstNonGst == 'GST') {
-		document.getElementById("price").value = basePrice*1.18;
+		document.getElementById("price").value = (basePrice*1.18).toFixed(2);
 	} else {
 		document.getElementById("price").value = basePrice;
 	}

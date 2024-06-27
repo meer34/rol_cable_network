@@ -37,6 +37,10 @@ public class ExpenseService {
 	public Page<Expense> getAllExpensesForTypeName(String expenseType, Integer pageNo, Integer pageSize) {
 		return expenseRepo.findAllForTypeName(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()), expenseType);
 	}
+	
+	public Page<Expense> getAllExpensesForAppUser(Long appUserId, Integer pageNo, Integer pageSize) {
+		return expenseRepo.findAllForAppUser(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()), appUserId);
+	}
 
 	public void deleteExpenseById(Long id) {
 		expenseRepo.deleteById(id);

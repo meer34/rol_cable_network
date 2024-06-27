@@ -30,7 +30,9 @@
                   </div>
 				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Date</label>
-                    <input type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}">
+                    <input type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}" required sec:authorize="hasAuthority('ADMIN')">
+                    <input th:if="${collection.id}" type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}" required sec:authorize="!hasAuthority('ADMIN')">
+                    <input th:if="${collection.id==null}" type="date" class="form-control" name="date" id="defaultDate" readonly required sec:authorize="!hasAuthority('ADMIN')">
                   </div>
                 </div>
 				<div class="col-lg-12 flexdisplay">

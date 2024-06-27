@@ -196,3 +196,11 @@ function setStateChangeValue(){
 	document.getElementById("specificDayRenew").value = document.getElementById("js_datePickerToggle").value;
 }
 
+function toDateInputValue(dateObject){
+	const local = new Date(dateObject);
+	local.setMinutes(dateObject.getMinutes() - dateObject.getTimezoneOffset());
+	return local.toJSON().slice(0,10);
+}
+$(document).ready( function() {
+	document.getElementById("defaultDate").valueAsDate = new Date();
+});

@@ -14,7 +14,7 @@
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 
-                <form class="dashboardicon" th:action="@{/collection}" method="get">
+                <form th:if="${!searchDisabled}" class="dashboardicon" th:action="@{/collection}" method="get">
                 	<div th:replace="fragments :: search_bar"></div>
                 </form>
                 

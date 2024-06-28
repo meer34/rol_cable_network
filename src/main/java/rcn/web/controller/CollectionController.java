@@ -45,15 +45,30 @@ public class CollectionController {
 			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="keyword", required = false) String keyword,
 			@RequestParam(value="consumerId", required = false) Long consumerId,
-			@RequestParam(value="appUserId", required = false) Long appUserId) {
+			@RequestParam(value="appUserId", required = false) Long appUserId,
+			@RequestParam(value="appUserName", required = false) String appUserName) {
 
 		Page<Collection> listPage = null;
+		
+		model.addAttribute("searchDisabled", false);
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Bucket home page");
-			if(consumerId == null && appUserId == null) listPage = collectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
-			else if(consumerId != null && appUserId==null) listPage = collectionService.getPageByConsumer(consumerId, page.orElse(1) - 1, size.orElse(initialPageSize));
-			else if(appUserId != null && consumerId==null) listPage = collectionService.getPageByAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
+			System.out.println("Collection home page");
+			if(consumerId == null && appUserId == null && appUserName == null) {
+				listPage = collectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
+			}
+			else if(consumerId != null && appUserId==null && appUserName==null) {
+				listPage = collectionService.getPageByConsumer(consumerId, page.orElse(1) - 1, size.orElse(initialPageSize));
+				model.addAttribute("searchDisabled", true);
+			}
+			else if(appUserId != null && consumerId==null && appUserName==null) {
+				listPage = collectionService.getPageByAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
+				model.addAttribute("searchDisabled", true);
+			}
+			else if(appUserName != null && consumerId==null && appUserId==null) {
+				listPage = collectionService.getPageByAppUserName(appUserName, page.orElse(1) - 1, size.orElse(initialPageSize));
+				model.addAttribute("searchDisabled", true);
+			}
 
 		} else {
 			System.out.println("Searching Collection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);

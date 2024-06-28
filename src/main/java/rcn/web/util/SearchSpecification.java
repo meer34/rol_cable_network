@@ -44,11 +44,19 @@ public abstract class SearchSpecification<T extends Object> {
 	            	tempPredicate = builder.equal(root.get(criteria.getKey()), criteria.getValue());
 	            }
 	        }
-			if(finalPredicate == null) finalPredicate = tempPredicate;
-			else if(criteria.isOr()) finalPredicate = builder.or(finalPredicate, tempPredicate);
-			else finalPredicate = builder.and(finalPredicate, tempPredicate);
-			
-		}
+	        else if (criteria.getOperation().equalsIgnoreCase("+")) {
+	        	if (root.join(criteria.getJoinTable()).<String>get(criteria.getKey().toString()).getJavaType() == String.class) {
+	        		tempPredicate = builder.like(root.join(criteria.getJoinTable()).<String>get(criteria.getKey().toString()), "%" + criteria.getValue() + "%");
+	        	}
+	        	else {
+	        		tempPredicate = builder.equal(root.join(criteria.getJoinTable()).get(criteria.getKey()), criteria.getValue());
+	        	}
+	        }
+	        	if(finalPredicate == null) finalPredicate = tempPredicate;
+	        	else if(criteria.isOr()) finalPredicate = builder.or(finalPredicate, tempPredicate);
+	        	else finalPredicate = builder.and(finalPredicate, tempPredicate);
+
+	        }
         
         return finalPredicate;
     }

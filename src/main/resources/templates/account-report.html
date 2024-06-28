@@ -6,7 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
-                   <div class="row">
+      <div class="row">
         <div class="col-md-12">
           <div class="tile">
             <h3 class="tile-title">View Account Report</h3>
@@ -14,6 +14,7 @@
 				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
 					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
 					<tr>
+						<th class="table_heading">Total Collection</th>
 						<th class="table_heading">Total Income</th>
 						<th class="table_heading">Total Expense</th>
 						<th class="table_heading">Profit</th>
@@ -22,10 +23,11 @@
 					</thead>
 					<tbody>
 						<tr style="background-color:#FFF" >
+							<td th:text="${totalCollection}"/>
 							<td th:text="${totalIncome}"/>
 							<td th:text="${totalExpense}"/>
-							<td th:text="${totalIncome - totalExpense}"/>
-							<td th:if="${totalExpense != 0}" th:text="${100*(totalIncome - totalExpense)/totalExpense}"/>
+							<td th:text="${totalCollection + totalIncome - totalExpense}"/>
+							<td th:if="${totalExpense != 0}" th:text="${100*(totalCollection + totalIncome - totalExpense)/totalExpense}"/>
 							<td th:if="${totalExpense == 0}" >-</td>
 						</tr>
 					</tbody>
@@ -49,6 +51,37 @@
 				<input type="button" name="cancel" class="previous action-button-previous" value="Cancel">
 				<input type="submit" name="submit" class="submit action-button" value="Search">
 			</form>
+			<div class="table-responsive table_size" style="margin-top: 12px;">          
+				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
+					<tr>
+						<th class="table_heading">Collection By</th>
+						<th class="table_heading">Total Collection</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="collectionReport : ${collectionReportList}" >
+							<td th:text="${collectionReport.category}" />
+							<td th:text="${collectionReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/collection?appUserName=${collectionReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#FFF" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(collectionReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/collection}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 			<div class="table-responsive table_size" style="margin-top: 12px;">          
 				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
 					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">

@@ -49,6 +49,10 @@ public class CollectionService {
 	public Page<Collection> getPageByAppUser(Long appUserId, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForAppUser(appUserId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
+	
+	public Page<Collection> getPageByAppUserName(String appUserName, Integer pageNo, Integer pageSize) {
+		return collectionRepo.findAllForAppUserName(appUserName, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+	}
 
 	public Page<Collection> searchCollectionByDateAndKeyword(String keyword, 
 			String fromDate, String toDate, int pageNo, Integer pageSize) {

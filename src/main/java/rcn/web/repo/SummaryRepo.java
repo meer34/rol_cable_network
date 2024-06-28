@@ -30,8 +30,22 @@ public interface SummaryRepo extends JpaRepository<Income, Long>{
 	@Query("SELECT COALESCE(SUM(income.totalAmount), 0) FROM Income income")
 	Long findTotalIncome();
 	
+	@Query("SELECT COALESCE(SUM(collection.netAmount), 0) FROM Collection collection")
+	Long findTotalCollection();
+	
 	@Query("SELECT COALESCE(SUM(expense.totalAmount), 0) FROM Expense expense")
 	Long findTotalExpense();
+	
+	@Query("SELECT appUser.name AS category, COALESCE(SUM(collection.netAmount), 0) AS totalAmount "
+			+ "FROM AppUser appUser LEFT JOIN Collection collection ON appUser.id = collection.collectedBy "
+			+ "GROUP BY appUser.name")
+	List<AccountReport> findCollectionReport();
+	
+	@Query("SELECT appUser.name AS category, COALESCE(SUM(collection.netAmount), 0) AS totalAmount "
+			+ "FROM AppUser appUser LEFT JOIN Collection collection ON appUser.id = collection.collectedBy "
+			+ "WHERE appUser.name LIKE %:appUserName% AND collection.date >= :fromDate "
+			+ "AND collection.date <= :toDate GROUP BY appUser.name")
+	List<AccountReport> findCollectionReport(Date fromDate, Date toDate, String appUserName);
 	
 	@Query("SELECT type.name AS category, COALESCE(SUM(income.totalAmount), 0) AS totalAmount "
 			+ "FROM IncomeType type LEFT JOIN Income income ON type.id = income.incomeType GROUP BY type.name")

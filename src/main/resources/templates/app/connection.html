@@ -42,7 +42,7 @@
 						<div class="modal-body">
 							<select name="dateRange" id="dateRange" dateRange='' style="height: 25px;">
 								<option value="Today" id="todayRenew">Today</option>
-								<option type="date" value="Specific date" id="specificDayRenew">
+								<option type="date" value="Specific date" id="specificDayRenew" sec:authorize="hasAuthority('ADMIN')">
 									Specific Date
 									<input type="date" id="js_datePickerToggle" class="displayNone" style="height: 25px;">
 								</option>

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Area;
-import rcn.web.model.Connection;
 import rcn.web.model.Consumer;
 import rcn.web.repo.AreaRepo;
 import rcn.web.service.ConnectionService;

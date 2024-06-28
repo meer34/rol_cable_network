@@ -20,8 +20,21 @@ public class SearchSpecificationBuilder {
 
 			if(keyword != null && !keyword.equals("")) {
 				for (Field field : classObj.getDeclaredFields()) {
-					if(field.getGenericType().getTypeName().equals("java.lang.String")) {
+					String typeName = field.getGenericType().getTypeName();
+					if(typeName.equals("java.lang.String")) {
 						listOfCriteria.add(new SearchCriteria(field.getName(), ":", keyword, true));
+
+					} else if(typeName.contains("rcn.web.model")){
+						String joinTableName = typeName.substring(typeName.lastIndexOf(".")+1);
+						//Remove > from list fields
+						if(!typeName.startsWith("rcn.web.model")) {
+							joinTableName = joinTableName.substring(0, joinTableName.length() - 1);
+						}
+						for (Field subField : Class.forName("rcn.web.model." + joinTableName).getDeclaredFields()) {
+							if(subField.getGenericType().getTypeName().equals("java.lang.String")) {
+								listOfCriteria.add(new SearchCriteria(subField.getName(), "+", keyword, field.getName()));
+							}
+						}
 					};
 					//java.lang.Integer, java.lang.Double, int, long, double
 				}

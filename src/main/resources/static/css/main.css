@@ -821,8 +821,6 @@ body.stop-scrolling {
 
 .app-content {
   margin-top: 62px;
-  margin-left: 20% !important;
-  width: 78%;
 }
 .app-content2 {
   margin-top: 200px;
@@ -837,7 +835,8 @@ body.stop-scrolling {
 }
 @media (min-width: 768px) {
   .app-content, .app-content2, .app-content3  {
-    margin-left: 230px;
+    margin-left: 265px;
+    margin-right: 10px;
   }
 }
 
@@ -1102,7 +1101,7 @@ li{
     bottom: 0;
     left: 0;
     padding-top: 70px;
-    width: 260px;
+    width: 240px;
     background: linear-gradient(to bottom right, #1D2951 50%,#0b89af 100%);
     overflow: auto;
     z-index: 1000;
@@ -1293,7 +1292,8 @@ li{
     height: 30px;
   }
   .sidebar-mini.sidenav-toggled .app-content, .app-content2, .app-content3 {
-    margin-left: 50px;
+    margin-left: 75px;
+    margin-right: 8px;
   }
   .sidebar-mini.sidenav-toggled .app-sidebar {
     left: 0;
@@ -1797,7 +1797,7 @@ margin-top:10px;
   padding: 4px;
   margin-top: 20px;
   margin-bottom: 0;
-  margin-right: 16%;
+  margin-right: 4%;
 }
 .order-style {
   text-align: center;

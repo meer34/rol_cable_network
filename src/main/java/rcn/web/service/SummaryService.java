@@ -37,12 +37,32 @@ public class SummaryService {
 //		
 //	}
 	
+	public Long getTotalCollection() {
+		return summaryRepo.findTotalCollection();
+	}
+	
 	public Long getTotalIncome() {
 		return summaryRepo.findTotalIncome();
 	}
 	
 	public Long getTotalExpense() {
 		return summaryRepo.findTotalExpense();
+	}
+	
+	public List<AccountReport> getCollectionReport() {
+		return summaryRepo.findCollectionReport();
+	}
+	
+	public List<AccountReport> getCollectionReport(String fromDate, String toDate, String category) throws ParseException {
+		Date fromDateConverted = null;
+		Date toDateConverted = null;
+		
+		if(fromDate == null || "".equals(fromDate)) fromDateConverted = new Date(-50000000000000L);
+		else fromDateConverted = new SimpleDateFormat("yyyy-MM-dd").parse(fromDate);
+		
+		if(toDate == null || "".equals(toDate)) toDateConverted = new Date(50000000000000L);
+		else toDateConverted = new SimpleDateFormat("yyyy-MM-dd").parse(toDate);
+		return summaryRepo.findCollectionReport(fromDateConverted, toDateConverted, category);
 	}
 	
 	public List<AccountReport> getIncomeReport() {

@@ -178,7 +178,7 @@ public class BillController {
 
 
 //	@Scheduled(cron = "0 30 9 * * *")
-//	@Scheduled(fixedRate = 30000)
+	@Scheduled(fixedRate = 30000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
 		System.out.println("Reminder scheduler: Job running at - " + strDate);

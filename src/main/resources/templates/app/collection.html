@@ -17,6 +17,9 @@
                 <form th:if="${!searchDisabled}" class="dashboardicon" th:action="@{/collection}" method="get">
                 	<div th:replace="fragments :: search_bar"></div>
                 </form>
+                <form th:if="${searchDisabled}" class="dashboardicon" th:action="@{/collection}" method="get">
+                	<div th:replace="fragments :: keyup_search_bar"></div>
+                </form>
                 
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/}" method="get">
@@ -55,7 +58,9 @@
                     </table>
                   </form>
                   
-                  <div th:replace="fragments :: pagination"></div>
+                  <th:block th:if="${!searchDisabled}">
+                  	<div th:replace="fragments :: pagination"></div>
+                  </th:block>
                   
                 </div>
               </div>

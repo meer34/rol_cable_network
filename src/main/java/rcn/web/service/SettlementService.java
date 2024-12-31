@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import rcn.web.model.Settlement;
 import rcn.web.repo.SettlementRepo;
+import rcn.web.specification.SettlementSearchSpecification;
+import rcn.web.util.SearchSpecificationBuilder;
 
 @Service
 public class SettlementService {
@@ -42,6 +44,13 @@ public class SettlementService {
 	
 	public Page<Settlement> getPageByAppUser(Long appUserId, Integer pageNo, Integer pageSize) {
 		return settlementRepo.findAllForAppUser(appUserId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+	}
+	
+	public Page<Settlement> searchCollectionByDateAndKeyword(String keyword, 
+			String fromDate, String toDate, int pageNo, Integer pageSize) {
+		PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+		SettlementSearchSpecification spec = (SettlementSearchSpecification) SearchSpecificationBuilder.build(fromDate, toDate, keyword, Settlement.class);
+		return settlementRepo.findAll(spec, pageRequest);
 	}
 	
 }

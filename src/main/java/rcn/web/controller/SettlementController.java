@@ -33,21 +33,32 @@ public class SettlementController {
 	public String showBasePage(Model model,
 			@RequestParam("page") Optional<Integer> page,
 			@RequestParam("size") Optional<Integer> size,
+			@RequestParam(value="fromDate", required = false) String fromDate,
+			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="keyword", required = false) String keyword,
 			@RequestParam(value="appUserId", required = false) Long appUserId) {
 
 		Page<Settlement> listPage = null;
+		
+		model.addAttribute("searchDisabled", false);
 
-		if(keyword == null) {
+		if(keyword == null && fromDate == null && toDate == null) {
 			System.out.println("Settlement home page");
-			if(appUserId == null) listPage = settlementService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
-			else listPage = settlementService.getPageByAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
+			if(appUserId == null) {
+				listPage = settlementService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
+			}
+			else{
+				listPage = settlementService.getPageByAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
+				model.addAttribute("searchDisabled", true);
+			}
 
 		} else {
-			System.out.println("Searching Settlements for keyword:" + keyword);
-			//TODO
+			System.out.println("Searching Collection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			listPage = settlementService.searchCollectionByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
+			
+			model.addAttribute("fromDate", fromDate);
+			model.addAttribute("toDate", toDate);
 			model.addAttribute("keyword", keyword);
-
 		}
 
 		model.addAttribute("listPage", listPage);

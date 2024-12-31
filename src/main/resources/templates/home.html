@@ -10,7 +10,7 @@
 			<div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
 			<div th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger" role="alert"></div>
 			<div class="col-lg-12">
-				<div class="tile">
+				<div class="tile" style="border: 1px solid black !important;">
 					<div class="dashboardicon2">
 						<a th:href="@{/consumer}"><input type="button" name="consumer" class="submit action-button" value="Consumer"></a>
 						<a th:href="@{/connection}"><input type="button" name="consumer" class="submit action-button" value="Connection"></a>
@@ -30,10 +30,9 @@
       <div class="col-lg-12">
 		<div class="tile">
                 <h3 class="tile-title">User Settlement Status</h3>
-                
-                <div class="table-responsive table_size" style="margin-top: 50px;">
+                <div class="table-responsive table_size" style="margin-top: 20px; border: 1px solid black !important;">
                   <form th:action="@{/}" method="get">
-                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;" id="printTable" >
                       <thead class="thead-inverse"
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
@@ -69,30 +68,7 @@
 		<div class="row">
         <div class="col-md-12">
           <div class="tile">
-            <h3 class="tile-title">View Account Report</h3>
-			<div class="table-responsive table_size" style="margin-top: 12px;">          
-				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
-					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
-					<tr>
-						<th class="table_heading">Total Collection</th>
-						<th class="table_heading">Total Income</th>
-						<th class="table_heading">Total Expense</th>
-						<th class="table_heading">Profit</th>
-						<th class="table_heading">Profit (%)</th>
-					</tr>
-					</thead>
-					<tbody>
-						<tr style="background-color:#FFF" >
-							<td th:text="${totalCollection}"/>
-							<td th:text="${totalIncome}"/>
-							<td th:text="${totalExpense}"/>
-							<td th:text="${totalCollection + totalIncome - totalExpense}"/>
-							<td th:if="${totalExpense != 0}" th:text="${100*(totalCollection + totalIncome - totalExpense)/totalExpense}"/>
-							<td th:if="${totalExpense == 0}" >-</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+            <h3 class="tile-title">Account Summary</h3>
 			<form class="dashboardicon" th:action="@{/home}" method="get" >
 				<div class="col-lg-12 flexdisplay">
 					<div class="col-lg-6 col-xs-12">
@@ -111,11 +87,11 @@
 				<input type="button" name="cancel" class="previous action-button-previous" value="Cancel">
 				<input type="submit" name="submit" class="submit action-button" value="Search">
 			</form>
-			<div class="table-responsive table_size" style="margin-top: 12px;">          
-				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+			<div class="table-responsive table_size" style="margin-top: 12px; border: 1px solid black !important;">          
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
 					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
 					<tr>
-						<th class="table_heading">Collection By</th>
+						<th class="table_heading">Collection By User</th>
 						<th class="table_heading">Total Collection</th>
 						<th class="table_heading" style="width: 15%;">Action</th>
 					</tr>
@@ -130,8 +106,8 @@
 								</div>
 							</td>
 						</tr>
-						<tr style="background-color:#FFF" >
-							<td>All Category</td>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Users</td>
 							<td th:text="${#aggregates.sum(collectionReportList.![totalAmount])}" />
 							<td>
 								<div class="dashboardicon2" style="text-align: left;">
@@ -142,8 +118,8 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="table-responsive table_size" style="margin-top: 12px;">          
-				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+			<div class="table-responsive table_size" style="margin-top: 12px;border: 1px solid black !important;">          
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
 					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
 					<tr>
 						<th class="table_heading">Income Category</th>
@@ -161,7 +137,7 @@
 								</div>
 							</td>
 						</tr>
-						<tr style="background-color:#FFF" >
+						<tr style="background-color:#9ca4bf" >
 							<td>All Category</td>
 							<td th:text="${#aggregates.sum(incomeReportList.![totalAmount])}" />
 							<td>
@@ -173,8 +149,8 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="table-responsive table_size" style="margin-top: 12px;">          
-				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+			<div class="table-responsive table_size" style="margin-top: 12px;border: 1px solid black !important;">
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
 					<thead class="thead-inverse" style="background-color:#1D2951; color:#FFF;">
 					<tr>
 						<th class="table_heading">Expense Category</th>
@@ -192,7 +168,7 @@
 								</div>
 							</td>
 						</tr>
-						<tr style="background-color:#FFF" >
+						<tr style="background-color:#9ca4bf" >
 							<td>All Category</td>
 							<td th:text="${#aggregates.sum(expenseReportList.![totalAmount])}" />
 							<td>

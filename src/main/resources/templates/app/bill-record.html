@@ -42,7 +42,7 @@
      												th:with="billRecord=${listPage.content[i]}">
                           <td th:text="${billRecord.connection?.consumer?.fullName}" />
 						  <td th:text="${billRecord.connection?.connectionType}" />
-                          <td th:text="${billRecord.endDate}" />
+                          <td th:text="${billRecord.startDate}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.billAmount, 1, 2)}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.paidAmount, 1, 2)}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.billAmount - billRecord.paidAmount, 1, 2)}" />

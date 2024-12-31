@@ -9,15 +9,19 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Settlement" th:attr="onclick=|location.href='@{/settlement/add}'|" >
+              <input type="button" class="submit action-button" value="Add New Settlement" th:attr="onclick=|location.href='@{/settlement/add}'|" sec:authorize="hasAuthority('ADMIN')">
               <input type="button" class="submit action-button" value="User Settlements" th:attr="onclick=|location.href='@{/settlement/user}'|" >
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 
-                <form class="dashboardicon" th:action="@{/settlement}" method="get">
+                <form th:if="${!searchDisabled}" class="dashboardicon" th:action="@{/settlement}" method="get">
                 	<div th:replace="fragments :: search_bar"></div>
+                </form>
+                
+                <form th:if="${searchDisabled}" class="dashboardicon" th:action="@{/settlement}" method="get">
+                	<div th:replace="fragments :: keyup_search_bar"></div>
                 </form>
                 
                 <div class="table-responsive table_size" style="margin-top: 50px;">

@@ -39,31 +39,38 @@ public class DueController {
 		due = dueService.saveDue(due);
 		redirectAttributes.addFlashAttribute("successMessage", "Due amount of " + due.getDueAmount() 
 		+ " saved successfully for consumer: " + due.getConsumer().getFullName());
-		return "redirect:/consumer";
+		redirectAttributes.addAttribute("consumerId", due.getConsumer().getId());
+		return "redirect:/bill/getDueRecordsForConsumer";
 
 	}
 
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
 	public String edit(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam(value="id", required = false) String id) throws Exception{
+			@RequestParam(value="dueId", required = false) String dueId) throws Exception{
 
-		System.out.println("Got edit request for connection id " + id);
-//		model.addAttribute("channel", subscriptionService.getChannelById(Long.parseLong(id)));
-		model.addAttribute("header", "Edit Channel");
-		return "app/channel-create";
+		System.out.println("Got edit request for dueId " + dueId);
+		Due due = dueService.getDueById(Long.parseLong(dueId));
+		model.addAttribute("due", due);
+		System.out.println("######" + due.toString());
+		model.addAttribute("consumerId", due.getConsumer().getId());
+		model.addAttribute("header", "Edit Due");
+		return "app/due-create";
 	}
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
 	public String delete(RedirectAttributes redirectAttributes, Model model,
-			@RequestParam("id") String id) throws Exception{
+			@RequestParam("dueId") String dueId) throws Exception{
 
-		System.out.println("Got delete request for due for consumerId: " + id);
-
-//		subscriptionService.deleteChannelById(Long.parseLong(id));
-		redirectAttributes.addFlashAttribute("successMessage", "Channel with id " + id + " deleted successfully!");
-		return "redirect:/channel";
+		System.out.println("Got delete request for dueId: " + dueId);
+		Long consumerId = dueService.getDueById(Long.parseLong(dueId))
+				.getConsumer()
+				.getId();
+		dueService.deleteDueById(Long.parseLong(dueId));
+		redirectAttributes.addFlashAttribute("successMessage", "Due with id " + dueId + " deleted successfully!");
+		redirectAttributes.addAttribute("consumerId", consumerId);
+		return "redirect:/bill/getDueRecordsForConsumer";
 	}
 
 }

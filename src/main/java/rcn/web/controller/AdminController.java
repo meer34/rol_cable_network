@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.security.User;
 import rcn.security.UserRepo;
-import rcn.web.model.Admin;
 import rcn.web.model.AppUser;
 import rcn.web.service.AppUserService;
 
@@ -36,7 +35,7 @@ public class AdminController {
 
 	@GetMapping("/addAdminPage")
 	public String showAddAdminPage(Model model) {
-		model.addAttribute("admin", new Admin());
+		model.addAttribute("admin", new AppUser());
 		model.addAttribute("header", "Create Admin");
 		return "admin-create";
 	}

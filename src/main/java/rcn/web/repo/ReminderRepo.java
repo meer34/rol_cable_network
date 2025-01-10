@@ -10,7 +10,7 @@ import rcn.web.model.Reminder;
 
 public interface ReminderRepo extends JpaRepository<Reminder, Long>, JpaSpecificationExecutor<Reminder>{
 
-	@Query("FROM Reminder reminder WHERE reminder.status <> 'Sent' AND reminder.date = CURRENT_DATE")
+	@Query("FROM Reminder reminder WHERE (reminder.status <> 'Sent' OR reminder.status is null) AND reminder.date = CURRENT_DATE")
 	List<Reminder> findAllPendingRemindersForToday();
 
 }

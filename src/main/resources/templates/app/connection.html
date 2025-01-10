@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Connection" th:attr="onclick=|location.href='@{/connection/add}'|" >
+              <input type="button" class="submit action-button" value="Add New Connection" th:attr="onclick=|location.href='@{/connection/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_CONNECTION')">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div th:if="${errorMessage}" th:text="${errorMessage}"
@@ -28,7 +28,7 @@
                       <input type="submit" th:formaction="@{/connection/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" class="submit action-button" value="Print" onclick="printData()">
                       <input type="submit" th:formaction="@{/connection/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
-					  <input type="button" id="renewButton" class="submit action-button" value="Renew">
+					  <input type="button" id="renewButton" class="submit action-button" value="Renew" sec:authorize="hasAnyAuthority('ADMIN','RENEW_CONNECTION')">
                     </div>
                     
                   <div class="modal fade" id="fileUploadModal" role="dialog">

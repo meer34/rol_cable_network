@@ -25,7 +25,7 @@
                     <select class="form-control" name="paymentMode" style="height: 48px;" >
                       <option selected disabled="disabled" value="">Select Type</option>
                       <option th:selected="${collection?.paymentMode=='Cash'}">Cash</option>
-                      <option th:selected="${collection?.paymentMode=='Deposit'}">Deposit</option>
+                      <option th:selected="${collection?.paymentMode=='Online'}">Online</option>
                     </select>
                   </div>
 				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -48,7 +48,7 @@
                     <label>Select Dues</label>
 					<select class="form-control multiple-select-pillbox" name="dues" id="dues" style="height: 48px !important;" multiple onChange="calculateOtherDueAmount()">
                       <option style="color: #333;" th:each="due : ${dues}" 
-										th:text="${due.dueType + '&nbsp&nbsp&nbsp₹' + due.dueAmount}" th:value="${due.id}"
+										th:text="${due.dueType + '&nbsp&nbsp&nbsp₹' + (due.dueAmount-due.paidAmount)}" th:value="${due.id}"
 										th:selected="${collection.dues?.contains(due)}"></option>
                     </select>
 				  </div>
@@ -56,7 +56,7 @@
 				<div class="col-lg-12 flexdisplay">
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Amount</label>
-                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()" readonly required>
+                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()" required>
                   </div>
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Discount</label>

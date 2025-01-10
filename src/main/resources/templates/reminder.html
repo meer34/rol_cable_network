@@ -9,9 +9,10 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" name="addCustomer" class="submit action-button" value="Add New Reminder" th:attr="onclick=|location.href='@{/addNewReminderPage}'|" >
+              <input type="button" name="addCustomer" class="submit action-button" value="Add New Reminder" th:attr="onclick=|location.href='@{/addNewReminderPage}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_REMINDER')">
             </div>
             <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
+            <div class="alert alert-danger"><h4>Message from Mir: This feature won't work as of now since not having SMS API subscription!</h4></div>
             <div class="tile">
               <h3 class="tile-title">Reminder List</h3>
               

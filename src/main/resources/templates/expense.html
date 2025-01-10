@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" name="nOrder" class="submit action-button" value="Add New Expense" th:attr="onclick=|location.href='@{/addExpensePage}'|" >
+              <input type="button" name="nOrder" class="submit action-button" value="Add New Expense" th:attr="onclick=|location.href='@{/addExpensePage}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_EXPENSE')">
               <input type="button" class="submit action-button" value="Expense Types" th:attr="onclick=|location.href='@{/expense-type}'|" >
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>

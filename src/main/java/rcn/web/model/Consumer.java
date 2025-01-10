@@ -32,6 +32,7 @@ public class Consumer {
 	private double securityDeposit;
 	private String remarks;
 	private String fullAddress;
+	private String stbAccountNo;
 	@Transient
 	private double subscriptionBill;
 	@Transient
@@ -56,7 +57,8 @@ public class Consumer {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {
 			for (Bill bill : connection.getBills()) {
-				subscriptionBill += bill.getBillAmount() - bill.getPaidAmount();
+//				subscriptionBill += bill.getBillAmount() - bill.getPaidAmount();
+				subscriptionBill += bill.getBillAmount();
 			}
 		}
 	}
@@ -64,7 +66,8 @@ public class Consumer {
 	public void calculateTotalOtherDueBill() {
 		otherDueBill = 0;
 		for (Due due : dues) {
-			otherDueBill += due.getDueAmount() - due.getPaidAmount();
+//			otherDueBill += due.getDueAmount() - due.getPaidAmount();
+			otherDueBill += due.getDueAmount();
 		}
 	}
 	

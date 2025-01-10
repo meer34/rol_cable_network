@@ -76,7 +76,7 @@ public class AppUtility {
 				.append("FTWSMS")
 				.append("&message=")
 				.append(message)
-				.append("&route=v3&numbers=")
+				.append("&route=dlt&numbers=")
 				.append(phone)
 				.append("&flash=")
 				.append("0")
@@ -96,7 +96,7 @@ public class AppUtility {
 
 		int responseCode = con.getResponseCode();
 
-		System.out.println("Received Response Code for Fast2SMS Server :: " + responseCode);
+		System.out.println("Received Response Code for Fast2SMS Server :: " + con.getResponseMessage());
 
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			return "Success";

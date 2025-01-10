@@ -27,8 +27,8 @@
                     <div class="dashboardicon2" style="text-align: left;" >
                       <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" name="action" class="submit action-button" value="Subscription Bill Records">
 					  <input type="submit" th:formaction="@{/bill/getDueRecordsForConsumer}" name="action" class="submit action-button" value="Due Records">
-					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due">
-					  <input type="submit" th:formaction="@{/collection/collectOtherDue}" name="action" class="submit action-button" value="Collect Other Due">
+					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
+					  <input type="submit" th:formaction="@{/collection/collectOtherDue}" name="action" class="submit action-button" value="Collect Other Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
@@ -54,7 +54,7 @@
 						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.totalPaid, 1, 2)}" />
-						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill + consumer.otherDueBill, 1, 2)}" />
+						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill + consumer.otherDueBill - consumer.totalPaid, 1, 2)}" />
                         </tr>
                       </tbody>
                     </table>

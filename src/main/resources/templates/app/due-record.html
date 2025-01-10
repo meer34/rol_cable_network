@@ -14,14 +14,17 @@
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
-                  <form th:action="@{/bill-record}" method="get">
+                  <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" >
+                      <input type="submit" th:formaction="@{/due/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
+                      <input type="submit" th:formaction="@{/due/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
+						  <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
 						  <th class="table_heading">Due Type</th>
 						  <th class="table_heading">Due Date</th>
@@ -32,6 +35,7 @@
                       </thead>
                       <tbody>
                         <tr style="background-color: #FFF" th:each="due : ${listPage.content}">
+                          <td class="noPrint" ><input type='radio' th:value="${due.id}" class="radioBtn" name='dueId'></td>
                           <td th:text="${due.consumer?.fullName}" />
 						  <td th:text="${due.dueType}" />
 						  <td th:text="${due.dateOfDueEntry}" />

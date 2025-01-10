@@ -8,7 +8,6 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SuppressWarnings("serial")
 public class MyUserDetails implements UserDetails {
@@ -32,8 +31,7 @@ public class MyUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		System.out.println("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPP ------------ " + new BCryptPasswordEncoder().encode("1234"));
-		return user.getPassword(); //user.getPin();
+		return user.getPassword();
 	}
 
 	@Override

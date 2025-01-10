@@ -119,7 +119,7 @@ public class ReminderController {
 
 	}
 	
-	@Scheduled(cron = "0 30 9 * * *")
+//	@Scheduled(cron = "0 30 9 * * *")
 //	@Scheduled(fixedRate = 5000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());

@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Bucket" th:attr="onclick=|location.href='@{/bucket/add}'|" >
+              <input type="button" class="submit action-button" value="Add New Bucket" th:attr="onclick=|location.href='@{/bucket/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_BUCKET')">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">

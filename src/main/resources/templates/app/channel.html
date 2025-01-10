@@ -9,7 +9,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Channel" th:attr="onclick=|location.href='@{/channel/add}'|" >
+              <input type="button" class="submit action-button" value="Add New Channel" th:attr="onclick=|location.href='@{/channel/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_CHANNEL')">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">

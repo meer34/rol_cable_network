@@ -170,14 +170,21 @@ public class CollectionController {
 		collection.setBillType("Other Due");
 		collection = collectionService.save(collection);
 		
-//		Consumer consumer = collection.getConsumer();
-//		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
-//		consumerService.save(consumer);
-		
 		Due tempDue = null;
+		Double amount = collection.getNetAmount();
 		for (Due due : collection.getDues()) {
 			tempDue = dueService.getDueById(due.getId());
-			tempDue.setPaidAmount(tempDue.getDueAmount());
+			
+			if(amount >= tempDue.getDueAmount()-tempDue.getPaidAmount()) {
+				tempDue.setPaidAmount(tempDue.getDueAmount());
+				amount = amount - tempDue.getPaidAmount();
+				
+			} else {
+				tempDue.setPaidAmount(tempDue.getPaidAmount() + amount);
+				dueService.saveDue(tempDue);
+				break;
+			}
+			
 			dueService.saveDue(tempDue);
 		}
 		

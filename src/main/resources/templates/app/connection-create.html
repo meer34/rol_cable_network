@@ -108,9 +108,13 @@
                     <label>Previous Due</label>
                     <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
                   </div>
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:if="${connection.id}">
                     <label>Advance Amount</label>
                     <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
+                    <label>Advance Amount</label>
+                    <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}">
                   </div>
                 </div>
 				

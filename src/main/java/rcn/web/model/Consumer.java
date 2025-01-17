@@ -57,7 +57,6 @@ public class Consumer {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {
 			for (Bill bill : connection.getBills()) {
-//				subscriptionBill += bill.getBillAmount() - bill.getPaidAmount();
 				subscriptionBill += bill.getBillAmount();
 			}
 		}
@@ -66,15 +65,30 @@ public class Consumer {
 	public void calculateTotalOtherDueBill() {
 		otherDueBill = 0;
 		for (Due due : dues) {
-//			otherDueBill += due.getDueAmount() - due.getPaidAmount();
 			otherDueBill += due.getDueAmount();
+		}
+	}
+	
+	public void calculateTotalSubscriptionPendingBill() {
+		subscriptionBill = 0;
+		for (Connection connection : connections) {
+			for (Bill bill : connection.getBills()) {
+				subscriptionBill += bill.getBillAmount() - bill.getPaidAmount();
+			}
+		}
+	}
+	
+	public void calculateTotalOtherDuePendingBill() {
+		otherDueBill = 0;
+		for (Due due : dues) {
+			otherDueBill += due.getDueAmount() - due.getPaidAmount();
 		}
 	}
 	
 	public void calculateTotalPaid() {
 		totalPaid= 0;
 		for (Collection collection : collections) {
-			totalPaid += collection.getAmount();
+			totalPaid += collection.getNetAmount();
 		}
 	}
 
@@ -105,7 +119,7 @@ public class Consumer {
 		for (Collection collection : collections) {
 			if((collection.getDate().after(yearStartDate) || collection.getDate().equals(yearStartDate))
 					& (collection.getDate().before(yearEndDate) || collection.getDate().equals(yearEndDate))) {
-				totalPaid += collection.getAmount();
+				totalPaid += collection.getNetAmount();
 			}
 		}
 	}

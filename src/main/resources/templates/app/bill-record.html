@@ -20,14 +20,17 @@
                     </div>
                   </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
-                  <form th:action="@{/bill-record}" method="get">
-                    <div class="dashboardicon2" style="text-align: left;" >
+                  <form th:action="@{/}" method="get">
+                    <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}">
+                      <input type="submit" th:formaction="@{/bill/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
+                      <input type="submit" th:formaction="@{/bill/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
+						  <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
 						  <th class="table_heading">Connection Type</th>
 						  <th class="table_heading">Due Date</th>
@@ -40,6 +43,7 @@
                         <!-- <tr style="background-color: #FFF" th:each="billRecord : ${listPage.content}"> -->
                         <tr style="background-color: #FFF" th:each="i : ${#numbers.sequence(listPage.content.size() - 1, 0, -1)}"
      												th:with="billRecord=${listPage.content[i]}">
+                          <td class="noPrint" ><input type='radio' th:value="${billRecord.id}" class="radioBtn" name='billId'></td>
                           <td th:text="${billRecord.connection?.consumer?.fullName}" />
 						  <td th:text="${billRecord.connection?.connectionType}" />
                           <td th:text="${billRecord.startDate}" />

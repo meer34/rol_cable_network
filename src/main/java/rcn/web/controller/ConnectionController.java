@@ -97,23 +97,30 @@ public class ConnectionController {
 		if(connection.getId() == null) {
 			connection.setState("Connected");
 			
-			Due connChargeDue = new Due();
-			connChargeDue.setDueType("Connection Charge");
-			connChargeDue.setDueAmount(connection.getConnectionCharge());
-			connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
-			connChargeDue.setRemarks("Auto entry for fresh connection");
-			connChargeDue.setConsumer(connection.getConsumer());
+			connection = connectionService.save(connection);
+			generateBill(connection);
 			
-			dueService.saveDue(connChargeDue);
+			if(connection.getConnectionCharge() > 0) {
+				Due connChargeDue = new Due();
+				connChargeDue.setDueType("Connection Charge");
+				connChargeDue.setDueAmount(connection.getConnectionCharge());
+				connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+				connChargeDue.setRemarks("Auto entry for fresh connection");
+				connChargeDue.setConsumer(connection.getConsumer());
+
+				dueService.saveDue(connChargeDue);
+			}
 			
-			Due prevDue = new Due();
-			prevDue.setDueType("Previous Due");
-			prevDue.setDueAmount(connection.getPreviousDue());
-			prevDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
-			prevDue.setRemarks("Auto entry for fresh connection");
-			prevDue.setConsumer(connection.getConsumer());
-			
-			dueService.saveDue(prevDue);
+			if(connection.getPreviousDue() > 0) {
+				Due prevDue = new Due();
+				prevDue.setDueType("Previous Due");
+				prevDue.setDueAmount(connection.getPreviousDue());
+				prevDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+				prevDue.setRemarks("Auto entry for fresh connection");
+				prevDue.setConsumer(connection.getConsumer());
+
+				dueService.saveDue(prevDue);
+			}
 			
 		} else {
 			Connection savedConn = connectionService.getById(connection.getId());
@@ -126,8 +133,7 @@ public class ConnectionController {
 				} else {
 					disconnectedDate = utility.formatStringToDate(stateChangeDate);
 				}
-				generateBillForDiconnectedConnection(connection, disconnectedDate);
-				connection.setState("Disconnected");
+				generateBillForPeriod(connection, connection.getSubscriptionAmount(), connection.getDateOfConnStart(), disconnectedDate);
 				connection.setDateOfConnExpiry(disconnectedDate);
 
 			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
@@ -143,31 +149,35 @@ public class ConnectionController {
 				c.add(Calendar.DATE, 30);
 
 				connection.setDateOfConnExpiry(c.getTime());
+				
+				generateBill(connection);
+			} else if(connection.getSubscriptionAmount() != savedConn.getSubscriptionAmount()){
+				generateBillForPeriod(connection, savedConn.getSubscriptionAmount(), connection.getDateOfConnStart(), utility.getTodaysDateWithoutTime());
+				generateBillForPeriod(connection, connection.getSubscriptionAmount(), utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
+//				deleteBillForPeriod
 			}
+			
+			connection = connectionService.save(connection);
 		}
 
-		connection = connectionService.save(connection);
-		
 		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/connection";
 
 	}
 
-	private void generateBillForDiconnectedConnection(Connection connection, Date disconnectedDate) {
+	private void generateBillForPeriod(Connection connection, double subscriptionAmount, Date billStartDate, Date billEndDate) {
 		System.out.println("Generating bill for disconnected connection id " + connection.getId());
 		
 		Bill bill = new Bill();
 		bill.setConnection(connection);
-		bill.setStartDate(connection.getDateOfConnStart());
-		bill.setEndDate(disconnectedDate);
-		bill.setBillAmount(connection.getSubscriptionAmount()
-				/utility.getDifferenceDays(connection.getDateOfConnStart(), disconnectedDate));
+		bill.setStartDate(billStartDate);
+		bill.setEndDate(billEndDate);
+		bill.setBillAmount(subscriptionAmount/utility.getDifferenceDays(billStartDate, billEndDate));
 		bill.setPaidAmount(0.0);
 		
 		billService.save(bill);
 		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
 									+ connection.getConsumer().getFullName());
-		billService.save(bill);
 	}
 
 	@RequestMapping(value = "/view",
@@ -241,6 +251,16 @@ public class ConnectionController {
 		connection.setDateOfConnStart( utility.formatStringToDate(date));
 		connection.setDateOfConnExpiry(utility.getOneMonthAheadDate(connection.getDateOfConnStart()));
 		
+		generateBill(connection);
+		
+		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " renewed successfully!");
+		return "redirect:/connection";
+
+	}
+	
+	private void generateBill(Connection connection) {
+		System.out.println("Generating bill for connection id " + connection.getId());
+		
 		Bill bill = new Bill();
 		bill.setConnection(connection);
 		bill.setStartDate(connection.getDateOfConnStart());
@@ -249,10 +269,8 @@ public class ConnectionController {
 		bill.setPaidAmount(0.0);
 		
 		billService.save(bill);
-		
-		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " renewed successfully!");
-		return "redirect:/connection";
-
+		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
+									+ connection.getConsumer().getFullName());
 	}
 
 }

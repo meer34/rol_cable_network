@@ -18,7 +18,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Bill;
 import rcn.web.model.Connection;
@@ -86,6 +88,46 @@ public class BillController {
 		return "app/bill";
 
 	}
+	
+	@RequestMapping(value = "/save",
+			method = RequestMethod.POST)
+	public String save(Model model, Bill bill, RedirectAttributes redirectAttributes) throws Exception{
+		bill = billService.save(bill);
+		redirectAttributes.addFlashAttribute("successMessage", "Bill amount of " + bill.getBillAmount() 
+		+ " saved successfully for consumer: " + bill.getConnection().getConsumer().getFullName());
+		redirectAttributes.addAttribute("consumerId", bill.getConnection().getConsumer().getId());
+		return "redirect:/bill/getSubscriptionBillRecordsForConsumer";
+
+	}
+	
+	@RequestMapping(value = "/edit",
+			method = RequestMethod.GET)
+	public String edit(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam(value="billId", required = false) String billId) throws Exception{
+
+		System.out.println("Got edit request for dueId " + billId);
+		Bill bill = billService.getById(Long.parseLong(billId));
+		model.addAttribute("bill", bill);
+		model.addAttribute("connectionId", bill.getConnection().getId());
+		model.addAttribute("header", "Edit Bill");
+		return "app/bill-edit";
+	}
+
+	@RequestMapping(value = "/delete",
+			method = RequestMethod.GET)
+	public String delete(RedirectAttributes redirectAttributes, Model model,
+			@RequestParam("billId") String billId) throws Exception{
+
+		System.out.println("Got delete request for billId: " + billId);
+		Long consumerId = billService.getById(Long.parseLong(billId))
+				.getConnection()
+				.getConsumer()
+				.getId();
+		billService.deleteById(Long.parseLong(billId));
+		redirectAttributes.addFlashAttribute("successMessage", "Bill with id " + billId + " deleted successfully!");
+		redirectAttributes.addAttribute("consumerId", consumerId);
+		return "redirect:/bill/getSubscriptionBillRecordsForConsumer";
+	}
 
 	@GetMapping("/getBillForConsumer")
 	public String getBillByConsumerId(Model model,
@@ -128,9 +170,7 @@ public class BillController {
 		Consumer consumer = consumerService.getById(consumerId);
 
 		for (Connection connection : consumer.getConnections()) {
-			for (Bill bill : connection.getBills()) {
-				listOfBills.add(bill);
-			}
+			listOfBills.addAll(connection.getBills());
 		}
 
 		Page<Bill> listPage = new PageImpl<>(listOfBills);
@@ -154,14 +194,8 @@ public class BillController {
 
 		System.out.println("Get due records page for consumerId: " + consumerId);
 
-		List<Due> listOfDues = new ArrayList<>();
 		Consumer consumer = consumerService.getById(consumerId);
-
-		for (Due due : consumer.getDues()) {
-			listOfDues.add(due);
-		}
-
-		Page<Due> listPage = new PageImpl<>(listOfDues); 
+		Page<Due> listPage = new PageImpl<>(consumer.getDues()); 
 
 		model.addAttribute("listPage", listPage);
 		int totalPages = listPage.getTotalPages();
@@ -181,26 +215,26 @@ public class BillController {
 	@Scheduled(fixedRate = 30000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
-		System.out.println("Reminder scheduler: Job running at - " + strDate);
+//		System.out.println("Bill scheduler: Job running at - " + strDate);
 
 		List<Consumer> listOfConsumers = consumerService.getAll();
-		System.out.println("Calculatng bill for consumer size - " + listOfConsumers.size());
+//		System.out.println("Calculatng bill for consumer size - " + listOfConsumers.size());
 		for (Consumer consumer : listOfConsumers) {
 			List<Connection> listOfConnection = connectionService.getByConsumerId(consumer.getId());
 			for(Connection connection : listOfConnection) {
-				//generate new bill if connection expired
+				//generate new bill if auto renew able and connection expired
 				if(connection.isAutoRenewal() && !"Disconnected".equals(connection.getState())) {
 					if(connection.getDateOfConnExpiry().before(utility.getTodaysDateWithoutTime())) {
 						System.out.println("Connection Expired and disconnected for consumer: " 
 								+ connection.getConsumer().getFullName());
-						generateBill(connection);
+						renewConnectionAndGenerateBill(connection);
 					}
 				};
 			}
 		}
 	}
 
-	public void generateBill(Connection connection) {
+	public void renewConnectionAndGenerateBill(Connection connection) {
 		System.out.println("Generating bill for connection id " + connection.getId());
 		
 		connection.setDateOfConnStart(connection.getDateOfConnExpiry());
@@ -217,7 +251,7 @@ public class BillController {
 		connectionService.save(connection);
 		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
 									+ connection.getConsumer().getFullName());
-		billService.save(bill);
+//		billService.save(bill);
 	}
 
 }

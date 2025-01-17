@@ -109,7 +109,7 @@ public class CollectionController {
 		}
 		
 		Consumer consumer = consumerService.getById(consumerId);
-		consumer.calculateTotalSubscriptionBill();
+		consumer.calculateTotalSubscriptionPendingBill();
 		model.addAttribute("pendingAmount", consumer.getSubscriptionBill());
 		model.addAttribute("bills", consumer.getConnections().stream().flatMap(connection -> connection.getBills().stream())
 				.filter(bill -> bill.getBillAmount() - bill.getPaidAmount() > 0)
@@ -132,7 +132,7 @@ public class CollectionController {
 		}
 		
 		Consumer consumer = consumerService.getById(consumerId);
-		consumer.calculateTotalOtherDueBill();
+		consumer.calculateTotalOtherDuePendingBill();
 		model.addAttribute("pendingAmount", consumer.getOtherDueBill());
 		model.addAttribute("dues", consumer.getDues()
 				.stream()
@@ -153,15 +153,25 @@ public class CollectionController {
 		consumerService.save(consumer);
 		
 		Bill tempBill = null;
+		Double amount = collection.getNetAmount();
 		for (Bill bill : collection.getBills()) {
 			tempBill = billService.getById(bill.getId());
-			tempBill.setPaidAmount(tempBill.getBillAmount());
+			
+			if(amount >= tempBill.getBillAmount()-tempBill.getPaidAmount()) {
+				tempBill.setPaidAmount(tempBill.getBillAmount());
+				amount = amount - tempBill.getPaidAmount();
+				
+			} else {
+				tempBill.setPaidAmount(tempBill.getPaidAmount() + amount);
+				billService.save(tempBill);
+				break;
+			}
+			
 			billService.save(tempBill);
 		}
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
-
 	}
 	
 	@RequestMapping(value = "/saveOtherDueCollection",

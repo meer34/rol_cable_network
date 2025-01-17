@@ -34,7 +34,6 @@
                           <th class="table_heading noPrint"></th>
                           <th class="table_heading">ID</th>
                           <th class="table_heading">Bucket Name</th>
-                          <th class="table_heading">Channel count</th>
                           <th class="table_heading">Price</th>
                           <th class="table_heading">GST / Non GST</th>
                         </tr>
@@ -44,7 +43,6 @@
                           <td class="noPrint" ><input type='radio' th:value="${bucket.id}" class="radioBtn" name='id'></td>
                           <td th:text="${bucket.id}" />
                           <td th:text="${bucket.name}" />
-                          <td th:text="${bucket.channelCount}" />
                           <td th:text="${#numbers.formatDecimal(bucket.price, 1, 2)}" />
                           <td th:text="${bucket.gstNonGst}" />
                         </tr>

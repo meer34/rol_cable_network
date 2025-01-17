@@ -8,7 +8,7 @@ function calculateTotalIncExp() {
 function calculateNetAmount(){
 	let amount = Number(document.getElementById("amount").value);
 	let discount = Number(document.getElementById("discount").value);
-	document.getElementById("netAmount").value = amount - discount;
+	document.getElementById("netAmount").value = amount + discount;
 }
 
 function calculateSubscriptionAmount(){

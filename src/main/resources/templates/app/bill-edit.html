@@ -8,32 +8,33 @@
     <main class="app-content">
         <div class="row">
           <div class="col-md-12">
-            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/due/save}" method="post">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/bill/save}" method="post">
               <fieldset style="margin-top: 0;">
 				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-					<label>Due Type</label>
-                    <input type="text" class="form-control" name="dueType" placeholder="Enter Due Type" th:value="${due.dueType}">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" name="startDate" id="startDate" placeholder="Entry Date" 
+						th:value="${bill.startDate}" required>
                   </div>
 				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                    <label>Date Of Entry</label>
-                    <input type="date" class="form-control" name="dateOfDueEntry" id="dateOfDueEntry" placeholder="Entry Date" 
-						th:value="${due.dateOfDueEntry}" required>
+                    <label>Due Date</label>
+                    <input type="date" class="form-control" name="endDate" id="endDate" placeholder="Entry Date" 
+						th:value="${bill.endDate}" required>
                   </div>
                 </div>
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                    <label>Due Amount</label>
-                    <input type="number" min="0" step=".01" class="form-control" name="dueAmount" placeholder="Enter Due Amount" th:value="${due.dueAmount}">
+                    <label>Bill Amount</label>
+                    <input type="number" min="0" step=".01" class="form-control" name="billAmount" placeholder="Enter Bill Amount" th:value="${bill.billAmount}">
                   </div>
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <label>Remarks</label>
-                    <input type="text" class="form-control" name="remarks" placeholder="Remarks" th:value="${due.remarks}">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Paid Amount</label>
+                    <input type="number" min="0" step=".01" class="form-control" name="paidAmount" placeholder="Enter Paid Amount" th:value="${bill.paidAmount}">
                   </div>
                 </div>
-			<input th:if="${due.id}" type="hidden" name="id" th:value="${due.id}">
-			<input type="hidden" name="consumer" th:value="${consumerId}">
+			<input th:if="${bill.id}" type="hidden" name="id" th:value="${bill.id}">
+			<input type="hidden" name="connection" th:value="${connectionId}">
             <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
             <input type="submit" name="submit" class="submit action-button" value="Save">
             </fieldset>

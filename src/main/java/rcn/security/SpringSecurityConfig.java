@@ -45,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 		.headers().frameOptions().disable();
 
-		processAuthorization(http, false)
+		processAuthorization(http, true)
 		.and()
 		.formLogin()
 		.loginPage("/login")

@@ -57,22 +57,24 @@
                         <tr>
                           <th class="table_heading noPrint"></th>
                           <th class="table_heading">Consumer Id</th>
-						  <th class="table_heading">Nick Name</th>
+                          <th class="table_heading">STB Acct No</th>
                           <th class="table_heading">Full Name</th>
-                          <th class="table_heading">Phone No</th>
+                          <th class="table_heading">Nick Name</th>
                           <th class="table_heading">Area</th>
-                          <th class="table_heading">Landmark</th>
+                          <th class="table_heading">Village</th>
+                          <th class="table_heading">Phone No</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr style="background-color: #FFF" th:each="consumer : ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${consumer.id}" class="radioBtn" name='consumerId'></td>
                           <td th:text="${consumer.id}" />
-						  <td th:text="${consumer.nickName}" />
+                          <td th:text="${consumer.stbAccountNo}" />
                           <td th:text="${consumer.fullName}" />
-                          <td th:text="${consumer.phoneNo}" />
+						  <td th:text="${consumer.nickName}" />
                           <td th:text="${consumer.area?.name}" />
                           <td th:text="${consumer.landmark}" />
+                          <td th:text="${consumer.phoneNo}" />
                         </tr>
                       </tbody>
                     </table>

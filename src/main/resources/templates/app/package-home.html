@@ -34,7 +34,6 @@
                           <th class="table_heading noPrint"></th>
                           <th class="table_heading">ID</th>
                           <th class="table_heading">Package Name</th>
-                          <th class="table_heading">Channel count</th>
                           <th class="table_heading">Price</th>
                           <th class="table_heading">GST / Non GST</th>
                         </tr>
@@ -44,7 +43,6 @@
                           <td class="noPrint" ><input type='radio' th:value="${channelPackage.id}" class="radioBtn" name='id'></td>
                           <td th:text="${channelPackage.id}" />
                           <td th:text="${channelPackage.name}" />
-                          <td th:text="${channelPackage.channelCount}" />
                           <td th:text="${#numbers.formatDecimal(channelPackage.price, 1, 2)}" />
                           <td th:text="${channelPackage.gstNonGst}" />
                         </tr>

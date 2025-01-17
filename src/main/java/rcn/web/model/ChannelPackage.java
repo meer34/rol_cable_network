@@ -19,7 +19,6 @@ public class ChannelPackage {
 	private Long id;
 	
 	private String name;
-	private int channelCount;
 	private double basePrice;
 	private double price;
 	private String gstNonGst;

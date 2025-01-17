@@ -67,21 +67,23 @@
                         style="background-color: #1D2951; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
-                          <th class="table_heading">ID</th>
+                          <th class="table_heading">Consumer Id</th>
                           <th class="table_heading">Consumer</th>
                           <th class="table_heading">Connection Type</th>
                           <th class="table_heading">Start Date</th>
-                          <th class="table_heading">Connection Charge</th>
+                          <th class="table_heading">End Date</th>
+                          <th class="table_heading">Subscription</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr style="background-color: #FFF" th:each="connection : ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${connection.id}" class="radioBtn" name='id'></td>
-                          <td th:text="${connection.id}" />
+                          <td th:text="${connection.consumer?.id}" />
                           <td th:text="${connection.consumer?.fullName}" />
                           <td th:text="${connection.connectionType}" />
                           <td th:text="${connection.dateOfConnStart}" />
-                          <td th:text="${connection.connectionCharge}" />
+                          <td th:text="${connection.dateOfConnExpiry}" />
+                          <td th:text="${connection.subscriptionAmount}" />
                         </tr>
                       </tbody>
                     </table>

@@ -1,94 +1,118 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-  <head th:replace="fragments :: html_head" />
-  <body class="app sidebar-mini rtl">
-    <div th:replace="fragments :: app-layout"></div>
-	
-    <main class="app-content">
+<head th:replace="fragments :: html_head" />
+<body class="app sidebar-mini rtl">
+<div th:replace="fragments :: app-layout"></div>
+
+<main class="app-content">
       <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="dashboardicon" style="margin-top: 0; text-align: left;">
-              <legend style="text-align:center; padding-top: 0px;" >View Connection</legend>
-              <fieldset style="margin-top: 0;" id="printTable">
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-					<label>Consumer</label>
-					<input type="text" class="form-control" name="consumer" th:value="${connection.consumer?.fullName}" readonly>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Connection Type</label>
-                    <input type="text" class="form-control" name="connectionType" th:value="${connection.connectionType}" readonly>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Connection For</label>
-                    <input type="text" class="form-control" name="connectionFor" th:value="${connection.connectionFor}" readonly>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Date of Joining</label>
-                    <input type="date" class="form-control" name="date"  th:value="${connection.date}" readonly>
-                  </div>
-                </div>
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Start Date</label>
-                    <input type="date" class="form-control" name="dateOfConnStart" id="dateOfConnStart" th:value="${connection.dateOfConnStart}" readonly>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Expiry Date</label>
-                    <input type="date" class="form-control" name="dateOfConnExpiry" id="dateOfConnExpiry" th:value="${connection.dateOfConnExpiry}" readonly>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Connection Charge</label>
-                    <input type="number" class="form-control" name="connectionCharge" th:value="${connection?.connectionCharge}" readonly>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Select Base Package</label>
-                    <select class="form-control" name="channelPackage" id="channelPackage" style="height: 48px !important;" disabled>
-                      <option selected disabled="disabled" value="">Select Package</option>
-                      <option style="color: #333;" th:each="channelPackage : ${packageList}" 
-										th:text="${channelPackage.name + '&nbsp&nbsp&nbsp₹' + channelPackage.price}" th:value="${channelPackage.id}"
-										th:selected="${channelPackage.id == connection.channelPackage?.id}"></option>
-                    </select>
-                  </div>
-                </div>
-				<div class="col-lg-12 flexdisplay">
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Subscription Amount</label>
-                    <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" th:value="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}" readonly>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Previous Due</label>
-                    <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${#numbers.formatDecimal(connection?.previousDue, 1, 2)}" readonly>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Advance Amount</label>
-                    <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}" readonly>
-                  </div>
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                    <label>Select Buckets</label>
-                    <select class="form-control multiple-select-pillbox" name="buckets" id="buckets" style="height: 48px !important;" multiple disabled>
-                      <option style="color: #333;" th:each="bucket : ${bucketList}" 
-										th:text="${bucket.name + '&nbsp&nbsp&nbsp₹' + bucket.price}" th:value="${bucket.id}"
-										th:selected="${connection.buckets?.contains(bucket)}"></option>
-                    </select>
-                  </div>
-                </div>
-				
-				<div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <label>Select Channels</label>
-                    <select class="form-control multiple-select-pillbox" name="channels" id="channels" style="height: 48px !important;" multiple disabled>
-                      <option style="color: #333;" th:each="channel : ${channelList}" 
-										th:text="${channel.name + '&nbsp&nbsp&nbsp₹' + channel.price}" th:value="${channel.id}"
-										th:selected="${connection.channels?.contains(channel)}"></option>
-                    </select>
-                  </div>
-                </div>
-				<table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+        <!-- Connection Details Section -->
+        <div class="tile mb-4">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
+                Connection Details
+            </div>
+            
+            <div class="tile-body" style="padding: 10px 20px;">
+				<div class="row">
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Consumer Name:</strong> <span th:text="${connection.consumer.fullName}"></span>
+						</div>
+						<div>
+							<strong>Phone No:</strong> <span th:text="${connection.consumer.phoneNo}"></span>
+						</div>
+						<div>
+							<strong>Subscription Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}"></span>
+						</div>
+						<div>
+							<strong>Advance Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.advanceAmount, 1, 2)}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Connection Type:</strong> <span th:text="${connection.connectionType}"></span>
+						</div>
+						<div>
+							<strong>STB Account No:</strong> <span th:text="${connection.consumer?.stbAccountNo}"></span>
+						</div>
+						<div>
+							<strong>Connection Charge:</strong> ₹<span th:text="${connection.connectionCharge}"></span>
+						</div>
+						<div>
+							<strong>Previous Due:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.previousDue, 1, 2)}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Date of Joining:</strong> <span th:text="${connection.date}"></span>
+						</div>
+						<div>
+							<strong>Start Date:</strong> <span th:text="${connection.dateOfConnStart}"></span>
+						</div>
+						<div>
+							<strong>Expiry Date:</strong> <span th:text="${connection.dateOfConnExpiry}"></span>
+						</div>
+						<div>
+							<strong>Base Package:</strong> <span th:text="${connection.channelPackage?.name + connection.channelPackage?.price}"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+
+        <!-- Subscriptions -->
+        <div class="tile">
+			<div class="tile-title bg-gradient text-white py-2 px-3 rounded">
+				Subscriptions
+			</div>
+		
+			<div class="tile-body" style="padding: 0px 20px;">
+				<div class="row">
+					<!-- Column 1: Base Package -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Base Package:</strong>
+						<span th:text="${connection.channelPackage?.name + ' - ₹' + connection.channelPackage?.price}"></span>
+					</div>
+		
+					<!-- Column 2: Bouquets -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Bouquets:</strong>
+						<div>
+							<ul style="list-style: none; padding: 0; margin: 0;">
+								<li th:each="bouquet : ${connection.buckets}">
+									<span th:text="${bouquet.name + ' - ₹' + bouquet.price}"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+		
+					<!-- Column 3: Channels -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Channels:</strong>
+						<div>
+							<ul style="list-style: none; padding: 0; margin: 0;">
+								<li th:each="channel : ${connection.channels}">
+									<span th:text="${channel.name + ' - ₹' + channel.price}"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+        
+        <!-- Bills -->
+        <div class="tile">
+            <div class="tile-title bg-gradient text-white py-2 px-3 rounded">
+                Latest Bills
+            </div>
+            
+            <div class="tile-body" style="padding: 0px 20px;">
+            
+                <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                   <thead class="thead-inverse"
-                    style="background-color: #1D2951; color: #FFF;">
+                    style="background-color: #199999; color: #FFF;">
                     <tr>
                       <th class="table_heading">SL. No</th>
                       <th class="table_heading">Start Date</th>
@@ -109,35 +133,13 @@
                     </tr>
                   </tbody>
                 </table>
-				<div class="col-lg-12 flexdisplay" th:if="${connection.id}">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label style="color:#780c2a;">Change Connection State</label>
-                  </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <select class="form-control" name="state" style="height: 30px !important;border: 1px solid black;" disabled>
-             	      <option selected disabled="disabled" value="">Select Type</option>
-                	  <option class="btn btn-success" th:selected="${connection?.state=='Connected'}">Connected</option>
-					  <option class="btn btn-warning" th:selected="${connection?.state=='Suspended'}">Suspended</option>
-                      <option class="btn btn-danger" th:selected="${connection?.state=='Disconnected'}">Disconnected</option>
-                    </select>
-                  </div>
-				</div>
-			<!--<input type="hidden" name="currentBill" th:value="${connection.currentBill?.id}">-->
-            <input type="button" name="cancel" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
-			<input type="button" name="print" class="submit action-button" value="Print Bills" onclick="printData()">
-            </fieldset>
+                <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 20px;" onclick="window.history.back()">Back</button>
             </div>
-          </div>
         </div>
+        
       </div>
     </main>
-      <div th:replace="fragments :: main_scripts"></div>
-	  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-	  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-	  <script>
-		$(document).ready(function() {
-			$('.multiple-select-pillbox').select2();
-		});
-	  </script>
-  </body>
+
+<div th:replace="fragments :: main_scripts"></div>
+</body>
 </html>

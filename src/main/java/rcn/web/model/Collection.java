@@ -2,6 +2,7 @@ package rcn.web.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -72,5 +73,29 @@ public class Collection {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date date;
+
+	public Collection processForEdit() {
+		if(this.bills != null) {
+			this.bills = this.bills
+					.stream()
+					.map(bill -> {
+						bill.setPaidAmount(bill.getPaidAmount() - bill.getCollectedAmount());
+//						bill.setCollectedAmount(0);
+						return bill;
+					})
+					.collect(Collectors.toList());
+		}
+		if(this.dues != null) {
+			this.dues = this.dues
+					.stream()
+					.map(due -> {
+						due.setPaidAmount(due.getPaidAmount() - due.getCollectedAmount());
+//						due.setCollectedAmount(0);
+						return due;
+					})
+					.collect(Collectors.toList());
+		}
+		return this;
+	}
 	
 }

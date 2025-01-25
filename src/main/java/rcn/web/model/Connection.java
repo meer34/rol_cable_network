@@ -38,7 +38,7 @@ public class Connection {
 	
 	private String state;
 	private String connectionType;
-	private String connectionFor;
+//	private String connectionFor;
 	private double connectionCharge;
 	private double subscriptionAmount;
 	private double previousDue;

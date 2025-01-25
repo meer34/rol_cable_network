@@ -56,9 +56,7 @@ public class BillController {
 		if(year == null || year.equals("All Years")) {
 			listPage = consumerService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
 			for (Consumer consumer : listPage) {
-				consumer.calculateTotalSubscriptionBill();
-				consumer.calculateTotalOtherDueBill();
-				consumer.calculateTotalPaid();
+				consumer.calculateAllBillAndTotalPaid();
 			}
 		} else {
 			String yearStart ="01/01/" + year;
@@ -123,9 +121,17 @@ public class BillController {
 				.getConnection()
 				.getConsumer()
 				.getId();
-		billService.deleteById(Long.parseLong(billId));
-		redirectAttributes.addFlashAttribute("successMessage", "Bill with id " + billId + " deleted successfully!");
 		redirectAttributes.addAttribute("consumerId", consumerId);
+		
+		Bill bill = billService.getById(Long.parseLong(billId));
+		
+		if(bill.getPaidAmount() == 0.0) {
+			billService.deleteById(Long.parseLong(billId));
+			redirectAttributes.addFlashAttribute("successMessage", "Bill with id " + billId + " deleted successfully for consumer id " + consumerId);
+		} else {
+			redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete Bill since it already has paid amount!");
+		}
+		
 		return "redirect:/bill/getSubscriptionBillRecordsForConsumer";
 	}
 
@@ -173,17 +179,8 @@ public class BillController {
 			listOfBills.addAll(connection.getBills());
 		}
 
-		Page<Bill> listPage = new PageImpl<>(listOfBills);
-
-		model.addAttribute("listPage", listPage);
-		int totalPages = listPage.getTotalPages();
-		if (totalPages > 0) {
-			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-					.boxed()
-					.collect(Collectors.toList());
-			model.addAttribute("pageNumbers", pageNumbers);
-		}
-
+		model.addAttribute("listOfBills", listOfBills);
+		model.addAttribute("consumerId", consumerId);
 		return "app/bill-record";
 
 	}
@@ -195,17 +192,11 @@ public class BillController {
 		System.out.println("Get due records page for consumerId: " + consumerId);
 
 		Consumer consumer = consumerService.getById(consumerId);
-		Page<Due> listPage = new PageImpl<>(consumer.getDues()); 
+		List<Due> listOfDues = consumer.getDues(); 
 
-		model.addAttribute("listPage", listPage);
-		int totalPages = listPage.getTotalPages();
-		if (totalPages > 0) {
-			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
-					.boxed()
-					.collect(Collectors.toList());
-			model.addAttribute("pageNumbers", pageNumbers);
-		}
-
+		model.addAttribute("listOfDues", listOfDues);
+		
+		model.addAttribute("consumerId", consumerId);
 		return "app/due-record";
 
 	}
@@ -213,8 +204,8 @@ public class BillController {
 
 //	@Scheduled(cron = "0 30 9 * * *")
 	@Scheduled(fixedRate = 30000)
-	public void scheduleTask(){
-		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
+	public void autoRenewTask() throws ParseException{
+//		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 //		System.out.println("Bill scheduler: Job running at - " + strDate);
 
 		List<Consumer> listOfConsumers = consumerService.getAll();

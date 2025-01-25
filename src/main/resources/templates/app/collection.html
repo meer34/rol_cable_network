@@ -6,6 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
@@ -38,7 +39,8 @@
 						  <th class="table_heading">Date</th>
                           <th class="table_heading">Consumer Name</th>
                           <th class="table_heading">Bill Type</th>
-                          <th class="table_heading">Collection Amount</th>
+                          <th class="table_heading">Paid Amount</th>
+                          <th class="table_heading">Discount</th>
                           <th class="table_heading">Payment Mode</th>
 						  <th class="table_heading">Received By</th>
                         </tr>
@@ -47,10 +49,11 @@
                         <tr style="background-color: #FFF" th:each="collection : ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${collection.id}" class="radioBtn" name='id'></td>
                           <td th:text="${collection.id}" />
-                          <td th:text="${collection.date}" />
+                          <td th:text="${{collection.date}}" />
                           <td th:text="${collection?.consumer?.fullName}" />
                           <td th:text="${collection?.billType}" />
                           <td th:text="${collection.amount}" />
+                          <td th:text="${collection.discount}" />
                           <td th:text="${collection.paymentMode}" />
 						  <td th:text="${collection.collectedBy?.name}" />
                         </tr>
@@ -67,7 +70,8 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
   </body>
 </html>

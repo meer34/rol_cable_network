@@ -6,11 +6,14 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
+              <div th:if="${errorMessage}" th:text="${errorMessage}"
+                class="alert alert-danger" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
                   <div class="dashboardicon form-group col-lg-12">
@@ -21,7 +24,7 @@
                   </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/}" method="get">
-                    <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}">
+                    <div class="dashboardicon2" style="text-align: left;" th:if="${listOfBills.size() > 0}">
                       <input type="submit" th:formaction="@{/bill/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
                       <input type="submit" th:formaction="@{/bill/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
@@ -33,20 +36,22 @@
 						  <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
 						  <th class="table_heading">Connection Type</th>
-						  <th class="table_heading">Due Date</th>
+						  <th class="table_heading">Start Date</th>
+						  <th class="table_heading">End Date</th>
                           <th class="table_heading">Bill Amount</th>
                           <th class="table_heading">Paid Amount</th>
 						  <th class="table_heading">Current Due</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <!-- <tr style="background-color: #FFF" th:each="billRecord : ${listPage.content}"> -->
-                        <tr style="background-color: #FFF" th:each="i : ${#numbers.sequence(listPage.content.size() - 1, 0, -1)}"
-     												th:with="billRecord=${listPage.content[i]}">
+                        <tr style="background-color: #FFF" th:each="billRecord : ${listOfBills}">
+                        <!-- <tr style="background-color: #FFF" th:each="i : ${#numbers.sequence(listPage.content.size() - 1, 0, -1)}"
+     												th:with="billRecord=${listPage.content[i]}">  -->
                           <td class="noPrint" ><input type='radio' th:value="${billRecord.id}" class="radioBtn" name='billId'></td>
                           <td th:text="${billRecord.connection?.consumer?.fullName}" />
 						  <td th:text="${billRecord.connection?.connectionType}" />
-                          <td th:text="${billRecord.startDate}" />
+                          <td th:text="${{billRecord.startDate}}" />
+                          <td th:text="${{billRecord.endDate}}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.billAmount, 1, 2)}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.paidAmount, 1, 2)}" />
                           <td th:text="${#numbers.formatDecimal(billRecord.billAmount - billRecord.paidAmount, 1, 2)}" />
@@ -59,7 +64,8 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
       <div th:replace="fragments :: table_search_script"></div>
   </body>

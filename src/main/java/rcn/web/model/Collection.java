@@ -3,6 +3,7 @@ package rcn.web.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,8 +13,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -39,6 +42,8 @@ public class Collection {
 	private String billType;
 	private Double amount;
 	private Double discount;
+	@Transient
+	private Double advanceAmount;
 	private Double netAmount;
 	private String paymentMode;
 	private String remarks;
@@ -52,13 +57,15 @@ public class Collection {
 	  name = "collection_bill", 
 	  joinColumns = @JoinColumn(name = "collection_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "bill_id"))
+	@OrderBy("startDate DESC")
 	private List<Bill> bills;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(
 	  name = "collection_due", 
 	  joinColumns = @JoinColumn(name = "collection_id"), 
 	  inverseJoinColumns = @JoinColumn(name = "due_id"))
+	@OrderBy("dateOfDueEntry DESC")
 	private List<Due> dues;
 	
 	@Temporal(TemporalType.DATE)

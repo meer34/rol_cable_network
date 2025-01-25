@@ -122,7 +122,7 @@ public class ReminderController {
 //	@Scheduled(cron = "0 30 9 * * *")
 //	@Scheduled(fixedRate = 5000)
 	public void scheduleTask(){
-		String strDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS").format(new Date());
+		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 		System.out.println("Reminder scheduler: Job running at - " + strDate);
 		
 		List<Reminder> listOfReminders = reminderService.getAllPendingRemindersForToday();

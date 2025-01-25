@@ -13,8 +13,6 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,15 +29,18 @@ public class Due {
 	private String dueType;
 	private double dueAmount;
 	private double paidAmount;
+	private double collectedAmount;
 	private String remarks;
 	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date dateOfDueEntry;
 	
 	@ManyToOne
 	@JoinColumn(name="consumer")
 	private Consumer consumer;
+	
+//	@ManyToMany(mappedBy="dues")
+//	private List<Collection> collections;
 	
 }

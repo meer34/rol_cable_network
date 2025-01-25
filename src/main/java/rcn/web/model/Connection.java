@@ -13,6 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -29,10 +30,6 @@ public class Connection {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-//	@OneToOne
-//	@JoinColumn(name="consumer")
-//	private Consumer consumer;
-	
 	@ManyToOne
 	@JoinColumn(name="consumer")
 	private Consumer consumer;
@@ -43,11 +40,9 @@ public class Connection {
 	private String connectionType;
 	private String connectionFor;
 	private double connectionCharge;
-	
 	private double subscriptionAmount;
 	private double previousDue;
 	private double advanceAmount;
-	
 	private String remarks;
 	
 	@Temporal(TemporalType.DATE)
@@ -62,7 +57,9 @@ public class Connection {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date dateOfConnExpiry;
 	
-	@OneToOne @JoinColumn(name="channelPackage") private ChannelPackage channelPackage;
+	@OneToOne
+	@JoinColumn(name="channelPackage")
+	private ChannelPackage channelPackage;
 	
 	@ManyToMany
 	@JoinTable(
@@ -79,6 +76,7 @@ public class Connection {
 	private List<Channel> channels;
 	
 	@OneToMany(mappedBy="connection")
+	@OrderBy("startDate DESC")
 	private List<Bill> bills;
 	
 }

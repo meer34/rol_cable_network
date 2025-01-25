@@ -10,7 +10,7 @@ import rcn.web.model.Consumer;
 
 public interface ConsumerRepo extends JpaRepository<Consumer, Long>, JpaSpecificationExecutor<Consumer> {
 	
-	@Query("FROM Consumer conn where conn.area = (FROM Area area where area.name = :area)")
+	@Query("FROM Consumer consumer where consumer.area = (FROM Area area where area.name = :area)")
 	Page<Consumer> findConsumerByArea(String area, PageRequest pageRequest);
 	
 }

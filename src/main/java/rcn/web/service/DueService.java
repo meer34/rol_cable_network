@@ -25,7 +25,7 @@ public class DueService {
 	}
 	
 	public List<Due> getAllDues() {
-		return dueRepo.findAll();
+		return dueRepo.findAll(Sort.by("id").descending());
 	}
 	
 	public Page<Due> getAllDues(Integer pageNo, Integer pageSize) {

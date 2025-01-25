@@ -8,8 +8,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import rcn.web.model.Bill;
 import rcn.web.model.Collection;
+import rcn.web.model.Connection;
+import rcn.web.model.Consumer;
+import rcn.web.model.Due;
+import rcn.web.repo.BillRepo;
 import rcn.web.repo.CollectionRepo;
+import rcn.web.repo.ConnectionRepo;
+import rcn.web.repo.ConsumerRepo;
+import rcn.web.repo.DueRepo;
 import rcn.web.specification.CollectionSearchSpecification;
 import rcn.web.util.SearchSpecificationBuilder;
 
@@ -17,8 +25,33 @@ import rcn.web.util.SearchSpecificationBuilder;
 public class CollectionService {
 
 	@Autowired private CollectionRepo collectionRepo;
+	@Autowired private BillRepo billRepo;
+	@Autowired private DueRepo dueRepo;
+	@Autowired private ConsumerRepo consumerRepo;
+	@Autowired private ConnectionRepo connectionRepo;
 
 	public Collection save(Collection collection) {
+		List<Bill> bills = collection.getBills();
+		List<Due> dues = collection.getDues();
+		
+		if(bills != null) billRepo.saveAll(bills);
+		if(dues != null) dueRepo.saveAll(dues);
+		
+		Double advanceAmount = collection.getAdvanceAmount();
+		if(advanceAmount != null && advanceAmount > 0) {
+			Consumer consumer = collection.getConsumer();
+			List<Connection> connections = consumer.getConnections();
+			
+			if(connections.size() > 0) {
+				Connection connection = connections.get(0);
+				connection.setAdvanceAmount(connection.getAdvanceAmount() + advanceAmount);
+				connectionRepo.save(connection);
+			} else {
+				consumer.setSecurityDeposit(consumer.getSecurityDeposit() + advanceAmount);
+				consumerRepo.save(consumer);
+			}
+		}
+		
 		return collectionRepo.save(collection);
 	}
 	
@@ -59,6 +92,15 @@ public class CollectionService {
 		PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 		CollectionSearchSpecification spec = (CollectionSearchSpecification) SearchSpecificationBuilder.build(fromDate, toDate, keyword, Collection.class);
 		return collectionRepo.findAll(spec, pageRequest);
+	}
+
+	public void removeBillFromCollections(Bill bill) {
+		List<Collection> listOfCollections = collectionRepo.findAllByBills_Id(bill.getId());
+		for (Collection collection : listOfCollections) {
+			collection.getBills().remove(bill);
+		}
+		collectionRepo.saveAll(listOfCollections);
+		
 	}
 	
 }

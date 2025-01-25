@@ -47,35 +47,18 @@
         <ul class="app-menu">
           <li><a class="app-menu__product" th:href="@{/home}"><i
             class="app-menu__icon fa fa-square"></i><span
-            class="app-menu__label">Dashboard</span></a></li>
-          <li class="treeview">
-            <a class="app-menu__product" href="#"
-              data-toggle="treeview"><i class="app-menu__icon fa fa-user"></i><span
-              class="app-menu__label">Consumer Service</span><i
-              class="treeview-indicator fa fa-angle-right"></i></a>
-            <ul class="treeview-menu">
-              <li><a class="treeview-product" th:href="@{/consumer}"><i
-                class="icon fa fa-user"></i> Consumers</a></li>
-              <li><a class="treeview-product" th:href="@{/connection}"><i
-                class="icon fa fa-user-plus"></i>Connections </a></li>
-            </ul>
+            class="app-menu__label">Dashboard</span></a>
           </li>
-          <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Package')" -->
-            <a class="app-menu__product" href="#"
-              data-toggle="treeview"><i class="app-menu__icon fa fa-book"></i><span
-              class="app-menu__label">Package Management</span><i
-              class="treeview-indicator fa fa-angle-right"></i></a>
-			<ul class="treeview-menu">
-              <li><a class="treeview-product" th:href="@{/channelPackage}"><i
-                class="icon fa fa-tag"></i>Package</a></li>
-              <li><a class="treeview-product" th:href="@{/bucket}"><i
-                class="icon fa fa-tag"></i>Bucket </a></li>
-              <li><a class="treeview-product" th:href="@{/channel}"><i
-                class="icon fa fa-tag"></i>Channel </a></li>
-            </ul>
+          <li><a class="app-menu__product" th:href="@{/consumer}"><i
+            class="app-menu__icon fa fa-users"></i><span
+            class="app-menu__label">Consumers</span></a>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/connection}"><i
+            class="app-menu__icon fa fa-plug"></i><span
+            class="app-menu__label">Connections</span></a>
           </li>
           <li><a class="app-menu__product" th:href="@{/bill}"><i
-            class="app-menu__icon fa fa-file-text"></i><span
+            class="app-menu__icon fa fa-credit-card"></i><span
             class="app-menu__label">Consumer Bill</span></a>
           </li>
           <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Accounts')" -->
@@ -99,6 +82,20 @@
           <li><a class="app-menu__product" th:href="@{/reminder}"><i
             class="app-menu__icon fa fa-bell"></i><span
             class="app-menu__label">Reminder</span></a>
+          </li>
+          <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Package')" -->
+            <a class="app-menu__product" href="#"
+              data-toggle="treeview"><i class="app-menu__icon fa fa-book"></i><span
+              class="app-menu__label">Package Management</span><i
+              class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+              <li><a class="treeview-product" th:href="@{/channelPackage}"><i
+                class="icon fa fa-tag"></i>Package</a></li>
+              <li><a class="treeview-product" th:href="@{/bucket}"><i
+                class="icon fa fa-tag"></i>Bucket </a></li>
+              <li><a class="treeview-product" th:href="@{/channel}"><i
+                class="icon fa fa-tag"></i>Channel </a></li>
+            </ul>
           </li>
           <li class="treeview">
             <a class="app-menu__product" href="#"

@@ -6,6 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/connection/save}" method="post" enctype="multipart/form-data">
@@ -73,7 +74,7 @@
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Start Date</label>
                     <input type="date" class="form-control" name="dateOfConnStart" id="dateOfConnStart" placeholder="Start Date" 
-						th:value="${connection.dateOfConnStart}" onChange="updateExpiryDate()" required>
+						th:value="${connection.dateOfConnStart}" th:onchange="'updateExpiryDate(' + ${renewalCycle} + ');'" required>
                   </div>
 				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Expiry Date</label>
@@ -106,15 +107,11 @@
                   </div>
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
                     <label>Previous Due</label>
-                    <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
+                    <input type="number" step=".01" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
                   </div>
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:if="${connection.id}">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Advance Amount</label>
-                    <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}" readonly>
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
-                    <label>Advance Amount</label>
-                    <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}">
+                    <input type="number" step=".01" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}">
                   </div>
                 </div>
 				
@@ -154,7 +151,8 @@
             </form>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
 	  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

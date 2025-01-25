@@ -6,6 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
@@ -50,7 +51,7 @@
                           <td th:text="${consumer.id}" />
                           <td th:text="${consumer.consumerType?.name}" />
                           <td th:text="${consumer.paymentMode}" />
-                          <td th:text="${consumer.date}" />
+                          <td th:text="${{consumer.date}}" />
                           <td th:text="${consumer.amount}" />
                           <td th:text="${consumer.tax}" />
                           <td th:text="${consumer.totalAmount}" />
@@ -67,7 +68,8 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
   </body>
 </html>

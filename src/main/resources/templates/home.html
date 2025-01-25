@@ -6,6 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
 		<div class="row">
 			<div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
 			<div th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger" role="alert"></div>
@@ -184,7 +185,7 @@
         </div>
       </div>
       
-      
+    </div>
     </main>
 	
 	

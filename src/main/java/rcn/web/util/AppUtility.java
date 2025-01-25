@@ -25,46 +25,45 @@ public class AppUtility {
 
 	@Value("${fast2sms.api.request.contentType}")
 	private String contentType;
+	
+	@Value("${RENEWAL_CYCLE}")
+	private int renewalCycle;
 
 	public long getDifferenceDays(Date d1, Date d2) {
 		long diff = d2.getTime() - d1.getTime();
-		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+		return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS) + 1;
 	}
 
-	public Date getTodaysDateWithoutTime() {
-		try{
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return formatter.parse(formatter.format(new Date()));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Date getTodaysDateWithoutTime() throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return formatter.parse(formatter.format(new Date()));
+	}
+	
+	public Date getTomorrowsDateWithoutTime() throws ParseException {
+		Date date = new Date();
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(date); 
+		c.add(Calendar.DATE, 1);
+		date = c.getTime();
+
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return formatter.parse(formatter.format(date));
 	}
 
-	public Date formatDate(Date date) {
-		try{
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return formatter.parse(formatter.format(date));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Date formatDate(Date date) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return formatter.parse(formatter.format(date));
 	}
 
-	public Date formatStringToDate(String stateChangeDate) {
-		try{
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-			return formatter.parse(stateChangeDate);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return null;
+	public Date formatStringToDate(String stateChangeDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		return formatter.parse(stateChangeDate);
 	}
 
 	public Date getOneMonthAheadDate(Date currentDate) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);
-		c.add(Calendar.DATE, 30);
+		c.add(Calendar.DATE, renewalCycle - 1);
 		return c.getTime();
 	}
 

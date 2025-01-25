@@ -40,7 +40,7 @@
                   </div>
 				</div>
                 <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 					<label>Consumer</label>
                     <select class="form-control" name="consumer" style="height: 48px;" required>
                       <option selected disabled="disabled" value="">Select Consumer</option>
@@ -48,7 +48,7 @@
 										th:text="${consumer.fullName}" th:value="${consumer.id}" th:selected="${consumer.id==connection.consumer?.id}"></option>
                     </select>
                   </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Connection Type</label>
                     <select class="form-control" name="connectionType" style="height: 48px;" required>
              	      <option selected disabled="disabled" value="">Select Type</option>
@@ -56,36 +56,23 @@
                       <option th:selected="${connection?.connectionType=='Internet'}">Internet</option>
                     </select>
                   </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Connection For</label>
-                    <select class="form-control" name="connectionFor" style="height: 48px;" >
-                      <option selected disabled="disabled" value="">Connection For</option>
-                      <option th:selected="${connection?.connectionFor=='Single Set'}">Single Set</option>
-                      <option th:selected="${connection?.connectionFor=='STB'}">STB</option>
-                      <option th:selected="${connection?.connectionFor=='STB3'}">STB3</option> 
-                    </select>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Date of Joining</label>
                     <input type="date" class="form-control" name="date" placeholder="Enter Joining Date" th:value="${connection.date}">
                   </div>
                 </div>
                 <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Start Date</label>
                     <input type="date" class="form-control" name="dateOfConnStart" id="dateOfConnStart" placeholder="Start Date" 
 						th:value="${connection.dateOfConnStart}" th:onchange="'updateExpiryDate(' + ${renewalCycle} + ');'" required>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Expiry Date</label>
                     <input type="date" class="form-control" name="dateOfConnExpiry" id="dateOfConnExpiry" placeholder="Expiry Date" 
 						th:value="${connection.dateOfConnExpiry}" readonly>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label>Connection Charge</label>
-                    <input type="number" class="form-control" name="connectionCharge" placeholder="Connection Charge" th:value="${connection?.connectionCharge}">
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Select Base Package</label>
                     <select class="form-control" name="channelPackage" id="channelPackage" style="height: 48px !important;" required onChange="calculateSubscriptionAmount()">
                       <option selected disabled="disabled" value="">Select Package</option>
@@ -97,26 +84,30 @@
                 </div>
 				
 				<div class="col-lg-12 flexdisplay">
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Subscription Amount</label>
                     <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" placeholder="0" th:value="${connection?.subscriptionAmount}" readonly>
                   </div>
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:if="${connection.id}">
+				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Connection Charge</label>
+                    <input type="number" class="form-control" name="connectionCharge" placeholder="Connection Charge" th:value="${connection?.connectionCharge}">
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" th:if="${connection.id}">
                     <label>Previous Due</label>
                     <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}" readonly>
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" th:unless="${connection.id}">
                     <label>Previous Due</label>
                     <input type="number" step=".01" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
                   </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-13">
                     <label>Advance Amount</label>
                     <input type="number" step=".01" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}">
                   </div>
                 </div>
 				
 				<div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Select Buckets</label>
                     <select class="form-control multiple-select-pillbox" name="buckets" id="buckets" style="height: 48px !important;" multiple onChange="calculateSubscriptionAmount()">
                       <option style="color: #333;" th:each="bucket : ${bucketList}" 
@@ -124,7 +115,7 @@
 										th:selected="${connection.buckets?.contains(bucket)}"></option>
                     </select>
                   </div>
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Select Channels</label>
                     <select class="form-control multiple-select-pillbox" name="channels" id="channels" style="height: 48px !important;" multiple onChange="calculateSubscriptionAmount()">
                       <option style="color: #333;" th:each="channel : ${channelList}" 

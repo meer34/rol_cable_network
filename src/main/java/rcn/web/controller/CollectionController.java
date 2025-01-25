@@ -101,6 +101,7 @@ public class CollectionController {
 	public String collectSubscriptionDue(Model model, Collection collection, 
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
+		
 		model.addAttribute("header", "Collect Subscription Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
@@ -125,6 +126,7 @@ public class CollectionController {
 	public String collectOtherDue(Model model, Collection collection,
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
+		
 		model.addAttribute("header", "Collect Other Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
@@ -208,7 +210,7 @@ public class CollectionController {
 			model.addAttribute("header", "Edit Other Due Collection for - " + collection.getConsumer().getFullName());
 		}
 		
-		model.addAttribute("collection", collection);
+		model.addAttribute("collection", collection.processForEdit());
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());

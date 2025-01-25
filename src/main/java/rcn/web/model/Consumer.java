@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
 import lombok.Getter;
@@ -39,6 +40,8 @@ public class Consumer {
 	private double otherDueBill;
 	@Transient
 	private double totalPaid;
+	@Transient
+	private double totalPending;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name ="area")
@@ -48,6 +51,7 @@ public class Consumer {
 	private List<Connection> connections;
 	
 	@OneToMany(mappedBy="consumer")
+	@OrderBy("dateOfDueEntry DESC")
 	private List<Due> dues;
 	
 	@OneToMany(mappedBy="consumer")
@@ -69,6 +73,20 @@ public class Consumer {
 		}
 	}
 	
+	public void calculateTotalPaid() {
+		totalPaid= 0;
+		for (Collection collection : collections) {
+			totalPaid += collection.getNetAmount();
+		}
+	}
+	
+	public void calculateAllBillAndTotalPaid() {
+		calculateAllPendingBill();
+		calculateTotalSubscriptionBill();
+		calculateTotalOtherDueBill();
+		calculateTotalPaid();
+	}
+	
 	public void calculateTotalSubscriptionPendingBill() {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {
@@ -85,13 +103,12 @@ public class Consumer {
 		}
 	}
 	
-	public void calculateTotalPaid() {
-		totalPaid= 0;
-		for (Collection collection : collections) {
-			totalPaid += collection.getNetAmount();
-		}
+	public void calculateAllPendingBill() {
+		calculateTotalSubscriptionPendingBill();
+		calculateTotalOtherDuePendingBill();
+		totalPending= subscriptionBill + otherDueBill;
 	}
-
+	
 	public void calculateTotalSubscriptionBillForYear(Date yearStartDate, Date yearEndDate) {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {

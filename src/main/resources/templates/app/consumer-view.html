@@ -1,84 +1,85 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-  <head th:replace="fragments :: html_head" />
-  <body class="app sidebar-mini rtl">
-    <div th:replace="fragments :: app-layout"></div>
-	
-    <main class="app-content">
-        <div class="row">
-          <div class="col-md-12">
-            <form class="dashboardicon" style="margin-top: 0; text-align: left;">
-              <legend style="text-align:center; padding-top: 0px;" >View Consumer</legend>
-              <fieldset style="margin-top: 0;">
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-					<label>Name</label>
-                    <input type="text" class="form-control" name="fullName" th:value="${consumer.fullName}" readonly>
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Nick Name</label>
-                    <input type="text" class="form-control" name="nickName" th:value="${consumer.nickName}" readonly>
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Father's Name</label>
-                    <input type="text" class="form-control" name="fatherName" th:value="${consumer.fatherName}" readonly>
-                  </div>
+<head th:replace="fragments :: html_head" />
+<body class="app sidebar-mini rtl">
+<div th:replace="fragments :: app-layout"></div>
+
+<main class="app-content">
+      <div class="container-fluid">
+        <!-- Consumer Details Section -->
+        <div class="tile mb-4">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
+                Consumer Details
+            </div>
+            <div class="tile-body" style="padding: 20px;">
+                <div class="row mb-3">
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Name:</strong> <span th:text="${consumer.fullName}"></span></div>
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Nick Name:</strong> <span th:text="${consumer.nickName}"></span></div>
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Father's Name:</strong> <span th:text="${consumer.fatherName}"></span></div>
                 </div>
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Phone No</label>
-                    <input type="text" class="form-control" name="phoneNo" th:value="${consumer.phoneNo}" readonly>
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Area / Locality</label>
-                    <input type="text" class="form-control" name="area" th:value="${consumer.area?.name}" readonly>
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Landmark</label>
-                    <input type="text" class="form-control" name="landmark" th:value="${consumer.landmark}" readonly>
-                  </div>
+                <div class="row mb-3">
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Phone No:</strong> <span th:text="${consumer.phoneNo}"></span></div>
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Area / Locality:</strong> <span th:text="${consumer.area?.name}"></span></div>
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Landmark:</strong> <span th:text="${consumer.landmark}"></span></div>
                 </div>
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>STB Account Number</label>
-                    <input type="text" class="form-control" name="stbAccountNo" th:value="${consumer.stbAccountNo}" readonly>
-                  </div>
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                    <label>Full Address</label>
-                    <input type="text" class="form-control" name="fullAddress" th:value="${consumer.fullAddress}" readonly>
-                  </div>
+                <div class="row mb-3">
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>STB Account Number:</strong> <span th:text="${consumer.stbAccountNo}"></span></div>
+                    <div class="col-lg-8 col-md-12"><strong>Full Address:</strong> <span th:text="${consumer.fullAddress}"></span></div>
                 </div>
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Security Deposit</label>
-                    <input type="number" class="form-control" name="securityDeposit" th:value="${consumer.securityDeposit}" readonly>
-                  </div>
-                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                    <label>Remarks</label>
-                    <input type="text" class="form-control" name="remarks" th:value="${consumer.remarks}" readonly>
-                  </div>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Security Deposit:</strong> ₹<span th:text="${consumer.securityDeposit}"></span></div>
+                    <div class="col-lg-8 col-md-12"><strong>Remarks:</strong> <span th:text="${consumer.remarks}"></span></div>
                 </div>
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <input type="button" class="btn-primary" value="Consumer Bills" style="font-weight: bold;color:black;"
-                            th:attr="onclick=|location.href='/bill/getBillForConsumer?consumerId=${consumer.id}'|" >
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <input type="button" class="btn-primary" value="Subscription Bills" style="font-weight: bold;color:black;"
-                            th:attr="onclick=|location.href='/bill/getSubscriptionBillRecordsForConsumer?consumerId=${consumer.id}'|" >
-                  </div>
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <input type="button" class="btn-primary" value="Other Due Bills" style="font-weight: bold;color:black;"
-                            th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumer.id}'|" >
-                  </div>
-                </div>
-                <input type="button" name="cancel" class="previous action-button-previous" value="Back" onclick="window.history.back()" >
-            </fieldset>
-            </form>
-          </div>
+            </div>
         </div>
-      </main>
-      <div th:replace="fragments :: main_scripts"></div>
-  </body>
+
+        <!-- Billing Actions Section -->
+        <div class="tile">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
+                Billing Actions
+            </div>
+            
+            <div class="tile-body text-center" style="margin-bottom: 20px;">
+            
+                <div class="row" style="margin-bottom: 10px;">
+                    <div class="col-md-4 mb-3">
+                        <strong>Total Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.totalPending, 1, 2)}"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <strong>Subscription Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <strong>Other Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}"></span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary w-100" 
+                                th:attr="onclick=|location.href='/bill/getBillForConsumer?consumerId=${consumer.id}'|">
+                            View Consumer Bills
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary w-100" 
+                                th:attr="onclick=|location.href='/bill/getSubscriptionBillRecordsForConsumer?consumerId=${consumer.id}'|">
+                            View Subscription Bills
+                        </button>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary w-100" 
+                                th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumer.id}'|">
+                            View Other Due Bills
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 20px;" onclick="window.history.back()">Back</button>
+            </div>
+        </div>
+      </div>
+    </main>
+
+<div th:replace="fragments :: main_scripts"></div>
+</body>
 </html>

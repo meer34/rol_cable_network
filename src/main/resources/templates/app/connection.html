@@ -6,6 +6,7 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
@@ -81,8 +82,8 @@
                           <td th:text="${connection.consumer?.id}" />
                           <td th:text="${connection.consumer?.fullName}" />
                           <td th:text="${connection.connectionType}" />
-                          <td th:text="${connection.dateOfConnStart}" />
-                          <td th:text="${connection.dateOfConnExpiry}" />
+                          <td th:text="${{connection.dateOfConnStart}}" />
+                          <td th:text="${{connection.dateOfConnExpiry}}" />
                           <td th:text="${connection.subscriptionAmount}" />
                         </tr>
                       </tbody>
@@ -96,7 +97,8 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
 	  <script>
 	  $(document).ready(function() {

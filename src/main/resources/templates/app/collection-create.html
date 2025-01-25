@@ -6,9 +6,10 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
-            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="${billType == 'Subscription'} ? @{/collection/saveSubscriptionCollection} : @{/collection/saveOtherDueCollection}" method="post">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:object="${collection}" th:action="${billType == 'Subscription'} ? @{/collection/saveSubscriptionCollection} : @{/collection/saveOtherDueCollection}" method="post">
               <fieldset style="margin-top: 0;">
 				<legend style="text-align:center; padding-top: 50px;" th:text="${header} + ${pendingAmount != null ? pendingAmount : ''}"></legend>
                 <div class="col-lg-12 flexdisplay">
@@ -22,66 +23,123 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Payment Mode</label>
-                    <select class="form-control" name="paymentMode" style="height: 48px;" >
+                    <select class="form-control" th:field="*{paymentMode}" style="height: 48px;" >
                       <option selected disabled="disabled" value="">Select Type</option>
-                      <option th:selected="${collection?.paymentMode=='Cash'}">Cash</option>
-                      <option th:selected="${collection?.paymentMode=='Online'}">Online</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Online">Online</option>
                     </select>
                   </div>
 				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <label>Date</label>
-                    <input type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}" required sec:authorize="hasAuthority('ADMIN')">
-                    <input th:if="${collection.id}" type="date" class="form-control" name="date" placeholder="Enter Date" th:value="${collection.date}" required sec:authorize="!hasAuthority('ADMIN')">
-                    <input th:if="${collection.id==null}" type="date" class="form-control" name="date" id="defaultDate" readonly required sec:authorize="!hasAuthority('ADMIN')">
+                    <input type="date" class="form-control" name="date" id="date" th:value="*{date}"  placeholder="Enter Date" required sec:authorize="hasAuthority('ADMIN')">
+                    <input th:if="${collection.id}" name="date" id="date" th:value="*{date}" class="form-control" placeholder="Enter Date" required sec:authorize="!hasAuthority('ADMIN')">
+                    <input th:if="${collection.id==null}" name="date" id="date" th:value="*{date}" class="form-control" readonly required sec:authorize="!hasAuthority('ADMIN')">
                   </div>
                 </div>
 				<div class="col-lg-12 flexdisplay">
-				  <div th:if="${billType == 'Subscription'}" class="col-lg-12">
-                    <label>Select Bills</label>
-					<select class="form-control multiple-select-pillbox" name="bills" id="bills" style="height: 48px !important;" multiple onChange="calculateSubscriptionBillAmount()">
-                      <option style="color: #333;" th:each="bill : ${bills}" 
-										th:text="${bill.endDate + '&nbsp&nbsp&nbsp₹' + bill.billAmount}" th:value="${bill.id}"
-										th:selected="${collection.bills?.contains(bill)}"></option>
-                    </select>
-				  </div>
-				  <div th:if="${billType == 'Other Due'}" class="col-lg-12">
-                    <label>Select Dues</label>
-					<select class="form-control multiple-select-pillbox" name="dues" id="dues" style="height: 48px !important;" multiple onChange="calculateOtherDueAmount()">
-                      <option style="color: #333;" th:each="due : ${dues}" 
-										th:text="${due.dueType + '&nbsp&nbsp&nbsp₹' + (due.dueAmount-due.paidAmount)}" th:value="${due.id}"
-										th:selected="${collection.dues?.contains(due)}"></option>
-                    </select>
-				  </div>
-				</div>
-				<div class="col-lg-12 flexdisplay">
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Paid Amount</label>
-                    <input type="number" min="0" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${collection.amount}" onChange="calculateNetAmount()" required>
-                  </div>
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <label>Discount</label>
-                    <input type="number" min="0" class="form-control" name="discount" id="discount" placeholder="Discount" th:value="${collection.discount}" onChange="calculateNetAmount()">
-                  </div>
-				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Net Amount</label>
-                    <input type="number" min="0" class="form-control" name="netAmount" id="netAmount" placeholder="Payable Amount" th:value="${collection.netAmount}" readonly>
+                    <input type="number" min="0" class="form-control" th:field="*{netAmount}" placeholder="Net Amount" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Discount</label>
+                    <input type="number" min="0" step=".01" class="form-control" th:field="*{discount}" placeholder="Discount" onChange="collectionPaidAmountChange()">
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Payable Amount</label>
+                    <input type="number" min="0" step=".01" class="form-control" th:field="*{amount}" placeholder="Paid Amount" onChange="collectionPaidAmountChange()" required>
+                  </div>
+				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Advance Amount</label>
+                    <input type="number" min="0" class="form-control" th:field="*{advanceAmount}" value="0.0" placeholder="Advance Amount" readonly>
                   </div>
 				</div>
 				<div class="col-lg-12 flexdisplay">
 				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Received By</label>
-                    <select class="form-control" name="collectedBy" style="height: 48px;" required>
+                    <select class="form-control" th:field="*{collectedBy}" style="height: 48px;" required>
                       <option selected disabled="disabled" value="">Select Received By</option>
 							<option style="color: #333;" th:each="user : ${users}" 
-								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==collection?.collectedBy?.id}"></option>
+								th:text="${user.name}" th:value="${user.id}"></option>
 							<!--dropdown to include both admin and appUser--> 
                     </select>
                   </div>
 				  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                     <label>Remarks</label>
-                    <input type="text" class="form-control" name="remarks" placeholder="Remarks" th:value="${collection.remarks}">
+                    <input type="text" class="form-control" th:field="*{remarks}" placeholder="Remarks">
                   </div>
 				</div>
+				
+				<div class="table-responsive table_size" style="margin-top: 50px;" th:if="${billType == 'Subscription'}">
+					<label>Bills</label>
+					<table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="dueTable" >
+					<thead id="myHeader" class="thead-inverse" style="background-color: #199999; color: #FFF;">
+						<tr>
+							<th class="table_heading">Start Date</th>
+							<th class="table_heading">End Date</th>
+							<th class="table_heading">Amount</th>
+							<th class="table_heading">Paid Amount</th>
+							<th class="table_heading">Collect</th>
+							<th class="table_heading">Paid Amount(Updated)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color: #FFF" th:each="bill, stat : *{bills}">
+							<td th:text="*{bills[__${stat.index}__].startDate}"></td>
+							<td th:text="*{bills[__${stat.index}__].endDate}"></td>
+							<td th:text="*{bills[__${stat.index}__].billAmount}"></td>
+							<td th:text="*{bills[__${stat.index}__].paidAmount}"></td>
+							<td>
+							    <input type="hidden" th:field="*{bills[__${stat.index}__].id}">
+								<input type="hidden" th:name="${'bills[' + stat.index + '].startDate'}" th:value="*{bills[__${stat.index}__].startDate}">
+								<input type="hidden" th:name="${'bills[' + stat.index + '].endDate'}" th:value="*{bills[__${stat.index}__].endDate}">
+								<input type="hidden" th:field="*{bills[__${stat.index}__].billAmount}">
+								<input type="hidden" th:field="*{bills[__${stat.index}__].paidAmount}">
+								<input type="hidden" th:field="*{bills[__${stat.index}__].connection}">
+								<input type="number" step="0.01" th:max="*{bills[__${stat.index}__].billAmount - bills[__${stat.index}__].paidAmount}" th:field="*{bills[__${stat.index}__].collectedAmount}" 
+									placeholder="Amount" onchange="collectionCollectedAmountChange()" style="padding:5px; margin-bottom:0px;">
+							</td>
+							<td/>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+				<div class="table-responsive table_size" style="margin-top: 50px;" th:if="${billType == 'Other Due'}">
+					<label>Dues</label>
+					<table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="dueTable" >
+					<thead id="myHeader" class="thead-inverse" style="background-color: #199999; color: #FFF;">
+						<tr>
+							<th class="table_heading">Sl No</th>
+							<th class="table_heading">Due Type</th>
+							<th class="table_heading">Amount</th>
+							<th class="table_heading">Paid Amount</th>
+							<th class="table_heading">Collect</th>
+							<th class="table_heading">Paid Amount(Updated)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color: #FFF" th:each="due, stat : *{dues}">
+							<td th:text="${stat.index + 1}" />
+							<td th:text="*{dues[__${stat.index}__].dueType}"></td>
+							<td th:text="*{dues[__${stat.index}__].dueAmount}"></td>
+							<td th:text="*{dues[__${stat.index}__].paidAmount}"></td>
+							<td>
+							    <input type="hidden" th:field="*{dues[__${stat.index}__].id}">
+								<input type="hidden" th:field="*{dues[__${stat.index}__].dueType}">
+								<input type="hidden" th:field="*{dues[__${stat.index}__].dueAmount}">
+								<input type="hidden" th:field="*{dues[__${stat.index}__].paidAmount}" readonly>
+								<input type="hidden" th:field="*{dues[__${stat.index}__].remarks}">
+								<input type="hidden" th:name="${'dues[' + stat.index + '].dateOfDueEntry'}" th:value="*{dues[__${stat.index}__].dateOfDueEntry}">
+								<input type="hidden" th:field="*{dues[__${stat.index}__].consumer}">
+								<input type="number" step="0.01" th:max="*{dues[__${stat.index}__].dueAmount - dues[__${stat.index}__].paidAmount}" th:field="*{dues[__${stat.index}__].collectedAmount}" 
+									placeholder="Amount" onchange="collectionCollectedAmountChange()" style="padding:5px; margin-bottom:0px;">
+							</td>
+							<td/>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+				
 			<input th:if="${collection.id}" type="hidden" name="id" th:value="${collection.id}">
             <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
             <input type="submit" name="submit" class="submit action-button" value="Save">
@@ -89,13 +147,15 @@
             </form>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
       <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	  <script>
 		$(document).ready(function() {
 			$('.multiple-select-pillbox').select2();
+			adjustUpdatedPaidAmount();
 		});
 	  </script>
 	  <script>

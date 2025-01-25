@@ -23,6 +23,7 @@ import rcn.web.model.Due;
 import rcn.web.service.AppUserService;
 import rcn.web.service.BillService;
 import rcn.web.service.CollectionService;
+import rcn.web.service.ConnectionService;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.DueService;
 
@@ -33,6 +34,7 @@ public class CollectionController {
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
 	@Autowired CollectionService collectionService;
 	@Autowired ConsumerService consumerService;
+	@Autowired ConnectionService connectionService;
 	@Autowired AppUserService appUserService;
 	@Autowired BillService billService;
 	@Autowired DueService dueService;
@@ -111,7 +113,8 @@ public class CollectionController {
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalSubscriptionPendingBill();
 		model.addAttribute("pendingAmount", consumer.getSubscriptionBill());
-		model.addAttribute("bills", consumer.getConnections().stream().flatMap(connection -> connection.getBills().stream())
+		
+		collection.setBills(consumer.getConnections().stream().flatMap(connection -> connection.getBills().stream())
 				.filter(bill -> bill.getBillAmount() - bill.getPaidAmount() > 0)
 				.collect(Collectors.toList()));
 		
@@ -134,7 +137,8 @@ public class CollectionController {
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalOtherDuePendingBill();
 		model.addAttribute("pendingAmount", consumer.getOtherDueBill());
-		model.addAttribute("dues", consumer.getDues()
+		
+		collection.setDues(consumer.getDues()
 				.stream()
 				.filter(due -> due.getDueAmount() - due.getPaidAmount() > 0)
 				.collect(Collectors.toList()));
@@ -145,30 +149,16 @@ public class CollectionController {
 	@RequestMapping(value = "/saveSubscriptionCollection",
 			method = RequestMethod.POST)
 	public String saveSubscriptionCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
+		
 		collection.setBillType("Subscription");
-		collection = collectionService.save(collection);
 		
-		Consumer consumer = collection.getConsumer();
-		consumer.setTotalPaid(consumer.getTotalPaid() + collection.getAmount());
-		consumerService.save(consumer);
+		List<Bill> bills = collection.getBills()
+				.stream()
+				.filter(bill -> bill.getCollectedAmount() > 0)
+				.collect(Collectors.toList());
 		
-		Bill tempBill = null;
-		Double amount = collection.getNetAmount();
-		for (Bill bill : collection.getBills()) {
-			tempBill = billService.getById(bill.getId());
-			
-			if(amount >= tempBill.getBillAmount()-tempBill.getPaidAmount()) {
-				tempBill.setPaidAmount(tempBill.getBillAmount());
-				amount = amount - tempBill.getPaidAmount();
-				
-			} else {
-				tempBill.setPaidAmount(tempBill.getPaidAmount() + amount);
-				billService.save(tempBill);
-				break;
-			}
-			
-			billService.save(tempBill);
-		}
+		collection.setBills(bills);
+		collectionService.save(collection);
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
@@ -177,26 +167,17 @@ public class CollectionController {
 	@RequestMapping(value = "/saveOtherDueCollection",
 			method = RequestMethod.POST)
 	public String saveOtherDueCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
-		collection.setBillType("Other Due");
-		collection = collectionService.save(collection);
 		
-		Due tempDue = null;
-		Double amount = collection.getNetAmount();
-		for (Due due : collection.getDues()) {
-			tempDue = dueService.getDueById(due.getId());
-			
-			if(amount >= tempDue.getDueAmount()-tempDue.getPaidAmount()) {
-				tempDue.setPaidAmount(tempDue.getDueAmount());
-				amount = amount - tempDue.getPaidAmount();
-				
-			} else {
-				tempDue.setPaidAmount(tempDue.getPaidAmount() + amount);
-				dueService.saveDue(tempDue);
-				break;
-			}
-			
-			dueService.saveDue(tempDue);
-		}
+		collection.setBillType("Other Due");
+		
+		
+		List<Due> dues = collection.getDues()
+				.stream()
+				.filter(due -> due.getCollectedAmount() > 0)
+				.collect(Collectors.toList());
+		
+		collection.setDues(dues);
+		collectionService.save(collection);
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Collection from " + collection.getConsumer().getFullName() + " saved successfully!");
 		return "redirect:/collection";
@@ -226,20 +207,13 @@ public class CollectionController {
 		} else {
 			model.addAttribute("header", "Edit Other Due Collection for - " + collection.getConsumer().getFullName());
 		}
+		
 		model.addAttribute("collection", collection);
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());
 		model.addAttribute("billType", collection.getBillType());
-		model.addAttribute("bills", collection.getConsumer().getConnections()
-				.stream()
-				.flatMap(connection -> connection.getBills().stream())
-				.filter(bill -> bill.getBillAmount() > 0)
-				.collect(Collectors.toList()));
-		model.addAttribute("dues", collection.getConsumer().getDues()
-				.stream()
-				.filter(due -> due.getDueAmount() > 0)
-				.collect(Collectors.toList()));
+		
 		return "app/collection-create";
 	}
 

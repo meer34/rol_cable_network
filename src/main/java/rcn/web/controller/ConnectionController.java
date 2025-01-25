@@ -22,6 +22,7 @@ import rcn.web.model.Bill;
 import rcn.web.model.Connection;
 import rcn.web.model.Due;
 import rcn.web.service.BillService;
+import rcn.web.service.CollectionService;
 import rcn.web.service.ConnectionService;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.DueService;
@@ -32,11 +33,17 @@ import rcn.web.util.AppUtility;
 @RequestMapping("/connection")
 public class ConnectionController {
 
-	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
+	@Value("${INITIAL_PAGE_SIZE}")
+	private Integer initialPageSize;
+	
+	@Value("${RENEWAL_CYCLE}")
+	private int renewalCycle;
+	
 	@Autowired ConnectionService connectionService;
 	@Autowired ConsumerService consumerService;
 	@Autowired SubscriptionService subscriptionService;
 	@Autowired BillService billService;
+	@Autowired CollectionService collectionService;
 	@Autowired DueService dueService;
 	@Autowired AppUtility utility;
 
@@ -86,6 +93,7 @@ public class ConnectionController {
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
 		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
 		model.addAttribute("channelList", subscriptionService.getAllChannels());
+		model.addAttribute("renewalCycle", renewalCycle);
 		return "app/connection-create";
 	}
 
@@ -104,7 +112,8 @@ public class ConnectionController {
 				Due connChargeDue = new Due();
 				connChargeDue.setDueType("Connection Charge");
 				connChargeDue.setDueAmount(connection.getConnectionCharge());
-				connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+//				connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime()); //Got 17th date in VPS on 18th Jan
+				connChargeDue.setDateOfDueEntry(connection.getDate());
 				connChargeDue.setRemarks("Auto entry for fresh connection");
 				connChargeDue.setConsumer(connection.getConsumer());
 
@@ -115,7 +124,7 @@ public class ConnectionController {
 				Due prevDue = new Due();
 				prevDue.setDueType("Previous Due");
 				prevDue.setDueAmount(connection.getPreviousDue());
-				prevDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime());
+				prevDue.setDateOfDueEntry(connection.getDate());
 				prevDue.setRemarks("Auto entry for fresh connection");
 				prevDue.setConsumer(connection.getConsumer());
 
@@ -134,6 +143,13 @@ public class ConnectionController {
 					disconnectedDate = utility.formatStringToDate(stateChangeDate);
 				}
 				generateBillForPeriod(connection, connection.getSubscriptionAmount(), connection.getDateOfConnStart(), disconnectedDate);
+				
+				Bill oldBill = billService.getBillForPeriod(connection, connection.getDateOfConnStart(), connection.getDateOfConnExpiry());
+				collectionService.removeBillFromCollections(oldBill);
+				billService.deleteById(oldBill.getId());
+				
+				double paidAmountReturn = oldBill.getPaidAmount();
+				connection.setAdvanceAmount(connection.getAdvanceAmount() + paidAmountReturn);
 				connection.setDateOfConnExpiry(disconnectedDate);
 
 			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
@@ -146,15 +162,19 @@ public class ConnectionController {
 
 				Calendar c = Calendar.getInstance();
 				c.setTime(connection.getDateOfConnStart());
-				c.add(Calendar.DATE, 30);
+				c.add(Calendar.DATE, renewalCycle - 1);
 
 				connection.setDateOfConnExpiry(c.getTime());
 				
 				generateBill(connection);
+				
 			} else if(connection.getSubscriptionAmount() != savedConn.getSubscriptionAmount()){
-				generateBillForPeriod(connection, savedConn.getSubscriptionAmount(), connection.getDateOfConnStart(), utility.getTodaysDateWithoutTime());
-				generateBillForPeriod(connection, connection.getSubscriptionAmount(), utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
-//				deleteBillForPeriod
+				double subscriptionAnountDifference = connection.getSubscriptionAmount() - savedConn.getSubscriptionAmount();
+				
+				if(subscriptionAnountDifference > 0)
+					generateBillForPeriod(connection, subscriptionAnountDifference, utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
+				else if(subscriptionAnountDifference < 0)
+					generateBillForPeriod(connection, subscriptionAnountDifference, utility.getTomorrowsDateWithoutTime(), connection.getDateOfConnExpiry());
 			}
 			
 			connection = connectionService.save(connection);
@@ -172,7 +192,7 @@ public class ConnectionController {
 		bill.setConnection(connection);
 		bill.setStartDate(billStartDate);
 		bill.setEndDate(billEndDate);
-		bill.setBillAmount(subscriptionAmount/utility.getDifferenceDays(billStartDate, billEndDate));
+		bill.setBillAmount(subscriptionAmount*utility.getDifferenceDays(billStartDate, billEndDate)/30);
 		bill.setPaidAmount(0.0);
 		
 		billService.save(bill);
@@ -213,11 +233,13 @@ public class ConnectionController {
 		} else {
 			model.addAttribute("connection", connectionService.getById(Long.parseLong(id)));
 		}
+		model.addAttribute("header", "Edit Connection");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
 		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
 		model.addAttribute("channelList", subscriptionService.getAllChannels());
-		model.addAttribute("header", "Edit Connection");
+		model.addAttribute("renewalCycle", renewalCycle);
+		
 		return "app/connection-create";
 	}
 
@@ -252,6 +274,10 @@ public class ConnectionController {
 		connection.setDateOfConnExpiry(utility.getOneMonthAheadDate(connection.getDateOfConnStart()));
 		
 		generateBill(connection);
+		
+		connection.setState("Connected");
+		
+		connectionService.save(connection);
 		
 		redirectAttributes.addFlashAttribute("successMessage", "Connection for " + connection.getConsumer().getFullName() + " renewed successfully!");
 		return "redirect:/connection";

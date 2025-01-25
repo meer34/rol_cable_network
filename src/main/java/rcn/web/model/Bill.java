@@ -26,12 +26,20 @@ public class Bill {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToOne @JoinColumn(name="connection") private Connection connection;
+	@ManyToOne
+	@JoinColumn(name="connection")
+	private Connection connection;
 	
-	@Temporal(TemporalType.DATE) @DateTimeFormat(pattern = "yyyy-MM-dd") private Date startDate;
-	@Temporal(TemporalType.DATE) @DateTimeFormat(pattern = "yyyy-MM-dd") private Date endDate;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date startDate;
+	
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date endDate;
 	
 	private Double billAmount;
 	private Double paidAmount;
+	private double collectedAmount;
 	
 }

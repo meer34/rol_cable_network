@@ -1,5 +1,6 @@
 package rcn.web.controller;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,7 +91,11 @@ public class ConsumerController {
 			@RequestParam("consumerId") String consumerId) throws Exception{
 
 		System.out.println("Got view request for consumer id " + consumerId);
-		model.addAttribute("consumer", consumerService.getById(Long.parseLong(consumerId)));
+		
+		Consumer consumer = consumerService.getById(Long.parseLong(consumerId));
+		consumer.calculateAllPendingBill();
+		model.addAttribute("consumer", consumer);
+		
 		return "app/consumer-view";
 	}
 
@@ -171,6 +176,32 @@ public class ConsumerController {
 		areaRepo.save(area);
 		redirectAttributes.addFlashAttribute("successMessage", "Area saved successfully!");
 		return "redirect:/consumer/area";
+
+	}
+	
+	@GetMapping("filter")
+	public String filter(Model model,
+			@RequestParam(value="filterType", required = false) String filterType,
+			@RequestParam(value="filterAmount", required = false) Double filterAmount,
+			@RequestParam(value="consumerId", required = false) String consumerId) throws ParseException {
+
+		List<Consumer> listOfConsumers = null;
+
+		System.out.println("Consumer filter page");
+		listOfConsumers = consumerService.getAll();
+		
+		for (Consumer consumer : listOfConsumers) {
+			consumer.calculateAllPendingBill();
+		}
+		
+		listOfConsumers = listOfConsumers.stream().filter(consumer -> consumer.getTotalPending() >= (filterAmount!=null? filterAmount: 0.0 )).collect(Collectors.toList());
+		
+		model.addAttribute("listOfConsumers", listOfConsumers);
+		
+		model.addAttribute("filterType", filterType);
+		model.addAttribute("filterAmount", filterAmount);
+
+		return "app/consumer-filter";
 
 	}
 

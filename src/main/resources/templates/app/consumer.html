@@ -6,11 +6,14 @@
     <div th:replace="fragments :: app-layout"></div>
 	
     <main class="app-content">
+      <div class="container-fluid">
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
               <input type="button" class="submit action-button" value="Add New Consumer" th:attr="onclick=|location.href='@{/consumer/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_CONSUMER')">
               <input type="button" class="submit action-button" value="Area Management" th:attr="onclick=|location.href='@{/consumer/area}'|" >
+              <input type="button" class="submit action-button" value="Due Consumers" th:attr="onclick=|location.href='@{/consumer/filter}'|" >
+              
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">
@@ -87,7 +90,8 @@
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
       <div th:replace="fragments :: main_scripts"></div>
   </body>
 </html>

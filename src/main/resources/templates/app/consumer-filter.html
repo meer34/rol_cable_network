@@ -15,21 +15,26 @@
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 
-                <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <label style="color:#780c2a;">Select Year</label>
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                    <select id="ddlYears" onChange="loadBillForParticularYear()"></select>
-                  </div>
-                </div>
+                <form class="dashboardicon" th:action="@{/consumer/filter}" method="get">
+					<div class="col-lg-12 flexdisplay">
+						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12" style="padding-top: 10px;">
+							<label>Minimum Due Amount</label>
+						</div>
+						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+							<input type="text" name="filterAmount" th:value="${filterAmount}" placeholder="Minimum Due" >
+						</div>
+						<div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
+							<div style="padding-top: 5px;">
+								<input type="submit" class="submit action-button" value="Search">
+							</div>
+						</div>
+					</div>
+                </form>
+                
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/bill-record}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" >
-                      <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" name="action" class="submit action-button" value="Subscription Bill Records">
-					  <input type="submit" th:formaction="@{/bill/getDueRecordsForConsumer}" name="action" class="submit action-button" value="Other Due Records">
-					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
-					  <input type="submit" th:formaction="@{/collection/collectOtherDue}" name="action" class="submit action-button" value="Collect Other Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
+					  <input type="submit" th:formaction="@{/reminder}" name="action" class="submit action-button" value="Send Reminder" sec:authorize="hasAnyAuthority('ADMIN','SEND_REMINDER')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
@@ -38,30 +43,26 @@
                         <tr>
                           <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>
-                          <th class="table_heading">Billing Address</th>
+						  <th class="table_heading">Phone No</th>
                           <th class="table_heading">Subscription Dues</th>
                           <th class="table_heading">Other Dues</th>
                           <th class="table_heading">Current Total Due</th>
-                          <th class="table_heading">Collection Amount</th>
                           <th class="table_heading">Advance</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr style="background-color: #FFF" th:each="consumer : ${listPage.content}">
-                          <td class="noPrint" ><input type='radio' class="radioBtn" name='consumerId' th:value="${consumer.id}"></td>
+                        <tr style="background-color: #FFF" th:each="consumer : ${listOfConsumers}">
+                          <td class="noPrint" ><input type='checkbox' class="radioBtn" name='consumerId' th:value="${consumer.id}"></td>
 						  <td th:text="${consumer.fullName}" />
-                          <td th:text="${consumer.fullAddress}" />
+						  <td th:text="${consumer.phoneNo}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.totalPending, 1, 2)}" />
-						  <td th:text="${#numbers.formatDecimal(consumer.totalPaid, 1, 2)}" />
 						  <td th:text="${consumer.connections.size() > 0} ? ${#numbers.formatDecimal(consumer.connections[0].advanceAmount, 1, 2)} : 0.0" />
                         </tr>
                       </tbody>
                     </table>
                   </form>
-				  
-				  <div th:replace="fragments :: pagination"></div>
 				  
                 </div>
               </div>
@@ -72,27 +73,6 @@
     </main>
       <script type="text/javascript" th:inline="javascript">
 		window.onload = function () {
-			//Reference the DropDownList.
-			var ddlYears = document.getElementById("ddlYears");
-			
-			//Determine the Current Year.
-			var currentYear = (new Date()).getFullYear();
-			
-			//Loop and add the Year values to DropDownList.
-			
-			var option = document.createElement("OPTION");
-				option.innerHTML = "All Years";
-				option.value = "All Years";
-				//option.disabled = true;
-				ddlYears.appendChild(option);
-				
-			for (var i = currentYear; i >= 2000; i--) {
-				var option = document.createElement("OPTION");
-				option.innerHTML = i;
-				option.id = 'year' + i;
-				option.value = i;
-				ddlYears.appendChild(option);
-			}
 			/*<![CDATA[*/
 			var year = /*[[${year}]]*/ 'default';
 			document.getElementById("year" + year).selected = "true";
@@ -100,8 +80,8 @@
 			
 		};
 		
-		function loadBillForParticularYear() {
-			var year = document.getElementById("ddlYears").value;
+		function loadConsumersWithFilterChange() {
+			var consumerFilter = document.getElementById("consumerFilter").value;
 			window.location = '/bill?year=' + year;
 			
 		}

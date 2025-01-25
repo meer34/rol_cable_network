@@ -67,10 +67,19 @@ public class DueController {
 		Long consumerId = dueService.getDueById(Long.parseLong(dueId))
 				.getConsumer()
 				.getId();
-		dueService.deleteDueById(Long.parseLong(dueId));
-		redirectAttributes.addFlashAttribute("successMessage", "Due with id " + dueId + " deleted successfully!");
 		redirectAttributes.addAttribute("consumerId", consumerId);
+		
+		Due due = dueService.getDueById(Long.parseLong(dueId));
+		
+		if(due.getPaidAmount() == 0.0) {
+			dueService.deleteDueById(Long.parseLong(dueId));
+			redirectAttributes.addFlashAttribute("successMessage", "Due with id " + dueId + " deleted successfully for consumer id " + consumerId);
+		} else {
+			redirectAttributes.addFlashAttribute("errorMessage", "Cannot delete Due since it already has paid amount!");
+		}
+		
 		return "redirect:/bill/getDueRecordsForConsumer";
+	
 	}
 
 }

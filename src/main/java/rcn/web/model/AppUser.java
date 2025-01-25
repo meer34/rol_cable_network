@@ -23,7 +23,6 @@ import rcn.security.User;
 @Getter
 @Setter
 @Entity
-@ToString
 public class AppUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,42 +10,42 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Bucket" th:attr="onclick=|location.href='@{/bucket/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_BUCKET')">
+              <input type="button" class="submit action-button" value="Add New Bouquet" th:attr="onclick=|location.href='@{/bouquet/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_BUCKET')">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 
-                <form class="dashboardicon" th:action="@{/bucket}" method="get">
+                <form class="dashboardicon" th:action="@{/bouquet}" method="get">
                 	<div th:replace="fragments :: keyword_search_bar"></div>
                 </form>
                 
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
-                      <input type="submit" th:formaction="@{/bucket/view}" name="action" class="submit action-button" value="View">
-                      <input type="submit" th:formaction="@{/bucket/edit}" name="action" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
+                      <input type="submit" th:formaction="@{/bouquet/view}" name="action" class="submit action-button" value="View">
+                      <input type="submit" th:formaction="@{/bouquet/edit}" name="action" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
                       <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/bucket/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
+                      <input type="submit" th:formaction="@{/bouquet/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
-                        style="background-color: #1D2951; color: #FFF;">
+                        style="background-color: #06697e; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
                           <th class="table_heading">ID</th>
-                          <th class="table_heading">Bucket Name</th>
+                          <th class="table_heading">Bouquet Name</th>
                           <th class="table_heading">Price</th>
                           <th class="table_heading">GST / Non GST</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr style="background-color: #FFF" th:each="bucket : ${listPage.content}">
-                          <td class="noPrint" ><input type='radio' th:value="${bucket.id}" class="radioBtn" name='id'></td>
-                          <td th:text="${bucket.id}" />
-                          <td th:text="${bucket.name}" />
-                          <td th:text="${#numbers.formatDecimal(bucket.price, 1, 2)}" />
-                          <td th:text="${bucket.gstNonGst}" />
+                        <tr style="background-color: #FFF" th:each="bouquet : ${listPage.content}">
+                          <td class="noPrint" ><input type='radio' th:value="${bouquet.id}" class="radioBtn" name='id'></td>
+                          <td th:text="${bouquet.id}" />
+                          <td th:text="${bouquet.name}" />
+                          <td th:text="${#numbers.formatDecimal(bouquet.price, 1, 2)}" />
+                          <td th:text="${bouquet.gstNonGst}" />
                         </tr>
                       </tbody>
                     </table>

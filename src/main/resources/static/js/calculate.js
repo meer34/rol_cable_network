@@ -23,12 +23,12 @@ function calculateSubscriptionAmount(){
 		}
 	});
 
-	$("#buckets option:selected").each(function () {
+	$("#bouquets option:selected").each(function () {
 		var $this = $(this);
 		if ($this.length) {
 			var selText = $this.text();
-			var bucketPrice = selText.split("₹")[1];
-			price = price + Number(bucketPrice);
+			var bouquetPrice = selText.split("₹")[1];
+			price = price + Number(bouquetPrice);
 		}
 	});
 

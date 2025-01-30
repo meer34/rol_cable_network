@@ -9,11 +9,11 @@
       <div class="container-fluid">
         <!-- Connection Details Section -->
         <div class="tile mb-4">
-            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951  100%); color: white; padding: 10px 20px; border-radius: 3px;">
                 Connection Details
             </div>
             
-            <div class="tile-body" style="padding: 10px 20px;">
+            <div class="tile-body" style="padding: 0px 20px;">
 				<div class="row">
 					<div class="col-lg-4 col-md-12">
 						<div>
@@ -53,9 +53,6 @@
 						<div>
 							<strong>Expiry Date:</strong> <span th:text="${connection.dateOfConnExpiry}"></span>
 						</div>
-						<div>
-							<strong>Base Package:</strong> <span th:text="${connection.channelPackage?.name + connection.channelPackage?.price}"></span>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -80,7 +77,7 @@
 						<strong>Bouquets:</strong>
 						<div>
 							<ul style="list-style: none; padding: 0; margin: 0;">
-								<li th:each="bouquet : ${connection.buckets}">
+								<li th:each="bouquet : ${connection.bouquets}">
 									<span th:text="${bouquet.name + ' - ₹' + bouquet.price}"></span>
 								</li>
 							</ul>
@@ -109,10 +106,9 @@
             </div>
             
             <div class="tile-body" style="padding: 0px 20px;">
-            
                 <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                   <thead class="thead-inverse"
-                    style="background-color: #199999; color: #FFF;">
+                    style="background-color: #06697e; color: #FFF;">
                     <tr>
                       <th class="table_heading">SL. No</th>
                       <th class="table_heading">Start Date</th>
@@ -133,7 +129,7 @@
                     </tr>
                   </tbody>
                 </table>
-                <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 20px;" onclick="window.history.back()">Back</button>
+                <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 5px;" onclick="window.history.back()">Back</button>
             </div>
         </div>
         

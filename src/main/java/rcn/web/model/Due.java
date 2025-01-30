@@ -3,6 +3,7 @@ package rcn.web.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +40,10 @@ public class Due {
 	@ManyToOne
 	@JoinColumn(name="consumer")
 	private Consumer consumer;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name ="createdBy")
+	private AppUser createdBy;
 	
 //	@ManyToMany(mappedBy="dues")
 //	private List<Collection> collections;

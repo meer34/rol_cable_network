@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import rcn.web.model.Bucket;
+import rcn.web.model.Bouquet;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.SubscriptionService;
 
 @Controller
-@RequestMapping("/bucket")
-public class BucketController {
+@RequestMapping("/bouquet")
+public class BouquetController {
 
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
 	@Autowired SubscriptionService subscriptionService;
@@ -34,15 +34,15 @@ public class BucketController {
 			@RequestParam("size") Optional<Integer> size,
 			@RequestParam(value="keyword", required = false) String keyword) {
 
-		Page<Bucket> listPage = null;
+		Page<Bouquet> listPage = null;
 
 		if(keyword == null) {
-			System.out.println("Bucket home page");
-			listPage = subscriptionService.getAllBuckets(page.orElse(1) - 1, size.orElse(initialPageSize));
+			System.out.println("Bouquet home page");
+			listPage = subscriptionService.getAllBouquets(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Bucket for keyword:" + keyword);
-			listPage = subscriptionService.searchBucketByKeyword(keyword, page.orElse(1) - 1, size.orElse(initialPageSize));
+			System.out.println("Searching Bouquet for keyword:" + keyword);
+			listPage = subscriptionService.searchBouquetByKeyword(keyword, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("keyword", keyword);
 
@@ -57,22 +57,22 @@ public class BucketController {
 			model.addAttribute("pageNumbers", pageNumbers);
 		}
 
-		return "app/bucket";
+		return "app/bouquet";
 
 	}
 
 	@GetMapping("/add")
-	public String add(Model model, Bucket bucket) {
-		model.addAttribute("header", "Create Bucket");
-		return "app/bucket-create";
+	public String add(Model model, Bouquet bouquet) {
+		model.addAttribute("header", "Create Bouquet");
+		return "app/bouquet-create";
 	}
 
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
-	public String save(Model model, Bucket bucket, RedirectAttributes redirectAttributes) throws Exception{
-		bucket = subscriptionService.saveBucket(bucket);
-		redirectAttributes.addFlashAttribute("successMessage", "Bucket " + bucket.getName() + " saved successfully!");
-		return "redirect:/bucket";
+	public String save(Model model, Bouquet bouquet, RedirectAttributes redirectAttributes) throws Exception{
+		bouquet = subscriptionService.saveBouquet(bouquet);
+		redirectAttributes.addFlashAttribute("successMessage", "Bouquet " + bouquet.getName() + " saved successfully!");
+		return "redirect:/bouquet";
 
 	}
 
@@ -82,8 +82,8 @@ public class BucketController {
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
 		System.out.println("Got view request for connection id " + id);
-		model.addAttribute("bucket", subscriptionService.getBucketById(Long.parseLong(id)));
-		return "app/bucket-view";
+		model.addAttribute("bouquet", subscriptionService.getBouquetById(Long.parseLong(id)));
+		return "app/bouquet-view";
 	}
 
 	@RequestMapping(value = "/edit",
@@ -92,9 +92,9 @@ public class BucketController {
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
 		System.out.println("Got edit request for connection id " + id);
-		model.addAttribute("bucket", subscriptionService.getBucketById(Long.parseLong(id)));
-		model.addAttribute("header", "Edit Bucket");
-		return "app/bucket-create";
+		model.addAttribute("bouquet", subscriptionService.getBouquetById(Long.parseLong(id)));
+		model.addAttribute("header", "Edit Bouquet");
+		return "app/bouquet-create";
 	}
 
 	@RequestMapping(value = "/delete",
@@ -104,9 +104,9 @@ public class BucketController {
 
 		System.out.println("Got delete request for connection id " + id);
 
-		subscriptionService.deleteBucketById(Long.parseLong(id));
-		redirectAttributes.addFlashAttribute("successMessage", "Bucket with id " + id + " deleted successfully!");
-		return "redirect:/bucket";
+		subscriptionService.deleteBouquetById(Long.parseLong(id));
+		redirectAttributes.addFlashAttribute("successMessage", "Bouquet with id " + id + " deleted successfully!");
+		return "redirect:/bouquet";
 	}
 
 }

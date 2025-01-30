@@ -63,11 +63,11 @@
                     <input type="number" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}" readonly>
                   </div>
                   <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                    <label>Select Buckets</label>
-                    <select class="form-control multiple-select-pillbox" name="buckets" id="buckets" style="height: 48px !important;" multiple disabled>
-                      <option style="color: #333;" th:each="bucket : ${bucketList}" 
-										th:text="${bucket.name + '&nbsp&nbsp&nbsp₹' + bucket.price}" th:value="${bucket.id}"
-										th:selected="${connection.buckets?.contains(bucket)}"></option>
+                    <label>Select Bouquets</label>
+                    <select class="form-control multiple-select-pillbox" name="bouquets" id="bouquets" style="height: 48px !important;" multiple disabled>
+                      <option style="color: #333;" th:each="bouquet : ${bouquetList}" 
+										th:text="${bouquet.name + '&nbsp&nbsp&nbsp₹' + bouquet.price}" th:value="${bouquet.id}"
+										th:selected="${connection.bouquets?.contains(bouquet)}"></option>
                     </select>
                   </div>
                 </div>
@@ -84,7 +84,7 @@
                 </div>
 				<table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                   <thead class="thead-inverse"
-                    style="background-color: #1D2951; color: #FFF;">
+                    style="background-color: #3753b1; color: #FFF;">
                     <tr>
                       <th class="table_heading">SL. No</th>
                       <th class="table_heading">Start Date</th>

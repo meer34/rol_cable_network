@@ -91,7 +91,7 @@ public class ConnectionController {
 		model.addAttribute("header", "Create Connection");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
-		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
+		model.addAttribute("bouquetList", subscriptionService.getAllBouquets());
 		model.addAttribute("channelList", subscriptionService.getAllChannels());
 		model.addAttribute("renewalCycle", renewalCycle);
 		return "app/connection-create";
@@ -214,7 +214,7 @@ public class ConnectionController {
 		}
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
-		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
+		model.addAttribute("bouquetList", subscriptionService.getAllBouquets());
 		model.addAttribute("channelList", subscriptionService.getAllChannels());
 		model.addAttribute("header", "View Connection");
 		
@@ -236,7 +236,7 @@ public class ConnectionController {
 		model.addAttribute("header", "Edit Connection");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
-		model.addAttribute("bucketList", subscriptionService.getAllBuckets());
+		model.addAttribute("bouquetList", subscriptionService.getAllBouquets());
 		model.addAttribute("channelList", subscriptionService.getAllChannels());
 		model.addAttribute("renewalCycle", renewalCycle);
 		

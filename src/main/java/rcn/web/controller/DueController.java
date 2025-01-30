@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Consumer;
 import rcn.web.model.Due;
+import rcn.web.service.AppUserService;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.DueService;
 
@@ -22,6 +23,7 @@ public class DueController {
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
 	@Autowired ConsumerService consumerService;
 	@Autowired DueService dueService;
+	@Autowired AppUserService appUserService;
 
 	@GetMapping("/add")
 	public String add(Model model, 
@@ -30,6 +32,7 @@ public class DueController {
 		model.addAttribute("header", "Add Due for " 
 		+ consumer.getFullName() + ", Consumer Id: " + consumerId);
 		model.addAttribute("consumerId", consumerId);
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		return "app/due-create";
 	}
 
@@ -52,8 +55,8 @@ public class DueController {
 		System.out.println("Got edit request for dueId " + dueId);
 		Due due = dueService.getDueById(Long.parseLong(dueId));
 		model.addAttribute("due", due);
-		System.out.println("######" + due.toString());
 		model.addAttribute("consumerId", due.getConsumer().getId());
+		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("header", "Edit Due");
 		return "app/due-create";
 	}

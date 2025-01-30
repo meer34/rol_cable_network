@@ -25,7 +25,7 @@
                 </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/bill-record}" method="get">
-                    <div class="dashboardicon2" style="text-align: left;" >
+                    <div class="dashboardicon2" style="text-align: left;padding:5px 5px" >
                       <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" name="action" class="submit action-button" value="Subscription Bill Records">
 					  <input type="submit" th:formaction="@{/bill/getDueRecordsForConsumer}" name="action" class="submit action-button" value="Other Due Records">
 					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
@@ -34,7 +34,7 @@
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
-                        style="background-color: #1D2951; color: #FFF;">
+                        style="background-color: #06697e; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>

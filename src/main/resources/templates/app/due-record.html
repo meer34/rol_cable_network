@@ -16,6 +16,22 @@
                 class="alert alert-danger" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
+                <div class="dashboardicon form-group col-lg-12">
+                  	<div class="col-lg-12">
+                  		<button type="button" class="btn btn-primary w-100" style="float: right;" 
+                                th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumerId}&showAll=true'|">
+                            Show All Bills
+                       </button>
+                       <button type="button" class="btn btn-primary w-100" style="float: right;margin-right:5px;" 
+                                th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumerId}'|">
+                            Show Bills With Due
+                       </button>
+                  	</div>
+                  	<div class="col-lg-12">
+                      <label>Search</label>
+                      <input type="text" name="Search" id="searchTable" placeholder="Type Here">
+                    </div>
+                  </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listOfDues.size() > 0}">
@@ -25,7 +41,7 @@
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
-                        style="background-color: #1D2951; color: #FFF;">
+                        style="background-color: #06697e; color: #FFF;">
                         <tr>
 						  <th class="table_heading noPrint"></th>
 						  <th class="table_heading">Name</th>

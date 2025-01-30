@@ -168,7 +168,8 @@ public class BillController {
 
 	@GetMapping("/getSubscriptionBillRecordsForConsumer")
 	public String getSubscriptionBillsByConsumerId(Model model,
-			@RequestParam(value="consumerId", required = true) Long consumerId) throws ParseException {
+			@RequestParam(value="consumerId", required = true) Long consumerId,
+			@RequestParam(value="showAll", required = false) boolean showAll) throws ParseException {
 
 		System.out.println("Get Subscription Bill Page for consumerId: " + consumerId);
 
@@ -176,7 +177,13 @@ public class BillController {
 		Consumer consumer = consumerService.getById(consumerId);
 
 		for (Connection connection : consumer.getConnections()) {
-			listOfBills.addAll(connection.getBills());
+			List<Bill> bills = connection.getBills();
+			if(!showAll) {
+				bills = bills.stream()
+						.filter(bill -> bill.getBillAmount() - bill.getPaidAmount() > 0)
+						.collect(Collectors.toList());
+			}
+			listOfBills.addAll(bills);
 		}
 
 		model.addAttribute("listOfBills", listOfBills);
@@ -187,12 +194,19 @@ public class BillController {
 
 	@GetMapping("/getDueRecordsForConsumer")
 	public String getDuesByConsumerId(Model model,
-			@RequestParam(value="consumerId", required = true) Long consumerId) throws ParseException {
+			@RequestParam(value="consumerId", required = true) Long consumerId,
+			@RequestParam(value="showAll", required = false) boolean showAll) throws ParseException {
 
 		System.out.println("Get due records page for consumerId: " + consumerId);
 
 		Consumer consumer = consumerService.getById(consumerId);
 		List<Due> listOfDues = consumer.getDues(); 
+		
+		if(!showAll) {
+			listOfDues = listOfDues.stream()
+					.filter(due -> due.getDueAmount() - due.getPaidAmount() > 0)
+					.collect(Collectors.toList());
+		}
 
 		model.addAttribute("listOfDues", listOfDues);
 		

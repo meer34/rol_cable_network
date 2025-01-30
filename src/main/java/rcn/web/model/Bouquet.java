@@ -16,7 +16,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Bucket {
+public class Bouquet {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -26,7 +26,7 @@ public class Bucket {
 	private double price;
 	private String gstNonGst;
 	
-	@ManyToMany(mappedBy = "buckets")
+	@ManyToMany(mappedBy = "bouquets")
 	private List<Connection> connections;
 	
 }

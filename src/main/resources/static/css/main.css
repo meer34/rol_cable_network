@@ -1490,7 +1490,7 @@ li{
     -moz-box-shadow: none !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    border: 1px solid #1D2951;
+    border: 1px solid #06697e;
     transition: All 0.5s ease-in;
     -webkit-transition: All 0.5s ease-in;
     -moz-transition: All 0.5s ease-in;
@@ -1500,7 +1500,7 @@ li{
 /*buttons*/
 .dashboardicon .action-button {
   width: auto;
-  background: #1D2951;
+  background: #224c81;
   font-weight: bold;
   color: white;
   border: 0 none;
@@ -1511,14 +1511,14 @@ li{
 }
 
 .dashboardicon .action-button:hover, .dashboardicon .action-button:focus {
-    box-shadow: 0 0 0 2px white, 0 0 0 3px #1D2951;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #06697e;
 }
 
 .dashboardicon .action-button-previous {
   width: auto;
   background: #b3bcda;
   font-weight: bold;
-  color: #1D2951;
+  color: #06697e;
   border: 0 none;
   border-radius: 25px;
   cursor: pointer;
@@ -1604,7 +1604,7 @@ margin-top:10px;
 }
 .dashboardicon2 .action-button {
   width: auto;
-  background: #1D2951;
+  background: #06697e;
   font-weight: bold;
   color: white;
   border: 0 none;
@@ -1618,7 +1618,7 @@ margin-top:10px;
 /*buttons*/
 .dashboardicon2 .action-button {
   width: auto;
-  background: #1D2951;
+  background: #224c81;
   font-weight: bold;
   color: white;
   border: 0 none;
@@ -1635,14 +1635,14 @@ margin-top:10px;
 }
 
 .dashboardicon2 .action-button:hover, .dashboardicon2 .action-button:focus {
-    box-shadow: 0 0 0 2px white, 0 0 0 3px #1D2951;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #06697e;
 }
 
 .dashboardicon2 .action-button-previous {
   width: auto;
   background: transparent;
   font-weight: bold;
-  color: #1D2951;
+  color: #06697e;
   border: 0 none;
   border-radius: 25px;
   cursor: pointer;
@@ -1805,7 +1805,7 @@ margin-top:10px;
 }
 .dashboardicon2 .action-button {
   width: auto;
-  background: #1D2951;
+  background: #224c81;
   font-weight: bold;
   color: white;
   border: 0 none;
@@ -1926,12 +1926,12 @@ margin-top:10px;
   width: 100%;
 }
 .pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
-  background-color: #1D2951 !important;
-  border-color: #1D2951 !important;
+  background-color: #06697e !important;
+  border-color: #06697e !important;
   color: #fff !important;
 }
 .pagination > li > a, .pagination > li > span {
-  color: #1D2951 !important;
+  color: #06697e !important;
 }
 .pagination {
   margin: 0 !important;
@@ -1952,7 +1952,7 @@ margin-top:10px;
 .buttonNew{
   padding: 5px;
   color: #fff;
-  background: #1D2951;
+  background: #06697e;
   margin-top: 14px;
 }
 .buttonNew2{

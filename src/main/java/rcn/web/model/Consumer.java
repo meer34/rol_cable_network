@@ -80,6 +80,14 @@ public class Consumer {
 		}
 	}
 	
+	public double getTotalPaid() {
+		totalPaid= 0;
+		for (Collection collection : collections) {
+			totalPaid += collection.getNetAmount();
+		}
+		return totalPaid;
+	}
+	
 	public void calculateAllBillAndTotalPaid() {
 		calculateAllPendingBill();
 		calculateTotalSubscriptionBill();

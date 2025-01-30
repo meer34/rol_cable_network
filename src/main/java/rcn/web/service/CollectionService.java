@@ -1,6 +1,7 @@
 package rcn.web.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,6 +69,45 @@ public class CollectionService {
 	}
 
 	public void deleteById(Long id) {
+		Collection collection = collectionRepo.findById(id).orElse(null);
+		
+		List<Bill> bills = collection.getBills();
+		List<Due> dues = collection.getDues();
+		
+		if(bills != null) {
+			bills = bills.stream()
+					.map(bill -> {
+						bill.setPaidAmount(bill.getPaidAmount()-bill.getCollectedAmount());
+						return bill;
+					})
+					.collect(Collectors.toList());
+			billRepo.saveAll(bills);
+		}
+		
+		if(dues != null) {
+			dues = dues.stream()
+					.map(due -> {
+						due.setPaidAmount(due.getPaidAmount()-due.getCollectedAmount());
+						return due;
+					})
+					.collect(Collectors.toList());
+			dueRepo.saveAll(dues);
+		}
+		
+		Double advanceAmount = collection.getAdvanceAmount();
+		if(advanceAmount != null && advanceAmount > 0) {
+			Consumer consumer = collection.getConsumer();
+			List<Connection> connections = consumer.getConnections();
+			
+			if(connections.size() > 0) {
+				Connection connection = connections.get(0);
+				connection.setAdvanceAmount(connection.getAdvanceAmount() - advanceAmount);
+				connectionRepo.save(connection);
+			} else {
+				consumer.setSecurityDeposit(consumer.getSecurityDeposit() - advanceAmount);
+				consumerRepo.save(consumer);
+			}
+		}
 		collectionRepo.deleteById(id);
 	}
 

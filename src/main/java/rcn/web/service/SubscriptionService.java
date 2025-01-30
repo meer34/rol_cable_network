@@ -9,10 +9,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import rcn.web.model.Bucket;
+import rcn.web.model.Bouquet;
 import rcn.web.model.Channel;
 import rcn.web.model.ChannelPackage;
-import rcn.web.repo.BucketRepo;
+import rcn.web.repo.BouquetRepo;
 import rcn.web.repo.ChannelRepo;
 import rcn.web.repo.PackageRepo;
 import rcn.web.specification.EntitySpecification;
@@ -21,7 +21,7 @@ import rcn.web.specification.EntitySpecification;
 public class SubscriptionService {
 
 	@Autowired private PackageRepo packageRepo;
-	@Autowired private BucketRepo bucketRepo;
+	@Autowired private BouquetRepo bouquetRepo;
 	@Autowired private ChannelRepo channelRepo;
 	
 //	EntitySpecification<ChannelPackage> spec = new EntitySpecification<ChannelPackage>();
@@ -51,29 +51,29 @@ public class SubscriptionService {
 		return packageRepo.findAll(Specification.where(EntitySpecification.textInAllStringColumns(keyword)), pageRequest);
 	}
 	
-	public Bucket saveBucket(Bucket bucket) {
-		return bucketRepo.save(bucket);
+	public Bouquet saveBouquet(Bouquet bouquet) {
+		return bouquetRepo.save(bouquet);
 	}
 	
-	public Bucket getBucketById(Long id) {
-		return bucketRepo.findById(id).orElse(null);
+	public Bouquet getBouquetById(Long id) {
+		return bouquetRepo.findById(id).orElse(null);
 	}
 	
-	public Page<Bucket> getAllBuckets(Integer pageNo, Integer pageSize) {
-		return bucketRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
+	public Page<Bouquet> getAllBouquets(Integer pageNo, Integer pageSize) {
+		return bouquetRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
 	
-	public List<Bucket> getAllBuckets() {
-		return bucketRepo.findAll();
+	public List<Bouquet> getAllBouquets() {
+		return bouquetRepo.findAll();
 	}
 
-	public void deleteBucketById(Long id) {
-		bucketRepo.deleteById(id);
+	public void deleteBouquetById(Long id) {
+		bouquetRepo.deleteById(id);
 	}
 
-	public Page<Bucket> searchBucketByKeyword(String keyword, int pageNo, Integer pageSize) {
+	public Page<Bouquet> searchBouquetByKeyword(String keyword, int pageNo, Integer pageSize) {
 		PageRequest pageRequest = PageRequest.of(pageNo, pageSize, Sort.by("id").descending());
-		return bucketRepo.findAll(Specification.where(EntitySpecification.textInAllStringColumns(keyword)), pageRequest);
+		return bouquetRepo.findAll(Specification.where(EntitySpecification.textInAllStringColumns(keyword)), pageRequest);
 	}
 	
 	public Channel saveChannel(Channel channel) {

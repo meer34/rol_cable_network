@@ -63,10 +63,10 @@ public class Connection {
 	
 	@ManyToMany
 	@JoinTable(
-	  name = "connection_bucket", 
+	  name = "connection_bouquet", 
 	  joinColumns = @JoinColumn(name = "connection_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "bucket_id"))
-	private List<Bucket> buckets;
+	  inverseJoinColumns = @JoinColumn(name = "bouquet_id"))
+	private List<Bouquet> bouquets;
 	
 	@ManyToMany
 	@JoinTable(

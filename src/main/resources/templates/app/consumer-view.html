@@ -9,57 +9,80 @@
       <div class="container-fluid">
         <!-- Consumer Details Section -->
         <div class="tile mb-4">
-            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951  100%); color: white; padding: 10px 20px; border-radius: 3px;">
                 Consumer Details
             </div>
-            <div class="tile-body" style="padding: 20px;">
-                <div class="row mb-3">
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Name:</strong> <span th:text="${consumer.fullName}"></span></div>
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Nick Name:</strong> <span th:text="${consumer.nickName}"></span></div>
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Father's Name:</strong> <span th:text="${consumer.fatherName}"></span></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Phone No:</strong> <span th:text="${consumer.phoneNo}"></span></div>
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Area / Locality:</strong> <span th:text="${consumer.area?.name}"></span></div>
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Landmark:</strong> <span th:text="${consumer.landmark}"></span></div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>STB Account Number:</strong> <span th:text="${consumer.stbAccountNo}"></span></div>
-                    <div class="col-lg-8 col-md-12"><strong>Full Address:</strong> <span th:text="${consumer.fullAddress}"></span></div>
-                </div>
+            <div class="tile-body" style="padding: 10px 20px;">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-sm-12"><strong>Security Deposit:</strong> ₹<span th:text="${consumer.securityDeposit}"></span></div>
-                    <div class="col-lg-8 col-md-12"><strong>Remarks:</strong> <span th:text="${consumer.remarks}"></span></div>
-                </div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Name:</strong> <span th:text="${consumer.fullName}"></span>
+						</div>
+						<div>
+							<strong>Nick Name:</strong> <span th:text="${consumer.nickName}"></span>
+						</div>
+						<div>
+							<strong>Father's Name:</strong> <span th:text="${consumer.fatherName}"></span>
+						</div>
+						<div>
+							<strong>Phone No:</strong> <span th:text="${consumer.phoneNo}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Area / Locality:</strong> <span th:text="${consumer.area?.name}"></span>
+						</div>
+						<div>
+							<strong>Full Address:</strong> <span th:text="${consumer.fullAddress}"></span>
+						</div>
+						<div>
+							<strong>Landmark:</strong> <span th:text="${consumer.landmark}"></span>
+						</div>
+						<div>
+							<strong>Remarks:</strong> <span th:text="${consumer.remarks}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Security Deposit:</strong> ₹<span th:text="${consumer.securityDeposit}"></span>
+						</div>
+						<div>
+							<strong>STB Account Number:</strong> <span th:text="${consumer.stbAccountNo}"></span>
+						</div>
+					</div>
+				</div>
+				
+            <div style="display: flex; flex-direction: column; align-items: center;margin-bottom:2px;" th:each="connection : ${consumer.connections}">
+            	<button type="button" class="btn btn-primary w-100" th:attr="onclick=|location.href='/connection/view?id=${connection.id}'|">
+        			View Connection - <span th:text="${connection.connectionType}"></span> - ₹<span th:text="${#numbers.formatDecimal(connection.subscriptionAmount, 1, 2)}"></span>
+        		</button>
             </div>
         </div>
-
+    </div>
+        
         <!-- Billing Actions Section -->
-        <div class="tile">
-            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 0%, #1D2951 100%); color: white; padding: 10px 20px; border-radius: 3px;">
-                Billing Actions
-            </div>
+    <div class="tile">
+            <div class="tile-title bg-gradient text-white py-2 px-3 rounded">
+				Billing Actions
+			</div>
             
-            <div class="tile-body text-center" style="margin-bottom: 20px;">
+            <div class="tile-body text-left" style="margin-bottom: 20px;padding: 10px 20px;">
             
-                <div class="row" style="margin-bottom: 10px;">
+                <div class="row" style="margin-bottom: 4px;">
                     <div class="col-md-4 mb-3">
                         <strong>Total Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.totalPending, 1, 2)}"></span>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <strong>Subscription Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}"></span>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <strong>Other Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}"></span>
-                    </div>
-                </div>
-                
-                <div class="row">
                     <div class="col-md-4 mb-3">
                         <button type="button" class="btn btn-primary w-100" 
                                 th:attr="onclick=|location.href='/bill/getBillForConsumer?consumerId=${consumer.id}'|">
                             View Consumer Bills
                         </button>
+                    </div>
+                </div>
+                
+                <div class="row" style="margin-bottom: 4px;">
+                    <div class="col-md-4 mb-3">
+                        <strong>Subscription Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}"></span>
                     </div>
                     <div class="col-md-4 mb-3">
                         <button type="button" class="btn btn-primary w-100" 
@@ -67,16 +90,40 @@
                             View Subscription Bills
                         </button>
                     </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="button" th:attr="onclick=|location.href='/collection/collectSubscriptionDue?consumerId=${consumer.id}&action=Collect+Subscription+Due'|" 
+                        	name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 4px;">
+                	<div class="col-md-4 mb-3">
+                        <strong>Other Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}"></span>
+                    </div>
                     <div class="col-md-4 mb-3">
                         <button type="button" class="btn btn-primary w-100" 
                                 th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumer.id}'|">
                             View Other Due Bills
                         </button>
                     </div>
+                    <div class="col-md-2 mb-2">
+                        <input type="submit" th:attr="onclick=|location.href='/collection/collectOtherDue?consumerId=${consumer.id}&action=Collect+Other+Due'|" 
+                        name="action" class="submit action-button" value="Collect Other Due" 
+                        	sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 4px;">
+                	<div class="col-md-4 mb-3">
+                        <strong>Total Collections:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.getTotalPaid(), 1, 2)}"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <button type="button" class="btn btn-primary w-100" 
+                                th:attr="onclick=|location.href='/collection?consumerId=${consumer.id}'|">
+                            View Collections
+                        </button>
+                    </div>
                 </div>
                 <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 20px;" onclick="window.history.back()">Back</button>
             </div>
-        </div>
       </div>
     </main>
 

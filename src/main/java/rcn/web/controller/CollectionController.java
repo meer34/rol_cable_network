@@ -114,6 +114,7 @@ public class CollectionController {
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalSubscriptionPendingBill();
 		model.addAttribute("pendingAmount", consumer.getSubscriptionBill());
+		model.addAttribute("consumerAdvanceAmount", consumer.getAdvanceAmount());
 		
 		collection.setBills(consumer.getConnections().stream().flatMap(connection -> connection.getBills().stream())
 				.filter(bill -> bill.getBillAmount() - bill.getPaidAmount() > 0)
@@ -139,6 +140,7 @@ public class CollectionController {
 		Consumer consumer = consumerService.getById(consumerId);
 		consumer.calculateTotalOtherDuePendingBill();
 		model.addAttribute("pendingAmount", consumer.getOtherDueBill());
+		model.addAttribute("consumerAdvanceAmount", consumer.getAdvanceAmount());
 		
 		collection.setDues(consumer.getDues()
 				.stream()
@@ -215,6 +217,7 @@ public class CollectionController {
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());
 		model.addAttribute("billType", collection.getBillType());
+		model.addAttribute("consumerAdvanceAmount", collection.getConsumer().getAdvanceAmount());
 		
 		return "app/collection-create";
 	}

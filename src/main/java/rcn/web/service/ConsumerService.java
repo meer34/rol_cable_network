@@ -54,4 +54,8 @@ public class ConsumerService {
 		return consumerRepo.findAll(Specification.where(EntitySpecification.textInAllStringColumns(keyword)), PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
 
+	public void addToAdvanceAmount(Long id, double addAmount) {
+		consumerRepo.addToAdvanceAmountForId(id, addAmount);
+	}
+
 }

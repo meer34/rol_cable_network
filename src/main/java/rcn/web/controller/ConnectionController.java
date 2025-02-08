@@ -1,5 +1,7 @@
 package rcn.web.controller;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -112,9 +114,7 @@ public class ConnectionController {
 				Due connChargeDue = new Due();
 				connChargeDue.setDueType("Connection Charge");
 				connChargeDue.setDueAmount(connection.getConnectionCharge());
-//				connChargeDue.setDateOfDueEntry(utility.getTodaysDateWithoutTime()); //Got 17th date in VPS on 18th Jan
 				connChargeDue.setDateOfDueEntry(connection.getDate());
-				connChargeDue.setRemarks("Auto entry for fresh connection");
 				connChargeDue.setConsumer(connection.getConsumer());
 
 				dueService.saveDue(connChargeDue);
@@ -125,7 +125,6 @@ public class ConnectionController {
 				prevDue.setDueType("Previous Due");
 				prevDue.setDueAmount(connection.getPreviousDue());
 				prevDue.setDateOfDueEntry(connection.getDate());
-				prevDue.setRemarks("Auto entry for fresh connection");
 				prevDue.setConsumer(connection.getConsumer());
 
 				dueService.saveDue(prevDue);
@@ -149,7 +148,7 @@ public class ConnectionController {
 				billService.deleteById(oldBill.getId());
 				
 				double paidAmountReturn = oldBill.getPaidAmount();
-				connection.setAdvanceAmount(connection.getAdvanceAmount() + paidAmountReturn);
+				consumerService.addToAdvanceAmount(connection.getConsumer().getId(), paidAmountReturn);
 				connection.setDateOfConnExpiry(disconnectedDate);
 
 			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
@@ -188,11 +187,14 @@ public class ConnectionController {
 	private void generateBillForPeriod(Connection connection, double subscriptionAmount, Date billStartDate, Date billEndDate) {
 		System.out.println("Generating bill for disconnected connection id " + connection.getId());
 		
+		double billAmount = subscriptionAmount*utility.getDifferenceDays(billStartDate, billEndDate)/renewalCycle;
+		billAmount = utility.roundDecimal(billAmount);
+		
 		Bill bill = new Bill();
 		bill.setConnection(connection);
 		bill.setStartDate(billStartDate);
 		bill.setEndDate(billEndDate);
-		bill.setBillAmount(subscriptionAmount*utility.getDifferenceDays(billStartDate, billEndDate)/30);
+		bill.setBillAmount(billAmount);
 		bill.setPaidAmount(0.0);
 		
 		billService.save(bill);

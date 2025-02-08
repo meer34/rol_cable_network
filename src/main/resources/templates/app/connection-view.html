@@ -23,18 +23,13 @@
 							<strong>Phone No:</strong> <span th:text="${connection.consumer.phoneNo}"></span>
 						</div>
 						<div>
-							<strong>Subscription Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}"></span>
-						</div>
-						<div>
-							<strong>Advance Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.advanceAmount, 1, 2)}"></span>
+							<strong>STB Account No:</strong> <span th:text="${connection.consumer?.stbAccountNo}"></span>
 						</div>
 					</div>
 					<div class="col-lg-4 col-md-12">
+						
 						<div>
 							<strong>Connection Type:</strong> <span th:text="${connection.connectionType}"></span>
-						</div>
-						<div>
-							<strong>STB Account No:</strong> <span th:text="${connection.consumer?.stbAccountNo}"></span>
 						</div>
 						<div>
 							<strong>Connection Charge:</strong> ₹<span th:text="${connection.connectionCharge}"></span>
@@ -42,16 +37,19 @@
 						<div>
 							<strong>Previous Due:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.previousDue, 1, 2)}"></span>
 						</div>
+						<div>
+							<strong>Subscription Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}"></span>
+						</div>
 					</div>
 					<div class="col-lg-4 col-md-12">
 						<div>
-							<strong>Date of Joining:</strong> <span th:text="${connection.date}"></span>
+							<strong>Date of Joining:</strong> <span th:text="${{connection.date}}"></span>
 						</div>
 						<div>
-							<strong>Start Date:</strong> <span th:text="${connection.dateOfConnStart}"></span>
+							<strong>Start Date:</strong> <span th:text="${{connection.dateOfConnStart}}"></span>
 						</div>
 						<div>
-							<strong>Expiry Date:</strong> <span th:text="${connection.dateOfConnExpiry}"></span>
+							<strong>Expiry Date:</strong> <span th:text="${{connection.dateOfConnExpiry}}"></span>
 						</div>
 					</div>
 				</div>
@@ -122,8 +120,8 @@
                     <tr style="background-color: #FFF" th:each="i, iter : ${#numbers.sequence(connection.bills.size() - 1, 0, -1)}"
      												th:with="bills=${connection.bills[i]}">
                       <td th:text="${iter.count}" />
-                      <td th:text="${bills?.startDate}" />
-                      <td th:text="${bills?.endDate}" />
+                      <td th:text="${{bills?.startDate}}" />
+                      <td th:text="${{bills?.endDate}}" />
                       <td th:text="${#numbers.formatDecimal(bills?.billAmount, 1, 2)}" />
 					  <td th:text="${#numbers.formatDecimal(bills?.paidAmount, 1, 2)}" />
                     </tr>

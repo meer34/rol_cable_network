@@ -84,25 +84,21 @@
                 </div>
 				
 				<div class="col-lg-12 flexdisplay">
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Subscription Amount</label>
                     <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" placeholder="0" th:value="${connection?.subscriptionAmount}" readonly>
                   </div>
-				  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Connection Charge</label>
                     <input type="number" class="form-control" name="connectionCharge" placeholder="Connection Charge" th:value="${connection?.connectionCharge}">
                   </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" th:if="${connection.id}">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:if="${connection.id}">
                     <label>Previous Due</label>
                     <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}" readonly>
                   </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" th:unless="${connection.id}">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
                     <label>Previous Due</label>
                     <input type="number" step=".01" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
-                  </div>
-                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-13">
-                    <label>Advance Amount</label>
-                    <input type="number" step=".01" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="0" th:value="${connection?.advanceAmount}">
                   </div>
                 </div>
 				

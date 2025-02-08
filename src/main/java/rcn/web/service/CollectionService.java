@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import rcn.web.model.Bill;
 import rcn.web.model.Collection;
-import rcn.web.model.Connection;
 import rcn.web.model.Consumer;
 import rcn.web.model.Due;
 import rcn.web.repo.BillRepo;
@@ -29,7 +28,6 @@ public class CollectionService {
 	@Autowired private BillRepo billRepo;
 	@Autowired private DueRepo dueRepo;
 	@Autowired private ConsumerRepo consumerRepo;
-	@Autowired private ConnectionRepo connectionRepo;
 
 	public Collection save(Collection collection) {
 		List<Bill> bills = collection.getBills();
@@ -39,18 +37,9 @@ public class CollectionService {
 		if(dues != null) dueRepo.saveAll(dues);
 		
 		Double advanceAmount = collection.getAdvanceAmount();
-		if(advanceAmount != null && advanceAmount > 0) {
+		if(advanceAmount != null) {
 			Consumer consumer = collection.getConsumer();
-			List<Connection> connections = consumer.getConnections();
-			
-			if(connections.size() > 0) {
-				Connection connection = connections.get(0);
-				connection.setAdvanceAmount(connection.getAdvanceAmount() + advanceAmount);
-				connectionRepo.save(connection);
-			} else {
-				consumer.setSecurityDeposit(consumer.getSecurityDeposit() + advanceAmount);
-				consumerRepo.save(consumer);
-			}
+			consumerRepo.addToAdvanceAmountForId(consumer.getId(), advanceAmount);
 		}
 		
 		return collectionRepo.save(collection);
@@ -97,16 +86,7 @@ public class CollectionService {
 		Double advanceAmount = collection.getAdvanceAmount();
 		if(advanceAmount != null && advanceAmount > 0) {
 			Consumer consumer = collection.getConsumer();
-			List<Connection> connections = consumer.getConnections();
-			
-			if(connections.size() > 0) {
-				Connection connection = connections.get(0);
-				connection.setAdvanceAmount(connection.getAdvanceAmount() - advanceAmount);
-				connectionRepo.save(connection);
-			} else {
-				consumer.setSecurityDeposit(consumer.getSecurityDeposit() - advanceAmount);
-				consumerRepo.save(consumer);
-			}
+			consumerRepo.addToAdvanceAmountForId(consumer.getId(), advanceAmount);
 		}
 		collectionRepo.deleteById(id);
 	}

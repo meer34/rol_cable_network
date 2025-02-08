@@ -79,30 +79,145 @@ function calculateOtherDueAmount(){
 
 }
 
+function getTotalCollectedAmount(){
+	var amount = 0.0;
+	$("#dueTable tr").each(function(index){
+		if(index === 0) return;
+		var currentRow=$(this);
+		var collectedAmount=Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+		amount += collectedAmount;
+	});
+	return amount;
+}
+
 function collectionPaidAmountChange(){
-	var paidAmount = Number($('#amount').val());
+	var payableAmount = Number($('#amount').val());
 	var discount = Number($('#discount').val());
-	var netAmount = paidAmount + discount;
-	$('#netAmount').val(netAmount);
+	var consumerAdvanceAmount = Number($('#consumerAdvanceAmount').val());
+	var totalCollectedAmount = getTotalCollectedAmount();
+	
+	var have = payableAmount + discount + consumerAdvanceAmount - totalCollectedAmount;
+	
+	if(have < 0){
+		//$('#advanceAmount').val(0.0);
+		$("#dueTable tr").each(function(index){
+			if(index === 0) return;
+			var currentRow=$(this);
+			var collectedAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+			
+			if(collectedAmount + have > 0){
+				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(collectedAmount + have);
+				return false;
+			} else{
+				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(0.0);
+				have += collectedAmount;
+			}
+		});
+		$('#advanceAmount').val(consumerAdvanceAmount);
+	} else{
+		//advanceAmount = netAmount;
+		var tbody = $('#dueTable tbody');
+		tbody.html($('tr',tbody).get().reverse());
+		
+		$("#dueTable tr").each(function(index){
+			if(index === 0) return;
+			var currentRow=$(this);
+			var collectedAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+			var maxAttr = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").attr('max'));
+			var gap = maxAttr - collectedAmount;
+			
+			if(gap > 0){
+				if(have > gap) {
+					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(collectedAmount + gap);
+					have -= gap;
+				} else{
+					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(collectedAmount + have);
+					have = 0.0;
+					return false;
+				}
+			}
+			
+		});
+		
+		tbody = $('#dueTable tbody');
+		tbody.html($('tr',tbody).get().reverse());
+		$('#advanceAmount').val(consumerAdvanceAmount - have);
+		
+	}
+	
+	$('#netAmount').val(getTotalCollectedAmount());
+	
+	$("#dueTable tr").each(function(index){
+			if(index === 0) return;
+			var currentRow=$(this);
+			var collectedAmount= Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+			var paidAmount=Number(currentRow.find("td:eq(3)").text());
+			currentRow.find("td:eq(5) input[name$=paidAmount]").val(paidAmount + collectedAmount);
+			currentRow.find("td:eq(6)").text(paidAmount + collectedAmount);
+		});
+	
+}
+
+function adjustUpdatedPaidAmount(){
+	var toBePaid = 0;
+	var takeFromAdvance = 0;
 	
 	$("#dueTable tr").each(function(index){
 		if(index === 0) return;
 		var currentRow=$(this);
-		var dueAmount=currentRow.find("td:eq(4) input[name$=collectedAmount]").val();
-		netAmount -= dueAmount;
+		var collectedAmount= Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+		var paidAmount=Number(currentRow.find("td:eq(3)").text());
+		currentRow.find("td:eq(5) input[name$=paidAmount]").val(paidAmount + collectedAmount);
+		currentRow.find("td:eq(6)").text(paidAmount + collectedAmount);
+		toBePaid += collectedAmount;
 	});
+	
+	$('#netAmount').val(toBePaid);
+	
+	var discount = Number($('#discount').val());
+	var consumerAdvanceAmount = Number($('#consumerAdvanceAmount').val());
+	
+	toBePaid -= discount;
+	if(toBePaid >= consumerAdvanceAmount) {
+		takeFromAdvance = consumerAdvanceAmount;
+		toBePaid -= takeFromAdvance;
+		
+	} else {
+		takeFromAdvance = toBePaid;
+		toBePaid = 0.0;
+	}
+	
+	$('#advanceAmount').val(takeFromAdvance);
+	$('#amount').val(toBePaid);
+	
+}
+
+
+//
+
+function collectionPaidAmountChange1(){
+	var payableAmount = Number($('#amount').val());
+	var discount = Number($('#discount').val());
+	var advance = Number($('#advanceAmount').val());
+	var totalCollectedAmount = getTotalCollectedAmount();
+	
+	var netAmount = payableAmount + discount - advance;
+	$('#netAmount').val(netAmount);
+	
+	netAmount -= totalCollectedAmount;
+	
 	if(netAmount < 0){
 		$('#advanceAmount').val(0.0);
 		$("#dueTable tr").each(function(index){
 			if(index === 0) return;
 			var currentRow=$(this);
-			var dueAmount = Number(currentRow.find("td:eq(4) input[name$=collectedAmount]").val());
+			var dueAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
 			
 			if(dueAmount + netAmount > 0){
-				currentRow.find("td:eq(4) input[name$=collectedAmount]").val(dueAmount + netAmount);
+				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + netAmount);
 				return false;
 			} else{
-				currentRow.find("td:eq(4) input[name$=collectedAmount]").val(0.0);
+				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(0.0);
 				netAmount += dueAmount;
 			}
 		});
@@ -113,15 +228,15 @@ function collectionPaidAmountChange(){
 		$("#dueTable tr").each(function(index){
 			if(index === 0) return;
 			var currentRow=$(this);
-			var dueAmount = Number(currentRow.find("td:eq(4) input[name$=collectedAmount]").val());
-			var maxAttr = Number(currentRow.find("td:eq(4) input[name$=collectedAmount]").attr('max'));
+			var dueAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
+			var maxAttr = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").attr('max'));
 			var gap = maxAttr - dueAmount;
 			if(gap > 0){
 				if(gap < advanceAmount) {
-					currentRow.find("td:eq(4) input[name$=collectedAmount]").val(dueAmount + gap);
+					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + gap);
 					advanceAmount -= gap;
 				} else{
-					currentRow.find("td:eq(4) input[name$=collectedAmount]").val(dueAmount + advanceAmount);
+					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + advanceAmount);
 					advanceAmount = 0.0;
 					return false;
 				}
@@ -130,29 +245,10 @@ function collectionPaidAmountChange(){
 		tbody = $('#dueTable tbody');
 		tbody.html($('tr',tbody).get().reverse());
 		$('#advanceAmount').val(advanceAmount);
-	}
-	
-	adjustUpdatedPaidAmount();
-	
+	} 
 }
+//
 
-
-function adjustUpdatedPaidAmount(){
-	var toBePaid = 0;
-	$("#dueTable tr").each(function(index){
-		if(index === 0) return;
-		var currentRow=$(this);
-		var collectedAmount= Number(currentRow.find("td:eq(4) input[name$=collectedAmount]").val());
-		var paidAmount=Number(currentRow.find("td:eq(3)").text());
-		currentRow.find("td:eq(4) input[name$=paidAmount]").val(paidAmount + collectedAmount);
-		currentRow.find("td:eq(5)").text(paidAmount + collectedAmount);
-		toBePaid += collectedAmount;
-	});
-	var discount = Number($('#discount').val());
-	$('#netAmount').val(toBePaid);
-	$('#amount').val(toBePaid - discount);
-	
-}
 
 function collectionCollectedAmountChange(){
 	adjustUpdatedPaidAmount();
@@ -191,3 +287,11 @@ function test() {
 			}, 1000);
 }
 
+function fixAllInputValues(decimals = 2) {
+    document.querySelectorAll("input[type='number'], input[data-fix]").forEach(input => {
+        let value = parseFloat(input.value);
+        if (!isNaN(value)) {
+            input.value = (Math.round((value + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals)).toFixed(decimals);
+        }
+    });
+}

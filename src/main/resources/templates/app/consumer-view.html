@@ -44,17 +44,20 @@
 					</div>
 					<div class="col-lg-4 col-md-12">
 						<div>
-							<strong>Security Deposit:</strong> ₹<span th:text="${consumer.securityDeposit}"></span>
+							<strong>STB Account Number:</strong> <span th:text="${consumer.stbAccountNo}"></span>
 						</div>
 						<div>
-							<strong>STB Account Number:</strong> <span th:text="${consumer.stbAccountNo}"></span>
+							<strong>Security Deposit:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.securityDeposit, 1, 2)}"></span>
+						</div>
+						<div>
+							<strong>Advance Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.advanceAmount, 1, 2)}"></span>
 						</div>
 					</div>
 				</div>
 				
             <div style="display: flex; flex-direction: column; align-items: center;margin-bottom:2px;" th:each="connection : ${consumer.connections}">
             	<button type="button" class="btn btn-primary w-100" th:attr="onclick=|location.href='/connection/view?id=${connection.id}'|">
-        			View Connection - <span th:text="${connection.connectionType}"></span> - ₹<span th:text="${#numbers.formatDecimal(connection.subscriptionAmount, 1, 2)}"></span>
+        			View Connection - <span th:text="${connection.connectionType}"></span> ₹<span th:text="${#numbers.formatDecimal(connection.subscriptionAmount, 1, 2)}"></span>
         		</button>
             </div>
         </div>
@@ -84,14 +87,14 @@
                     <div class="col-md-4 mb-3">
                         <strong>Subscription Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}"></span>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-2">
                         <button type="button" class="btn btn-primary w-100" 
                                 th:attr="onclick=|location.href='/bill/getSubscriptionBillRecordsForConsumer?consumerId=${consumer.id}'|">
                             View Subscription Bills
                         </button>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <input type="button" th:attr="onclick=|location.href='/collection/collectSubscriptionDue?consumerId=${consumer.id}&action=Collect+Subscription+Due'|" 
+                        <input type="button" style="height:32px;" th:attr="onclick=|location.href='/collection/collectSubscriptionDue?consumerId=${consumer.id}&action=Collect+Subscription+Due'|" 
                         	name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
                     </div>
                 </div>
@@ -99,14 +102,14 @@
                 	<div class="col-md-4 mb-3">
                         <strong>Other Due:</strong> ₹<span th:text="${#numbers.formatDecimal(consumer.otherDueBill, 1, 2)}"></span>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-2">
                         <button type="button" class="btn btn-primary w-100" 
                                 th:attr="onclick=|location.href='/bill/getDueRecordsForConsumer?consumerId=${consumer.id}'|">
                             View Other Due Bills
                         </button>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <input type="submit" th:attr="onclick=|location.href='/collection/collectOtherDue?consumerId=${consumer.id}&action=Collect+Other+Due'|" 
+                        <input type="button" style="height:32px;" th:attr="onclick=|location.href='/collection/collectOtherDue?consumerId=${consumer.id}&action=Collect+Other+Due'|" 
                         name="action" class="submit action-button" value="Collect Other Due" 
                         	sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
                     </div>

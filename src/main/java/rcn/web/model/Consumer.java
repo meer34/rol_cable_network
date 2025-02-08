@@ -34,6 +34,7 @@ public class Consumer {
 	private String remarks;
 	private String fullAddress;
 	private String stbAccountNo;
+	private double advanceAmount;
 	@Transient
 	private double subscriptionBill;
 	@Transient

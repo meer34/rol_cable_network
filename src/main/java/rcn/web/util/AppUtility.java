@@ -1,8 +1,10 @@
 package rcn.web.util;
 
 import java.io.OutputStream;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -104,6 +106,12 @@ public class AppUtility {
 			return "Request Failed";
 		}
 
+	}
+
+	public double roundDecimal(double doubleValue) {
+		DecimalFormat df_obj = new DecimalFormat("#.##");
+		df_obj.setRoundingMode(RoundingMode.UP);
+		return Double.valueOf(df_obj.format(doubleValue));
 	}
 
 }

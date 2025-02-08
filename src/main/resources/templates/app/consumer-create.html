@@ -47,7 +47,7 @@
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>STB Account Number</label>
-                    <input type="text" class="form-control" name="stbAccountNo" placeholder="STB Account Number" th:value="${consumer.stbAccountNo}">
+                    <input type="text" class="form-control" name="stbAccountNo" placeholder="Enter STB Account Number" th:value="${consumer.stbAccountNo}">
                   </div>
                   <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                     <label>Full Address</label>
@@ -55,9 +55,13 @@
                   </div>
                 </div>
                 <div class="col-lg-12 flexdisplay">
-                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
                     <label>Security Deposit</label>
-                    <input type="number" step=".01" class="form-control" name="securityDeposit" placeholder="Security Deposit Amount" th:value="${consumer.securityDeposit}">
+                    <input type="number" step=".01" class="form-control" name="securityDeposit" placeholder="Enter Amount" th:value="${consumer.securityDeposit}">
+                  </div>
+                  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                    <label>Advance Amount</label>
+                    <input type="number" step=".01" class="form-control" name="advanceAmount" id="advanceAmount" placeholder="Enter Amount" th:value="${consumer?.advanceAmount}">
                   </div>
                   <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                     <label>Remarks</label>

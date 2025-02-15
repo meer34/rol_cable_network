@@ -64,7 +64,7 @@ public class AppUser {
 		long amount= 0;
 		
 		for (Collection collection : collectionList) {
-			amount += collection.getNetAmount();
+			amount += collection.getAmount();
 		}
 		
 		for (Income income : incomeList) {

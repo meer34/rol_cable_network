@@ -115,7 +115,6 @@ function collectionPaidAmountChange(){
 		});
 		$('#advanceAmount').val(consumerAdvanceAmount);
 	} else{
-		//advanceAmount = netAmount;
 		var tbody = $('#dueTable tbody');
 		tbody.html($('tr',tbody).get().reverse());
 		
@@ -193,64 +192,14 @@ function adjustUpdatedPaidAmount(){
 }
 
 
-//
-
-function collectionPaidAmountChange1(){
-	var payableAmount = Number($('#amount').val());
-	var discount = Number($('#discount').val());
-	var advance = Number($('#advanceAmount').val());
-	var totalCollectedAmount = getTotalCollectedAmount();
+function collectionCollectedAmountChange(elem){
+	var collectedAmount= parseFloat(elem.value);
+	var max = parseFloat(elem.max);
 	
-	var netAmount = payableAmount + discount - advance;
-	$('#netAmount').val(netAmount);
-	
-	netAmount -= totalCollectedAmount;
-	
-	if(netAmount < 0){
-		$('#advanceAmount').val(0.0);
-		$("#dueTable tr").each(function(index){
-			if(index === 0) return;
-			var currentRow=$(this);
-			var dueAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
-			
-			if(dueAmount + netAmount > 0){
-				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + netAmount);
-				return false;
-			} else{
-				currentRow.find("td:eq(5) input[name$=collectedAmount]").val(0.0);
-				netAmount += dueAmount;
-			}
-		});
-	} else{
-		advanceAmount = netAmount;
-		var tbody = $('#dueTable tbody');
-		tbody.html($('tr',tbody).get().reverse());
-		$("#dueTable tr").each(function(index){
-			if(index === 0) return;
-			var currentRow=$(this);
-			var dueAmount = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").val());
-			var maxAttr = Number(currentRow.find("td:eq(5) input[name$=collectedAmount]").attr('max'));
-			var gap = maxAttr - dueAmount;
-			if(gap > 0){
-				if(gap < advanceAmount) {
-					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + gap);
-					advanceAmount -= gap;
-				} else{
-					currentRow.find("td:eq(5) input[name$=collectedAmount]").val(dueAmount + advanceAmount);
-					advanceAmount = 0.0;
-					return false;
-				}
-			}
-		});
-		tbody = $('#dueTable tbody');
-		tbody.html($('tr',tbody).get().reverse());
-		$('#advanceAmount').val(advanceAmount);
-	} 
-}
-//
-
-
-function collectionCollectedAmountChange(){
+	if (!isNaN(collectedAmount) && !isNaN(max) && collectedAmount > max) {
+		alert("Collection amount cannot be greater than due amount!");
+        elem.value = max;
+    }
 	adjustUpdatedPaidAmount();
 }
 

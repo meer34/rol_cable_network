@@ -25,12 +25,12 @@
                 </div>
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/bill-record}" method="get">
-                    <div class="dashboardicon2" style="text-align: left;padding:5px 5px" >
+                    <div class="dashboardicon2" style="text-align: left;padding:5px 5px" th:if="${listPage.content.size() > 0}">
                       <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" name="action" class="submit action-button" value="Subscription Bill Records">
 					  <input type="submit" th:formaction="@{/bill/getDueRecordsForConsumer}" name="action" class="submit action-button" value="Other Due Records">
-					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
-					  <input type="submit" th:formaction="@{/collection/collectOtherDue}" name="action" class="submit action-button" value="Collect Other Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
-                      <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
+					  <input type="submit" th:formaction="@{/collection/collectSubscriptionDue}" name="action" class="submit action-button" value="Collect Subscription Due" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''COLLECT_SUBSCRIPTION_DUE'')')}">
+					  <input type="submit" th:formaction="@{/collection/collectOtherDue}" name="action" class="submit action-button" value="Collect Other Due" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''COLLECT_OTHER_DUE'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
@@ -108,6 +108,7 @@
 		
       </script>
       <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
       <div th:replace="fragments :: table_search_script"></div>
   </body>
 </html>

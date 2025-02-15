@@ -9,6 +9,7 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,6 +71,7 @@ public class ConsumerController {
 	}
 
 	@GetMapping("/add")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CONSUMER')")
 	public String add(Model model, Consumer consumer) {
 		model.addAttribute("header", "Create Consumer");
 		model.addAttribute("areaList", areaRepo.findAll());
@@ -101,6 +103,7 @@ public class ConsumerController {
 
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("consumerId") String consumerId) throws Exception{
 
@@ -114,6 +117,7 @@ public class ConsumerController {
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("consumerId") String consumerId) throws Exception{
 
@@ -150,6 +154,7 @@ public class ConsumerController {
 	}
 
 	@GetMapping("/area/add")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddIncomeTypePage(Model model) {
 
 		model.addAttribute("header", "Add Consumer Area");
@@ -159,6 +164,7 @@ public class ConsumerController {
 
 	@RequestMapping(value = "/area/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editIncomeTypePage(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for consumer area with id " + id);
@@ -172,6 +178,7 @@ public class ConsumerController {
 
 	@RequestMapping(value = "/area/save",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String saveIncomeType(Model model, Area area, RedirectAttributes redirectAttributes) throws Exception{
 		areaRepo.save(area);
 		redirectAttributes.addFlashAttribute("successMessage", "Area saved successfully!");

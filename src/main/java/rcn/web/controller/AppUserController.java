@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,6 +45,7 @@ public class AppUserController {
 	}
 
 	@GetMapping("/addAppUserPage")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddAppUserPage(Model model) {
 		model.addAttribute("appUser", new AppUser());
 		model.addAttribute("header", "Create App User");
@@ -52,6 +54,7 @@ public class AppUserController {
 
 	@RequestMapping(value = "/createAppUser",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String createAppUser(Model model, AppUser appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
 
@@ -116,6 +119,7 @@ public class AppUserController {
 
 	@RequestMapping(value = "/editAppUser",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
@@ -129,6 +133,7 @@ public class AppUserController {
 
 	@RequestMapping(value = "/disableAppUser",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String disableAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
@@ -144,6 +149,7 @@ public class AppUserController {
 	
 	@RequestMapping(value = "/enableAppUser",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String enableAppUser(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{

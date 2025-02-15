@@ -46,6 +46,40 @@ function printData() {
 	printWindow.document.close();
 }
 
+function exportTableToExcel() {
+    let table = document.getElementById("printTable"); // Get table
+    let wb = XLSX.utils.book_new(); // Create a new Excel workbook
+    let ws = XLSX.utils.aoa_to_sheet([]); // Create an empty worksheet
+
+    let rows = table.querySelectorAll("tr"); // Get all table rows
+    let data = [];
+
+    // Loop through table rows
+    rows.forEach((row, rowIndex) => {
+        let rowData = [];
+        let cells = row.querySelectorAll("th, td"); // Select both headers and cells
+
+        cells.forEach((cell) => {
+            // Ignore elements with class 'noPrint'
+            if (!cell.classList.contains("noPrint")) {
+                rowData.push(cell.innerText.trim()); // Add text content to array
+            }
+        });
+
+        if (rowData.length > 0) {
+            data.push(rowData); // Add filtered row data to main array
+        }
+    });
+
+    // Convert the filtered data to a worksheet
+    ws = XLSX.utils.aoa_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "Data"); // Append sheet to workbook
+
+    // Save file as Excel
+    XLSX.writeFile(wb, "Excel_Export.xlsx");
+}
+
+
 function checkIfNumberExistForOthers() {
 	let phone = document.getElementById("phone").value;
 	let userId = document.getElementById("userId").value;
@@ -93,56 +127,51 @@ function searchTableColumn() {
 
 
 //Pagination
-$('.pageElement, .page-link-next, .page-link-prev, .pageSizeChange, .goTo').on("click change keyup", function (event) {
+$('.pageElement, .page-link-next, .page-link-prev, .pageSizeChange, .goTo')
+    .on("click change keyup", function (event) {
 
-	if(this.className == 'pageSizeChange' && event.type == 'click') return;
-	if(this.className == 'goTo' && !(event.key === 'Enter' || event.keyCode === 13)) return;
+    if ($(this).hasClass('pageSizeChange') && event.type === 'click') return;
+    if ($(this).hasClass('goTo') && !(event.key === 'Enter' || event.keyCode === 13)) return;
 
-	var pageSize = $("#pageSize").val(),
-			pageNumber = $(".pageElement.active").first().text(),
-			totalPages = $(".pageElement").length,
-			fromDate = '',
-			toDate = '',
-			keyword = '',
-			url;
-	if($("#fromDate").val()) fromDate = $("#fromDate").val();
-	if($("#toDate").val()) toDate = $("#toDate").val();
-	if($("#keyWord").val()) keyword = $("#keyWord").val();
+    let url = new URL(window.location.href); // Get current URL
+    let params = new URLSearchParams(url.search); // Get query parameters
 
-	console.log("page-" + pageNumber + ' size-' + pageSize);
+    let pageSize = $("#pageSize").val(),
+        pageNumber = $(".pageElement.active").first().text(),
+        totalPages = $(".pageElement").length;
 
-	if(this.className == 'goTo') {
-		pageNumber = $("#goToPageNo").val();
-		if(pageNumber > totalPages) {
-			alert("Entered page number is greater than total number of page: " + totalPages);
-			return;
-		}
+    // Handle special cases for Go To and Pagination
+    if ($(this).hasClass('goTo')) {
+        pageNumber = $("#goToPageNo").val();
+        if (pageNumber > totalPages) {
+            alert("Entered page number is greater than total pages: " + totalPages);
+            return;
+        }
+    } else if ($(this).hasClass('pageElement')) {
+        pageNumber = $(this).text();
+    } else if ($(this).hasClass('page-link-next')) {
+        pageNumber = (pageNumber >= totalPages) ? 1 : Number(pageNumber) + 1;
+    } else if ($(this).hasClass('page-link-prev')) {
+        pageNumber = (pageNumber == 1) ? totalPages : Number(pageNumber) - 1;
+    }
 
-	} else if(this.className == 'pageElement') {
-		pageNumber = this.text;
+    // Update size and page parameters
+    params.set("size", pageSize);
+    params.set("page", pageNumber);
 
-	} else if(this.className == 'page-link-next') {
-		if(pageNumber >= totalPages) pageNumber = 1;
-		else pageNumber = Number(pageNumber) + 1;
+    // Update any other filtering parameters dynamically
+    $(".filter-input").each(function () {
+        let key = $(this).attr("name");
+        let value = $(this).val();
+        if (value) params.set(key, value);
+        else params.delete(key); // Remove if empty
+    });
 
-	} else if(this.className == 'page-link-prev') {
-		if(pageNumber == 1) pageNumber = totalPages;
-		else pageNumber = Number(pageNumber) - 1;
-
-	}
-
-	if(keyword != '' || fromDate != '' || toDate != '') {
-		url = "?fromDate=" + fromDate + "&toDate=" + toDate + "&keyword=" + keyword + "&size=" + pageSize + "&page=" + pageNumber;
-	} else {
-		url = "?size=" + pageSize + "&page=" + pageNumber;
-	}
-	
-	if(getUrlParameter('area')) {
-		url = url + "&area=" + getUrlParameter('area');
-	}
-
-	window.open(url,"_self");
+    // Redirect to the updated URL
+    url.search = params.toString();
+    window.open(url.toString(), "_self");
 });
+
 
 function confirmDelete() {
 	return confirm('Sure you want to delete this record?');
@@ -176,7 +205,7 @@ function performRenewal() {
 	
 	if(dateRangeSelection.value == "Today"){
 		if(confirm('Sure you want to renew this connection for Today?')){
-			window.open('/connection/renew?id=' + connId + '&date=' + new Date().toISOString().split('T')[0],"_self");
+			window.open(btoa('/connection/renew') + '?id=' + connId + '&date=' + new Date().toISOString().split('T')[0],"_self");
 			alert("Sent Request for " + new Date().toISOString().split('T')[0]);
 		}
 	} else{
@@ -186,7 +215,7 @@ function performRenewal() {
 			return false;
 		}
 		if(confirm('Sure you want to renew this connection for ' + specificDayRenew.value + '?')){
-			window.open('/connection/renew?id=' + connId + '&date=' + specificDayRenew.value,"_self");
+			window.open(btoa('/connection/renew') + '?id=' + connId + '&date=' + specificDayRenew.value,"_self");
 			alert("Sent Request for " + specificDayRenew.value);
 		}
 	}
@@ -204,3 +233,67 @@ function toDateInputValue(dateObject){
 $(document).ready( function() {
 	document.getElementById("defaultDate").valueAsDate = new Date();
 });
+
+
+/*
+function encodeUrlParams(url) {
+    let urlObj = new URL(url, window.location.origin);
+    urlObj.searchParams.forEach((value, key) => {
+        urlObj.searchParams.set(key, encodeURIComponent(value));
+    });
+    return urlObj.toString();
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    function encodeBase64(url) {
+        return btoa(unescape(encodeURIComponent(url)));
+    }
+
+    // Encode <a> tag href attributes
+    document.querySelectorAll(".app-menu a[href]").forEach(function (link) {
+        let originalUrl = link.getAttribute("href");
+        if (originalUrl && !originalUrl.startsWith("data:text/plain;base64,")) {
+            let [base, query] = originalUrl.split("?", 2); // Split URL into base and query
+            let encodedBase = encodeBase64(base); // Encode only base
+            let newUrl = query ? encodedBase + "?" + query : encodedBase; // Reconstruct URL
+            link.setAttribute("href", newUrl);
+        }
+    });
+
+    // Encode <form> action attributes
+    document.querySelectorAll("form[action]").forEach(function (form) {
+        let originalUrl = form.getAttribute("action");
+        if (originalUrl) {
+            let [base, query] = originalUrl.split("?", 2);
+            let encodedBase = encodeBase64(base);
+            let newUrl = query ? encodedBase + "?" + query : encodedBase;
+            form.setAttribute("action", newUrl);
+        }
+    });
+
+    // Encode <input> formaction attributes
+    document.querySelectorAll("input[formaction]").forEach(function (input) {
+        let originalUrl = input.getAttribute("formaction");
+        if (originalUrl) {
+            let [base, query] = originalUrl.split("?", 2);
+            let encodedBase = encodeBase64(base);
+            let newUrl = query ? encodedBase + "?" + query : encodedBase;
+            input.setAttribute("formaction", newUrl);
+        }
+    });
+
+    // Encode location.href in onclick attributes
+    document.querySelectorAll("input[onclick]").forEach(function (input) {
+        let onclickValue = input.getAttribute("onclick");
+        let match = onclickValue.match(/location\.href\s*=\s*['"]([^'"]+)['"]/);
+        if (match) {
+            let originalUrl = match[1];
+            let [base, query] = originalUrl.split("?", 2);
+            let encodedBase = encodeBase64(base);
+            let newUrl = query ? encodedBase + "?" + query : encodedBase;
+            input.setAttribute("onclick", onclickValue.replace(originalUrl, newUrl));
+        }
+    });
+});
+
+*/

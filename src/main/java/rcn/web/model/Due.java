@@ -1,6 +1,7 @@
 package rcn.web.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,8 +32,6 @@ public class Due {
 	
 	private String dueType;
 	private double dueAmount;
-	private double paidAmount;
-	private double collectedAmount;
 	private String remarks;
 	
 	@Temporal(TemporalType.DATE)
@@ -45,7 +46,21 @@ public class Due {
 	@JoinColumn(name ="createdBy")
 	private AppUser createdBy;
 	
-//	@ManyToMany(mappedBy="dues")
-//	private List<Collection> collections;
+	@Transient
+	private double paidAmount;
+	@Transient
+	private double collectedAmount;
+	
+	@OneToMany(mappedBy="due")
+	private List<DuePayment> duePayments;
+	
+	public double getPaidAmount() {
+		paidAmount = 0;
+		if(duePayments == null) return paidAmount;
+		for (DuePayment duePayment : duePayments) {
+			paidAmount += duePayment.getAmount();
+		}
+		return paidAmount;
+	}
 	
 }

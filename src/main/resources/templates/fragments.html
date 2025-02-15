@@ -59,16 +59,18 @@
           </li>
           <li><a class="app-menu__product" th:href="@{/bill}"><i
             class="app-menu__icon fa fa-credit-card"></i><span
-            class="app-menu__label">Consumer Bill</span></a>
+            class="app-menu__label">Consumer Bills</span></a>
           </li>
-          <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Accounts')" -->
+          <li><a class="app-menu__product" th:href="@{/collection}"><i
+            class="app-menu__icon fa fa-file-text-o"></i><span
+            class="app-menu__label">Collections</span></a>
+          </li>
+          <li class="treeview"> <!-- th:disabled="${!#authorization.expression('hasAnyAuthority('ADMIN', 'Accounts'')')}" -->
             <a class="app-menu__product" href="#"
               data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span
               class="app-menu__label">Account Management</span><i
               class="treeview-indicator fa fa-angle-right"></i></a>
 			<ul class="treeview-menu">
-              <li><a class="treeview-product" th:href="@{/collection}"><i
-                class="icon fa fa-file-text-o"></i>Collection </a></li>
               <li><a class="treeview-product" th:href="@{/settlement}"><i
                 class="icon fa fa-file-text-o"></i>Settlement </a></li>
               <li><a class="treeview-product" th:href="@{/income}"><i
@@ -83,7 +85,7 @@
             class="app-menu__icon fa fa-bell"></i><span
             class="app-menu__label">Reminder</span></a>
           </li>
-          <li class="treeview"> <!-- sec:authorize="hasAnyAuthority('ADMIN', 'Package')" -->
+          <li class="treeview"> <!-- th:disabled="${!#authorization.expression('hasAnyAuthority('ADMIN', 'Package'')')}" -->
             <a class="app-menu__product" href="#"
               data-toggle="treeview"><i class="app-menu__icon fa fa-book"></i><span
               class="app-menu__label">Package Management</span><i

@@ -1,5 +1,6 @@
 package rcn.web.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -43,7 +42,6 @@ public class Collection {
 	private String billType;
 	private Double amount;
 	private Double discount;
-	@Transient
 	private Double advanceAmount;
 	private Double netAmount;
 	private String paymentMode;
@@ -53,34 +51,52 @@ public class Collection {
 	@JoinColumn(name ="collectedBy")
 	private AppUser collectedBy;
 	
-	@ManyToMany
-	@JoinTable(
-	  name = "collection_bill", 
-	  joinColumns = @JoinColumn(name = "collection_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "bill_id"))
-	@OrderBy("startDate DESC")
-	private List<Bill> bills;
-	
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(
-	  name = "collection_due", 
-	  joinColumns = @JoinColumn(name = "collection_id"), 
-	  inverseJoinColumns = @JoinColumn(name = "due_id"))
-	@OrderBy("dateOfDueEntry DESC")
-	private List<Due> dues;
-	
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@JsonFormat(pattern="yyyy-MM-dd")
 	private Date date;
+	
+	@Transient
+	private List<Bill> bills;
+	
+	@Transient
+	private List<Due> dues;
+	
+	@OneToMany(mappedBy="collection", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<BillPayment> billPayments;
+	
+	@OneToMany(mappedBy="collection", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<DuePayment> duePayments;
+	
+	
 
 	public Collection processForEdit() {
+		if(this.billPayments != null) {
+			this.bills = new ArrayList<>();
+			for (BillPayment billPayment : billPayments) {
+				Bill bill = billPayment.getBill();
+				bill.getBillPayments().remove(billPayment);
+				this.bills.add(bill);
+			}
+		}
+		if(this.duePayments != null) {
+			this.dues = new ArrayList<>();
+			for (DuePayment duePayment : duePayments) {
+				Due due = duePayment.getDue();
+				due.getDuePayments().remove(duePayment);
+				this.dues.add(due);
+			}
+		}
+		return this;
+	}
+	
+	public Collection processForEdit1() {
 		if(this.bills != null) {
 			this.bills = this.bills
 					.stream()
 					.map(bill -> {
 						bill.setPaidAmount(bill.getPaidAmount() - bill.getCollectedAmount());
-//						bill.setCollectedAmount(0);
+						bill.setCollectedAmount(0);
 						return bill;
 					})
 					.collect(Collectors.toList());
@@ -90,12 +106,22 @@ public class Collection {
 					.stream()
 					.map(due -> {
 						due.setPaidAmount(due.getPaidAmount() - due.getCollectedAmount());
-//						due.setCollectedAmount(0);
+						due.setCollectedAmount(0);
 						return due;
 					})
 					.collect(Collectors.toList());
 		}
 		return this;
+	}
+
+	public void addBillPayment(BillPayment billPayment) {
+		if(billPayments == null) billPayments = new ArrayList<>();
+		billPayments.add(billPayment);
+	}
+	
+	public void addDuePayment(DuePayment duePayment) {
+		if(duePayments == null) duePayments = new ArrayList<>();
+		duePayments.add(duePayment);
 	}
 	
 }

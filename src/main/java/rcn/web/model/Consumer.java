@@ -81,6 +81,11 @@ public class Consumer {
 		}
 	}
 	
+	public double getTotalPending() {
+		calculateAllPendingBill();
+		return this.totalPending;
+	}
+	
 	public double getTotalPaid() {
 		totalPaid= 0;
 		for (Collection collection : collections) {
@@ -115,7 +120,7 @@ public class Consumer {
 	public void calculateAllPendingBill() {
 		calculateTotalSubscriptionPendingBill();
 		calculateTotalOtherDuePendingBill();
-		totalPending= subscriptionBill + otherDueBill;
+		this.totalPending= subscriptionBill + otherDueBill;
 	}
 	
 	public void calculateTotalSubscriptionBillForYear(Date yearStartDate, Date yearEndDate) {

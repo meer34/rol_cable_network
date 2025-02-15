@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,6 +90,7 @@ public class BillController {
 	
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String save(Model model, Bill bill, RedirectAttributes redirectAttributes) throws Exception{
 		bill = billService.save(bill);
 		redirectAttributes.addFlashAttribute("successMessage", "Bill amount of " + bill.getBillAmount() 
@@ -100,6 +102,7 @@ public class BillController {
 	
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="billId", required = false) String billId) throws Exception{
 
@@ -113,6 +116,7 @@ public class BillController {
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("billId") String billId) throws Exception{
 
@@ -256,7 +260,7 @@ public class BillController {
 		connectionService.save(connection);
 		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
 									+ connection.getConsumer().getFullName());
-//		billService.save(bill);
+//		billService.save(bill);//TODOO
 	}
 
 }

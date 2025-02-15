@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Connection" th:attr="onclick=|location.href='@{/connection/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_CONNECTION')">
+              <input type="button" class="submit action-button" value="Add New Connection" th:attr="onclick=|location.href='@{/connection/add}'|" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_CONNECTION'')')}">
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
               <div th:if="${errorMessage}" th:text="${errorMessage}"
@@ -26,10 +26,10 @@
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
                       <input type="submit" th:formaction="@{/connection/view}" class="submit action-button" value="View">
-                      <input type="submit" th:formaction="@{/connection/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
-                      <input type="button" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/connection/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
-					  <input type="button" id="renewButton" class="submit action-button" value="Renew" sec:authorize="hasAnyAuthority('ADMIN','RENEW_CONNECTION')">
+                      <input type="submit" th:formaction="@{/connection/edit}" class="submit action-button" value="Edit" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
+                      <input type="submit" th:formaction="@{/connection/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+					  <input type="button" id="renewButton" class="submit action-button" value="Renew" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''RENEW_CONNECTION'')')}">
                     </div>
                     
                   <div class="modal fade" id="fileUploadModal" role="dialog">
@@ -43,7 +43,7 @@
 						<div class="modal-body">
 							<select name="dateRange" id="dateRange" dateRange='' style="height: 25px;">
 								<option value="Today" id="todayRenew">Today</option>
-								<option type="date" value="Specific date" id="specificDayRenew" sec:authorize="hasAuthority('ADMIN')">
+								<option type="date" value="Specific date" id="specificDayRenew" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
 									Specific Date
 									<input type="date" id="js_datePickerToggle" class="displayNone" style="height: 25px;">
 								</option>
@@ -100,6 +100,7 @@
       </div>
     </main>
       <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 	  <script>
 	  $(document).ready(function() {
 			$( "#renewButton" ).click(function() {

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +56,7 @@ public class IncomeController {
 	}
 
 	@GetMapping("/addIncomeTypePage")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddIncomeTypePage(Model model) {
 
 		model.addAttribute("header", "Add Income Category");
@@ -64,6 +66,7 @@ public class IncomeController {
 
 	@RequestMapping(value = "/editIncomeTypePage",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editIncomeTypePage(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for income type with id " + id);
@@ -77,6 +80,7 @@ public class IncomeController {
 
 	@RequestMapping(value = "/saveIncomeType",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String saveIncomeType(Model model, IncomeType income, RedirectAttributes redirectAttributes) throws Exception{
 
 		incomeTypeRepo.save(income);
@@ -129,6 +133,7 @@ public class IncomeController {
 	}
 
 	@GetMapping("/addIncomePage")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_INCOME')")
 	public String showAddIncomePage(Model model) {
 
 		model.addAttribute("users", appUserService.getAllAppUsers());
@@ -141,6 +146,7 @@ public class IncomeController {
 
 	@RequestMapping(value = "/editIncomePage",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editIncomePage(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for income with id " + id);
@@ -177,6 +183,7 @@ public class IncomeController {
 
 	@RequestMapping(value = "/deleteIncome",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteIncome(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
 		System.out.println("Got delete request for income id " + id);
 		incomeService.deleteIncomeById(id);

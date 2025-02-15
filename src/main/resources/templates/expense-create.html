@@ -46,7 +46,7 @@
                   </div>
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                     <label>Expense Date</label>
-					<input type="date" class="form-control" name="date" placeholder="Date" th:value="${expense?.date}" required sec:authorize="hasAuthority('ADMIN')">
+					<input type="date" class="form-control" name="date" placeholder="Date" th:value="${expense?.date}" required th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
                     <input th:if="${expense?.id}" type="date" class="form-control" name="date" placeholder="Date" th:value="${expense?.date}" required sec:authorize="!hasAuthority('ADMIN')">
                     <input th:if="${expense?.id==null}" type="date" class="form-control" name="date" id="defaultDate" readonly required sec:authorize="!hasAuthority('ADMIN')">
                   </div>

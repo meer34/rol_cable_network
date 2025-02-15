@@ -1,6 +1,7 @@
 package rcn.web.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,8 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -39,7 +42,21 @@ public class Bill {
 	private Date endDate;
 	
 	private Double billAmount;
-	private Double paidAmount;
+	
+	@Transient
+	private double paidAmount;
+	@Transient
 	private double collectedAmount;
+	
+	@OneToMany(mappedBy="bill")
+	private List<BillPayment> billPayments;
+	
+	public double getPaidAmount() {
+		paidAmount = 0;
+		for (BillPayment billPayment : billPayments) {
+			paidAmount += billPayment.getAmount();
+		}
+		return paidAmount;
+	}
 	
 }

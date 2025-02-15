@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +63,7 @@ public class ChannelController {
 	}
 
 	@GetMapping("/add")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CHANNEL')")
 	public String add(Model model, Channel channel) {
 		model.addAttribute("header", "Create Channel");
 		return "app/channel-create";
@@ -88,6 +90,7 @@ public class ChannelController {
 
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
@@ -99,6 +102,7 @@ public class ChannelController {
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 

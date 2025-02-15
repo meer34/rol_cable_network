@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Expense Category" th:attr="onclick=|location.href='@{/addExpenseTypePage}'|" ><!--sec:authorize="hasAuthority('ADMIN')" -->
+              <input type="button" class="submit action-button" value="Add New Expense Category" th:attr="onclick=|location.href='@{/addExpenseTypePage}'|" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
             </div>
             <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
             <div class="tile">
@@ -42,7 +42,7 @@
                             <input type="button" name="action" class="submit action-button" value="View Expenses" 
                             	th:attr="onclick=|location.href='expense?expenseTypeId=${expenseType.id}'|" >
                             <input type="submit" th:formaction="@{/editExpenseType}" name="action" class="submit action-button" value="Edit" 
-                              th:attr="onclick=|location.href='editExpenseTypePage?id=${expenseType.id}'|" ><!-- sec:authorize="hasAuthority('ADMIN')" -->
+                              th:attr="onclick=|location.href='editExpenseTypePage?id=${expenseType.id}'|" ><!-- th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" -->
                         </div>
                       </td>
                     </tr>

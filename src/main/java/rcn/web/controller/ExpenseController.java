@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,7 @@ public class ExpenseController {
 	}
 
 	@GetMapping("/addExpenseTypePage")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddExpenseTypePage(Model model) {
 		model.addAttribute("header", "Add Expense Category");
 		return "add-expense-category";
@@ -51,6 +53,7 @@ public class ExpenseController {
 
 	@RequestMapping(value = "/editExpenseTypePage",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editExpenseTypePage(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for expense type with id " + id);
@@ -64,6 +67,7 @@ public class ExpenseController {
 
 	@RequestMapping(value = "/saveExpenseType",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String saveExpenseType(Model model, ExpenseType expense, RedirectAttributes redirectAttributes) throws Exception{
 
 		expenseTypeRepo.save(expense);
@@ -116,6 +120,7 @@ public class ExpenseController {
 	}
 
 	@GetMapping("/addExpensePage")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_EXPENSE')")
 	public String showAddExpensePage(Model model) {
 
 		model.addAttribute("users", appUserService.getAllAppUsers());
@@ -128,6 +133,7 @@ public class ExpenseController {
 
 	@RequestMapping(value = "/editExpensePage",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editExpensePage(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for expense with id " + id);
@@ -162,6 +168,7 @@ public class ExpenseController {
 
 	@RequestMapping(value = "/deleteExpense",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteIncome(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
 		System.out.println("Got delete request for expense id " + id);
 		expenseService.deleteExpenseById(id);

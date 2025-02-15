@@ -95,7 +95,7 @@
                     </div>
                     <div class="col-md-2 mb-2">
                         <input type="button" style="height:32px;" th:attr="onclick=|location.href='/collection/collectSubscriptionDue?consumerId=${consumer.id}&action=Collect+Subscription+Due'|" 
-                        	name="action" class="submit action-button" value="Collect Subscription Due" sec:authorize="hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')">
+                        	name="action" class="submit action-button" value="Collect Subscription Due" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''COLLECT_SUBSCRIPTION_DUE'')')}">
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 4px;">
@@ -111,7 +111,7 @@
                     <div class="col-md-2 mb-2">
                         <input type="button" style="height:32px;" th:attr="onclick=|location.href='/collection/collectOtherDue?consumerId=${consumer.id}&action=Collect+Other+Due'|" 
                         name="action" class="submit action-button" value="Collect Other Due" 
-                        	sec:authorize="hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')">
+                        	th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''COLLECT_OTHER_DUE'')')}">
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 4px;">

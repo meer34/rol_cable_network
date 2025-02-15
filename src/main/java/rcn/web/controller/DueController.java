@@ -2,6 +2,7 @@ package rcn.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class DueController {
 	@Autowired AppUserService appUserService;
 
 	@GetMapping("/add")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CONSUMER_DUE')")
 	public String add(Model model, 
 			@RequestParam(value="consumerId", required = false) String consumerId, Due due) {
 		Consumer consumer = consumerService.getById(Long.parseLong(consumerId));
@@ -49,6 +51,7 @@ public class DueController {
 
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="dueId", required = false) String dueId) throws Exception{
 
@@ -63,6 +66,7 @@ public class DueController {
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("dueId") String dueId) throws Exception{
 

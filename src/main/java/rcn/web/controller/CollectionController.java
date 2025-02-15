@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,6 +99,7 @@ public class CollectionController {
 	}
 
 	@GetMapping("/collectSubscriptionDue")
+	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE','COLLECT_OTHER_DUE')")
 	public String collectSubscriptionDue(Model model, Collection collection, 
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
@@ -124,6 +126,7 @@ public class CollectionController {
 	}
 	
 	@GetMapping("/collectOtherDue")
+	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE','COLLECT_OTHER_DUE')")
 	public String collectOtherDue(Model model, Collection collection,
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
@@ -152,6 +155,7 @@ public class CollectionController {
 
 	@RequestMapping(value = "/saveSubscriptionCollection",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')")
 	public String saveSubscriptionCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
 		
 		collection.setBillType("Subscription");
@@ -170,6 +174,7 @@ public class CollectionController {
 	
 	@RequestMapping(value = "/saveOtherDueCollection",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')")
 	public String saveOtherDueCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
 		
 		collection.setBillType("Other Due");
@@ -200,6 +205,7 @@ public class CollectionController {
 	
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
@@ -217,13 +223,14 @@ public class CollectionController {
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("consumerId", collection.getConsumer().getId());
 		model.addAttribute("billType", collection.getBillType());
-		model.addAttribute("consumerAdvanceAmount", collection.getConsumer().getAdvanceAmount());
+		model.addAttribute("consumerAdvanceAmount", collection.getConsumer().getAdvanceAmount() + collection.getAdvanceAmount());
 		
 		return "app/collection-create";
 	}
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 

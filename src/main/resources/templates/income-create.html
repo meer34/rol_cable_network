@@ -47,7 +47,7 @@
                   </div>
                   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                     <label>Income Date</label>
-                    <input type="date" class="form-control" name="date" placeholder="Date" th:value="${income?.date}" required sec:authorize="hasAuthority('ADMIN')">
+                    <input type="date" class="form-control" name="date" placeholder="Date" th:value="${income?.date}" required th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
                     <input th:if="${income?.id}" type="date" class="form-control" name="date" placeholder="Date" th:value="${income?.date}" required sec:authorize="!hasAuthority('ADMIN')">
                     <input th:if="${income?.id==null}" type="date" class="form-control" name="date" id="defaultDate" readonly required sec:authorize="!hasAuthority('ADMIN')">
                   </div>

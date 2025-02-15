@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Settlement" th:attr="onclick=|location.href='@{/settlement/add}'|" sec:authorize="hasAuthority('ADMIN')">
+              <input type="button" class="submit action-button" value="Add New Settlement" th:attr="onclick=|location.href='@{/settlement/add}'|" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
               <input type="button" class="submit action-button" value="User Settlements" th:attr="onclick=|location.href='@{/settlement/user}'|" >
               <div th:if="${successMessage}" th:text="${successMessage}"
                 class="alert alert-success" role="alert"></div>
@@ -29,9 +29,9 @@
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
                       <input type="submit" th:formaction="@{/settlement/view}" name="action" class="submit action-button" value="View">
-					  <input type="submit" th:formaction="@{/settlement/edit}" name="action" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
-                      <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/settlement/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
+					  <input type="submit" th:formaction="@{/settlement/edit}" name="action" class="submit action-button" value="Edit" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
+                      <input type="submit" th:formaction="@{/settlement/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
@@ -68,5 +68,6 @@
       </div>
     </main>
       <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </body>
 </html>

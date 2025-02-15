@@ -48,7 +48,7 @@
 											<input type="hidden" th:value="${appUser.name}" id="name" name='name'>
 											
 											<input type="submit" th:formaction="@{/enableAppUser}" name="action" class="submit action-button2" value="Enable" 
-																									onClick="return confirm('Sure you want to enable this user again?')" sec:authorize="hasAuthority('ADMIN')" >
+																									onClick="return confirm('Sure you want to enable this user again?')" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" >
 										  </form>
 										</div>
 									</td>

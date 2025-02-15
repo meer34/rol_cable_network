@@ -12,7 +12,7 @@
 			<div class="col-md-12">
 				<div class="dashboardicon2" style="text-align: left;">
 					<input type="button" name="addAdmin" class="submit action-button" value="Settle Amount" th:attr="onclick=|location.href='@{/settleAmount}'|" 
-						> <!-- sec:authorize="hasAuthority('ADMIN')" -->
+						> <!-- th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" -->
 				</div>
 
 				<div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
@@ -54,13 +54,13 @@
 											<input type="submit" th:formaction="@{/viewAppUser}" name="action" class="submit action-button" value="View">
 											
 											<input type="submit" th:formaction="@{/editAppUser}" name="action" class="submit action-button" value="Edit" 
-																									> <!-- sec:authorize="hasAuthority('ADMIN')" -->
+																									> <!-- th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" -->
 											<!-- 
 											<input type="button" name="action" class="submit action-button2" value="New Pin" th:attr="onClick=|generatePin(${appUser.phone})|" 
-																								sec:authorize="hasAuthority('ADMIN')" >
+																								th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" >
 											 -->
 											<input type="submit" th:formaction="@{/deleteAppUser}" name="action" class="submit action-button2" value="Delete" 
-																									onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')" >
+																									onClick="return confirmDelete()" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" >
 										  </form>
 										</div>
 									</td>

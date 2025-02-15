@@ -1,5 +1,6 @@
 package rcn.web.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,12 +11,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import rcn.web.model.Bill;
+import rcn.web.model.BillPayment;
 import rcn.web.model.Collection;
 import rcn.web.model.Consumer;
 import rcn.web.model.Due;
+import rcn.web.model.DuePayment;
 import rcn.web.repo.BillRepo;
 import rcn.web.repo.CollectionRepo;
-import rcn.web.repo.ConnectionRepo;
 import rcn.web.repo.ConsumerRepo;
 import rcn.web.repo.DueRepo;
 import rcn.web.specification.CollectionSearchSpecification;
@@ -30,25 +32,65 @@ public class CollectionService {
 	@Autowired private ConsumerRepo consumerRepo;
 
 	public Collection save(Collection collection) {
+		Collection existingCollection = null;
 		List<Bill> bills = collection.getBills();
 		List<Due> dues = collection.getDues();
-		
-		if(bills != null) billRepo.saveAll(bills);
-		if(dues != null) dueRepo.saveAll(dues);
-		
+
+		if (collection.getId() != null) {
+			existingCollection = collectionRepo.findById(collection.getId()).orElse(collection);
+			
+			if (collection.getBillPayments() == null) {
+				collection.setBillPayments(new ArrayList<>());
+			}
+			if (collection.getDuePayments() == null) {
+				collection.setDuePayments(new ArrayList<>());
+			}
+
+			collection.getBillPayments().clear(); // Clear existing references
+			collection.getDuePayments().clear(); // Clear existing references
+		}
+
+		if (bills != null) {
+			for (Bill bill : bills) {
+				if (bill.getCollectedAmount() != 0) {
+					BillPayment billPayment = new BillPayment();
+					billPayment.setAmount(bill.getCollectedAmount());
+					billPayment.setBill(bill);
+					billPayment.setCollection(collection);
+					collection.addBillPayment(billPayment);
+				}
+			}
+		}
+
+		if (dues != null) {
+			for (Due due : dues) {
+				if (due.getCollectedAmount() != 0) {
+					DuePayment duePayment = new DuePayment();
+					duePayment.setAmount(due.getCollectedAmount());
+					duePayment.setDue(due);
+					duePayment.setCollection(collection);
+					collection.addDuePayment(duePayment);
+				}
+			}
+		}
+
+		// Handle advance amount logic
 		Double advanceAmount = collection.getAdvanceAmount();
-		if(advanceAmount != null) {
+		if(existingCollection != null) advanceAmount -= existingCollection.getAdvanceAmount();
+		
+		if (advanceAmount != null) {
 			Consumer consumer = collection.getConsumer();
 			consumerRepo.addToAdvanceAmountForId(consumer.getId(), advanceAmount);
 		}
-		
+
 		return collectionRepo.save(collection);
 	}
-	
+
+
 	public Collection getById(Long id) {
 		return collectionRepo.findById(id).orElse(null);
 	}
-	
+
 	public List<Collection> getAll() {
 		return collectionRepo.findAll();
 	}
@@ -59,30 +101,30 @@ public class CollectionService {
 
 	public void deleteById(Long id) {
 		Collection collection = collectionRepo.findById(id).orElse(null);
-		
+
 		List<Bill> bills = collection.getBills();
 		List<Due> dues = collection.getDues();
-		
+
 		if(bills != null) {
 			bills = bills.stream()
 					.map(bill -> {
-						bill.setPaidAmount(bill.getPaidAmount()-bill.getCollectedAmount());
+						bill.setPaidAmount(bill.getPaidAmount()-bill.getCollectedAmount());//TODOO
 						return bill;
 					})
 					.collect(Collectors.toList());
 			billRepo.saveAll(bills);
 		}
-		
+
 		if(dues != null) {
 			dues = dues.stream()
 					.map(due -> {
-						due.setPaidAmount(due.getPaidAmount()-due.getCollectedAmount());
+						due.setPaidAmount(due.getPaidAmount()-due.getCollectedAmount());//TODOO
 						return due;
 					})
 					.collect(Collectors.toList());
 			dueRepo.saveAll(dues);
 		}
-		
+
 		Double advanceAmount = collection.getAdvanceAmount();
 		if(advanceAmount != null && advanceAmount > 0) {
 			Consumer consumer = collection.getConsumer();
@@ -94,15 +136,15 @@ public class CollectionService {
 	public List<Collection> getAllByConsumer(Long consumerId, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForConsumer(consumerId);
 	}
-	
+
 	public Page<Collection> getPageByConsumer(Long consumerId, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForConsumer(consumerId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
-	
+
 	public Page<Collection> getPageByAppUser(Long appUserId, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForAppUser(appUserId, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
-	
+
 	public Page<Collection> getPageByAppUserName(String appUserName, Integer pageNo, Integer pageSize) {
 		return collectionRepo.findAllForAppUserName(appUserName, PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
@@ -114,13 +156,4 @@ public class CollectionService {
 		return collectionRepo.findAll(spec, pageRequest);
 	}
 
-	public void removeBillFromCollections(Bill bill) {
-		List<Collection> listOfCollections = collectionRepo.findAllByBills_Id(bill.getId());
-		for (Collection collection : listOfCollections) {
-			collection.getBills().remove(bill);
-		}
-		collectionRepo.saveAll(listOfCollections);
-		
-	}
-	
 }

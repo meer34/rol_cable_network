@@ -33,9 +33,9 @@
                 
                 <div class="table-responsive table_size" style="margin-top: 50px;">
                   <form th:action="@{/bill-record}" method="get">
-                    <div class="dashboardicon2" style="text-align: left;" >
-					  <input type="submit" th:formaction="@{/reminder}" name="action" class="submit action-button" value="Send Reminder" sec:authorize="hasAnyAuthority('ADMIN','SEND_REMINDER')">
-                      <input type="button" name="action" class="submit action-button" value="Print" onclick="printData()">
+                    <div class="dashboardicon2" style="text-align: left;" th:if="${listOfConsumers != null}">
+					  <input type="submit" th:formaction="@{/add-reminder-queue}" name="action" class="submit action-button" value="Send Reminder" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''SEND_REMINDER'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
@@ -52,7 +52,7 @@
                       </thead>
                       <tbody>
                         <tr style="background-color: #FFF" th:each="consumer : ${listOfConsumers}">
-                          <td class="noPrint" ><input type='checkbox' class="radioBtn" name='consumerId' th:value="${consumer.id}"></td>
+                          <td class="noPrint" ><input type='checkbox' name='consumerIds' th:value="${consumer.id}"></td>
 						  <td th:text="${consumer.fullName}" />
 						  <td th:text="${consumer.phoneNo}" />
 						  <td th:text="${#numbers.formatDecimal(consumer.subscriptionBill, 1, 2)}" />
@@ -88,6 +88,7 @@
 		
       </script>
       <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
       <div th:replace="fragments :: table_search_script"></div>
   </body>
 </html>

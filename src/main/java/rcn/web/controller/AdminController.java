@@ -3,6 +3,7 @@ package rcn.web.controller;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/addAdminPage")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddAdminPage(Model model) {
 		model.addAttribute("admin", new AppUser());
 		model.addAttribute("header", "Create Admin");
@@ -42,6 +44,7 @@ public class AdminController {
 
 	@RequestMapping(value = "/createAdmin",
 			method = RequestMethod.POST)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String createAdmin(Model model, AppUser appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
 
@@ -87,6 +90,7 @@ public class AdminController {
 
 	@RequestMapping(value = "/editAdmin",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editAdmin(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
@@ -100,6 +104,7 @@ public class AdminController {
 	
 	@RequestMapping(value = "/deleteAdmin",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteAdmin(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{

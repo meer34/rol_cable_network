@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Area" th:attr="onclick=|location.href='@{/consumer/area/add}'|" ><!--sec:authorize="hasAuthority('ADMIN')" -->
+              <input type="button" class="submit action-button" value="Add New Area" th:attr="onclick=|location.href='@{/consumer/area/add}'|" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}" >
               <input type="button" class="submit action-button" value="All Consumers" th:attr="onclick=|location.href='@{/consumer}'|" >
             </div>
             <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>

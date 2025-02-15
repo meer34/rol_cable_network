@@ -1,8 +1,12 @@
 package rcn.web.controller;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -11,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import rcn.web.model.Consumer;
 import rcn.web.model.Reminder;
+import rcn.web.service.ConsumerService;
 import rcn.web.service.ReminderService;
 import rcn.web.util.AppUtility;
 
@@ -28,6 +34,7 @@ import rcn.web.util.AppUtility;
 public class ReminderController {
 
 	@Autowired ReminderService reminderService;
+	@Autowired ConsumerService consumerService;
 	@Autowired AppUtility utility;
 
 	@Value("${INITIAL_PAGE_SIZE}")
@@ -69,14 +76,63 @@ public class ReminderController {
 		return "reminder";
 
 	}
+	
+	@RequestMapping("/add-reminder-queue")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public String addReminderQueue(RedirectAttributes redirectAttributes, @RequestParam("consumerIds") Long[] consumerIds) {
+
+		Reminder reminder = null;
+		
+		for (Long consumerId : consumerIds) {
+			try {
+				Consumer consumer = consumerService.getById(consumerId);
+				
+		        String fullName = consumer.getFullName();
+		        double totalPending = consumer.getTotalPending();
+
+		        // Format the amount with a thousands separator
+		        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.ENGLISH);
+		        currencyFormat.setMinimumFractionDigits(2);
+		        currencyFormat.setMaximumFractionDigits(2);
+		        String formattedAmount = currencyFormat.format(totalPending);
+
+		        // Create the message
+		        String message = String.format(
+		            "Dear %s,\nYou have a pending due of ₹%s. Kindly pay at your earliest to avoid service disruption.\n– Rol Cable Network",
+		            fullName,
+		            formattedAmount
+		        );
+
+		        // URL-encode the message for sending via Textlocal API
+		        String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
+
+				reminder = new Reminder();
+				reminder.setPhone(consumer.getPhoneNo());
+				reminder.setMessage(message);
+				reminder.setName(consumer.getFullName());
+				reminder.setStatus("Pending");
+				reminder.setDate(utility.getTodaysDateWithoutTime());
+
+				reminderService.saveReminderToDB(reminder);
+
+			} catch (Exception e) {
+				System.out.println("Failed to add reminder for consumerId: " + consumerId);
+			}
+		}
+		redirectAttributes.addFlashAttribute("successMessage", "Reminders added successfully!");
+		return "redirect:/consumer/filter";
+
+	}
 
 	@RequestMapping("/addNewReminderPage")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_REMINDER')")
 	public String addNewReminderPage(Model model) {
-		model.addAttribute("header", "Edit Reminder");
+		model.addAttribute("header", "Add Reminder");
 		return "reminder-create";
 	}
 
 	@RequestMapping("/addReminder")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_REMINDER')")
 	public String addReminder(Model model, Reminder reminder, RedirectAttributes redirectAttributes) {
 
 		reminderService.saveReminderToDB(reminder);
@@ -87,6 +143,7 @@ public class ReminderController {
 
 	@RequestMapping(value = "/editReminder",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editReminder(Model model, @RequestParam("id") Long id) throws Exception{
 
 		System.out.println("Got edit request for reminder with id " + id);
@@ -110,6 +167,7 @@ public class ReminderController {
 
 	@RequestMapping(value = "/deleteReminder",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteReminder(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
 
 		System.out.println("Got delete request for reminder id " + id);

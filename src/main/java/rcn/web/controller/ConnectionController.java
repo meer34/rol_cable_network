@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,6 +90,7 @@ public class ConnectionController {
 	}
 
 	@GetMapping("/add")
+	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CONNECTION')")
 	public String add(Model model, Connection connection) {
 		model.addAttribute("header", "Create Connection");
 		model.addAttribute("consumerList", consumerService.getAll());
@@ -144,7 +146,6 @@ public class ConnectionController {
 				generateBillForPeriod(connection, connection.getSubscriptionAmount(), connection.getDateOfConnStart(), disconnectedDate);
 				
 				Bill oldBill = billService.getBillForPeriod(connection, connection.getDateOfConnStart(), connection.getDateOfConnExpiry());
-				collectionService.removeBillFromCollections(oldBill);
 				billService.deleteById(oldBill.getId());
 				
 				double paidAmountReturn = oldBill.getPaidAmount();
@@ -225,6 +226,7 @@ public class ConnectionController {
 
 	@RequestMapping(value = "/edit",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
@@ -247,6 +249,7 @@ public class ConnectionController {
 
 	@RequestMapping(value = "/delete",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
@@ -265,6 +268,7 @@ public class ConnectionController {
 	
 	@RequestMapping(value = "/renew",
 			method = RequestMethod.GET)
+	@PreAuthorize("hasAnyAuthority('ADMIN','RENEW_CONNECTION')")
 	public String renew(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id,
 			@RequestParam("date") String date) throws Exception{

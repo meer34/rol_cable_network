@@ -2041,3 +2041,16 @@ audio, canvas, progress, video {
 .displayNone {
   display: none;
 }
+
+.action-button:disabled {
+    background-color: #8fa6c1;
+    color: #ffffff80;
+    cursor: not-allowed;
+}
+
+.action-button2:disabled {
+    background-color: #f5b5b8;
+    color: #ffffff80;
+    cursor: not-allowed;
+}
+

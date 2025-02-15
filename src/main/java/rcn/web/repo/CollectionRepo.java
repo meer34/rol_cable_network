@@ -24,6 +24,6 @@ public interface CollectionRepo extends JpaRepository<Collection, Long>, JpaSpec
 	@Query("FROM Collection collection WHERE collection.collectedBy = (FROM AppUser appUser WHERE appUser.name = :appUserName)")
 	Page<Collection> findAllForAppUserName(String appUserName, Pageable pageable);
 
-	List<Collection> findAllByBills_Id(Long id);
+//	List<Collection> findAllByBills_Id(Long id);
 	
 }

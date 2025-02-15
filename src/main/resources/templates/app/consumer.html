@@ -10,7 +10,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="dashboardicon2" style="text-align: left;">
-              <input type="button" class="submit action-button" value="Add New Consumer" th:attr="onclick=|location.href='@{/consumer/add}'|" sec:authorize="hasAnyAuthority('ADMIN','ADD_CONSUMER')">
+              <input type="button" class="submit action-button" value="Add New Consumer" th:attr="onclick=|location.href='@{/consumer/add}'|" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_CONSUMER'')')}">
               <input type="button" class="submit action-button" value="Area Management" th:attr="onclick=|location.href='@{/consumer/area}'|" >
               <input type="button" class="submit action-button" value="Due Consumers" th:attr="onclick=|location.href='@{/consumer/filter}'|" >
               
@@ -47,12 +47,12 @@
                   <form th:action="@{/}" method="get">
                     <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
                       <input type="submit" th:formaction="@{/consumer/view}" class="submit action-button" value="View">
-                      <input type="submit" th:formaction="@{/consumer/edit}" class="submit action-button" value="Edit" sec:authorize="hasAuthority('ADMIN')">
+                      <input type="submit" th:formaction="@{/consumer/edit}" class="submit action-button" value="Edit" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
 					  <input type="submit" th:formaction="@{/connection}" class="submit action-button" value="Connection">
 					  <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" class="submit action-button" value="Billing">
-					  <input type="submit" th:formaction="@{/due/add}" class="submit action-button" value="Add Due" sec:authorize="hasAnyAuthority('ADMIN','ADD_CONSUMER_DUE')">
-                      <input type="button" class="submit action-button" value="Print" onclick="printData()">
-                      <input type="submit" th:formaction="@{/consumer/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" sec:authorize="hasAuthority('ADMIN')">
+					  <input type="submit" th:formaction="@{/due/add}" class="submit action-button" value="Add Due" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_CONSUMER_DUE'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
+                      <input type="submit" th:formaction="@{/consumer/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
                     </div>
                     <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
                       <thead class="thead-inverse"
@@ -93,5 +93,6 @@
       </div>
     </main>
       <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   </body>
 </html>

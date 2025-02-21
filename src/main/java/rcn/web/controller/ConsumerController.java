@@ -128,7 +128,8 @@ public class ConsumerController {
 		return "redirect:/consumer";
 	}
 
-	/*@RequestMapping(value = "/connection",
+	/*
+	@RequestMapping(value = "/connection",
 			method = RequestMethod.GET)
 	public String connection(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
@@ -145,7 +146,8 @@ public class ConsumerController {
 			return "redirect:/consumer";
 		}
 		
-	}*/
+	}
+	*/
 
 	@GetMapping("/area")
 	public String area(Model model) {
@@ -186,15 +188,17 @@ public class ConsumerController {
 
 	}
 	
-	@GetMapping("filter")
+	@GetMapping("/filter")
 	public String filter(Model model,
 			@RequestParam(value="filterType", required = false) String filterType,
 			@RequestParam(value="filterAmount", required = false) Double filterAmount,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws ParseException {
 
-		List<Consumer> listOfConsumers = null;
-
 		System.out.println("Consumer filter page");
+		
+		
+		/*
+		List<Consumer> listOfConsumers = null;
 		listOfConsumers = consumerService.getAll();
 		
 		for (Consumer consumer : listOfConsumers) {
@@ -202,9 +206,11 @@ public class ConsumerController {
 		}
 		
 		listOfConsumers = listOfConsumers.stream().filter(consumer -> consumer.getTotalPending() >= (filterAmount!=null? filterAmount: 0.0 )).collect(Collectors.toList());
+		*/
 		
+		List<Consumer> listOfConsumers = consumerService.getFilteredConsumers(filterAmount!=null? filterAmount: 0.0);
+		System.out.println("Got it");
 		model.addAttribute("listOfConsumers", listOfConsumers);
-		
 		model.addAttribute("filterType", filterType);
 		model.addAttribute("filterAmount", filterAmount);
 

@@ -17,7 +17,8 @@ public interface BillRepo extends JpaRepository<Bill, Long>, JpaSpecificationExe
 	Page<Bill> findPageByConnection(Long connectionId, PageRequest of);
 
 //	List<Bill> deleteByConnectionAndStartDateAndEndDate(Connection connection, Date dateOfConnStart, Date dateOfConnExpiry);
-
+	
+	@Query("SELECT b FROM Bill b LEFT JOIN FETCH b.billPayments WHERE b.connection = :connection AND b.startDate = :dateOfConnStart AND b.endDate = :dateOfConnExpiry")
 	Bill findByConnectionAndStartDateAndEndDate(Connection connection, Date dateOfConnStart, Date dateOfConnExpiry);
 
 }

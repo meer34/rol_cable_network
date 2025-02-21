@@ -42,10 +42,10 @@
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 					<label>Consumer</label>
-                    <select class="form-control" name="consumer" style="height: 48px;" required>
+                    <select class="form-control multiple-select-pillbox" name="consumer" style="height: 48px;" required>
                       <option selected disabled="disabled" value="">Select Consumer</option>
                       <option style="color: #333;" th:each="consumer : ${consumerList}" 
-										th:text="${consumer.fullName}" th:value="${consumer.id}" th:selected="${consumer.id==connection.consumer?.id}"></option>
+										th:text="${consumer.stbAccountNo + ' : ' + consumer.fullName}" th:value="${consumer.id}" th:selected="${consumer.id==connection.consumer?.id}"></option>
                     </select>
                   </div>
                   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -127,7 +127,7 @@
                 </div>
                 <div class="col-lg-12 flexdisplay">
                   <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
-                    <input type="checkbox" name="autoRenewal" id="autoRenewal" th:value="${connection.autoRenewal}">
+                    <input type="checkbox" name="autoRenewal" id="autoRenewal" th:checked="${connection.autoRenewal}">
                   </div>
                 </div>
 			<input th:if="${connection.id}" type="hidden" name="id" th:value="${connection.id}">

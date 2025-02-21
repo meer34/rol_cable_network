@@ -1,5 +1,6 @@
 package rcn.web.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import rcn.web.model.Consumer;
+import rcn.web.model.ConsumerBalanceDTO;
 import rcn.web.repo.ConsumerRepo;
 import rcn.web.specification.EntitySpecification;
 
@@ -55,7 +57,18 @@ public class ConsumerService {
 	}
 
 	public void addToAdvanceAmount(Long id, double addAmount) {
-		consumerRepo.addToAdvanceAmountForId(id, addAmount);
+		System.out.println("Adding " + addAmount + " rupees to consumer for id: " + id);
+		consumerRepo.deductFromAdvanceAmountForId(id, -addAmount);
 	}
+	
+	public List<Consumer> getFilteredConsumers(Double filterAmount) {
+		System.out.println(filterAmount);
+		List<ConsumerBalanceDTO> listOfConsumerBalanceDTO = consumerRepo.findFilteredConsumers(filterAmount);
+		System.out.println("After query!");
+		
+        return listOfConsumerBalanceDTO.stream()
+        		.map(dto -> dto.getConsumer())
+        		.toList();
+    }
 
 }

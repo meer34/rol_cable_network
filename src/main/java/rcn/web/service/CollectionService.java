@@ -80,7 +80,7 @@ public class CollectionService {
 		
 		if (advanceAmount != null) {
 			Consumer consumer = collection.getConsumer();
-			consumerRepo.addToAdvanceAmountForId(consumer.getId(), advanceAmount);
+			consumerRepo.deductFromAdvanceAmountForId(consumer.getId(), advanceAmount);
 		}
 
 		return collectionRepo.save(collection);
@@ -102,33 +102,10 @@ public class CollectionService {
 	public void deleteById(Long id) {
 		Collection collection = collectionRepo.findById(id).orElse(null);
 
-		List<Bill> bills = collection.getBills();
-		List<Due> dues = collection.getDues();
-
-		if(bills != null) {
-			bills = bills.stream()
-					.map(bill -> {
-						bill.setPaidAmount(bill.getPaidAmount()-bill.getCollectedAmount());//TODOO
-						return bill;
-					})
-					.collect(Collectors.toList());
-			billRepo.saveAll(bills);
-		}
-
-		if(dues != null) {
-			dues = dues.stream()
-					.map(due -> {
-						due.setPaidAmount(due.getPaidAmount()-due.getCollectedAmount());//TODOO
-						return due;
-					})
-					.collect(Collectors.toList());
-			dueRepo.saveAll(dues);
-		}
-
 		Double advanceAmount = collection.getAdvanceAmount();
 		if(advanceAmount != null && advanceAmount > 0) {
 			Consumer consumer = collection.getConsumer();
-			consumerRepo.addToAdvanceAmountForId(consumer.getId(), advanceAmount);
+			consumerRepo.deductFromAdvanceAmountForId(consumer.getId(), advanceAmount);
 		}
 		collectionRepo.deleteById(id);
 	}

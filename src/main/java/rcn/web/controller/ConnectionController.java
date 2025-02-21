@@ -2,6 +2,7 @@ package rcn.web.controller;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rcn.web.model.Bill;
+import rcn.web.model.BillPayment;
 import rcn.web.model.Connection;
 import rcn.web.model.Due;
 import rcn.web.service.BillService;
@@ -143,13 +145,16 @@ public class ConnectionController {
 				} else {
 					disconnectedDate = utility.formatStringToDate(stateChangeDate);
 				}
-				generateBillForPeriod(connection, connection.getSubscriptionAmount(), connection.getDateOfConnStart(), disconnectedDate);
-				
 				Bill oldBill = billService.getBillForPeriod(connection, connection.getDateOfConnStart(), connection.getDateOfConnExpiry());
 				billService.deleteById(oldBill.getId());
+				System.out.println("Old Bill with id: " + oldBill.getId() + " deleted!" );
 				
 				double paidAmountReturn = oldBill.getPaidAmount();
-				consumerService.addToAdvanceAmount(connection.getConsumer().getId(), paidAmountReturn);
+				paidAmountReturn = generateBillForPeriod(connection, connection.getSubscriptionAmount(), paidAmountReturn, connection.getDateOfConnStart(), disconnectedDate);
+				
+				if(paidAmountReturn > 0) {
+					consumerService.addToAdvanceAmount(connection.getConsumer().getId(), paidAmountReturn);
+				}
 				connection.setDateOfConnExpiry(disconnectedDate);
 
 			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
@@ -170,11 +175,15 @@ public class ConnectionController {
 				
 			} else if(connection.getSubscriptionAmount() != savedConn.getSubscriptionAmount()){
 				double subscriptionAnountDifference = connection.getSubscriptionAmount() - savedConn.getSubscriptionAmount();
+				System.out.println("Subscript amount differece is: " + subscriptionAnountDifference);
 				
-				if(subscriptionAnountDifference > 0)
-					generateBillForPeriod(connection, subscriptionAnountDifference, utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
-				else if(subscriptionAnountDifference < 0)
-					generateBillForPeriod(connection, subscriptionAnountDifference, utility.getTomorrowsDateWithoutTime(), connection.getDateOfConnExpiry());
+				if(subscriptionAnountDifference > 0) {
+					generateBillForPeriod(connection, subscriptionAnountDifference, 0.0, utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
+				
+				} else if(subscriptionAnountDifference < 0) {
+					double paidAmountReturn = generateBillForPeriod(connection, subscriptionAnountDifference, 0.0, utility.getTomorrowsDateWithoutTime(), connection.getDateOfConnExpiry());
+					consumerService.addToAdvanceAmount(connection.getConsumer().getId(), paidAmountReturn);
+				}
 			}
 			
 			connection = connectionService.save(connection);
@@ -185,22 +194,40 @@ public class ConnectionController {
 
 	}
 
-	private void generateBillForPeriod(Connection connection, double subscriptionAmount, Date billStartDate, Date billEndDate) {
+	private double generateBillForPeriod(Connection connection, double subscriptionAmount, double paidAmount, Date billStartDate, Date billEndDate) {
 		System.out.println("Generating bill for disconnected connection id " + connection.getId());
-		
+
 		double billAmount = subscriptionAmount*utility.getDifferenceDays(billStartDate, billEndDate)/renewalCycle;
 		billAmount = utility.roundDecimal(billAmount);
-		
+
 		Bill bill = new Bill();
 		bill.setConnection(connection);
 		bill.setStartDate(billStartDate);
 		bill.setEndDate(billEndDate);
 		bill.setBillAmount(billAmount);
-		bill.setPaidAmount(0.0);
+
+		double extraAmount = paidAmount - billAmount;
+		if(extraAmount > 0) {
+			paidAmount = billAmount;
+		} else {
+			extraAmount = 0;
+		}
 		
+		BillPayment billPayment = new BillPayment();
+		billPayment.setBill(bill);
+		billPayment.setAmount(paidAmount);
+
+		bill.setBillPayments(new ArrayList<>());
+		bill.getBillPayments().add(billPayment);
+
+		if(paidAmount < 0) {
+			extraAmount = -paidAmount;
+		}
+
 		billService.save(bill);
 		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
-									+ connection.getConsumer().getFullName());
+				+ connection.getConsumer().getFullName());
+		return extraAmount;
 	}
 
 	@RequestMapping(value = "/view",

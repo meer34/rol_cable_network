@@ -3,6 +3,7 @@ package rcn.web.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -48,7 +49,7 @@ public class Bill {
 	@Transient
 	private double collectedAmount;
 	
-	@OneToMany(mappedBy="bill")
+	@OneToMany(mappedBy="bill", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BillPayment> billPayments;
 	
 	public double getPaidAmount() {

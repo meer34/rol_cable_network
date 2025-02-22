@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12 dashboardicon">
+              <legend style="text-align:center; padding-top: 0px;" >View Expense</legend>
+              <fieldset style="margin-top: 0;" id="printTable">
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expense Category</label><!--dropdown from Expense category-->
+                    <input type="text" class="form-control" name="expenseType" th:value="${expense.expenseType?.name}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Amount</label>
+                    <input type="number" class="form-control" name="amount" placeholder="0.0" th:value="${expense.amount}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Tax (%)</label>
+                    <input type="number" class="form-control" name="tax" placeholder="0.0" th:value="${expense.tax}" readonly>
+                  </div>           
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Total</label>
+                    <input type="number" class="form-control" name="totalAmount" placeholder="0.0" th:value="${expense.totalAmount}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Payment Mode</label>
+                    <input type="text" class="form-control" name="paymentMode" th:value="${expense.paymentMode}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expense Date</label>
+                    <input type="date" class="form-control" name="date" th:value="${expense.date}" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expense By</label>
+                    <input type="text" class="form-control" name="spentBy" th:value="${expense.spentBy?.name}" readonly>
+                  </div>
+                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" th:value="${expense.remarks}" readonly>
+                  </div>
+                </div>
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="button" name="submit" class="submit action-button" value="print" onclick="printData()">
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

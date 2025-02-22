@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/channelPackage/save}" method="post" enctype="multipart/form-data">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<label>Package Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Enter Package Name" th:value="${channelPackage.name}" required>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Base Price</label>
+                    <input type="number" min="0" step=".01" class="form-control" name="basePrice" id="basePrice" 
+                    	placeholder="Enter Base Price" th:value="${channelPackage.basePrice}" onKeyup="calculateGstPrice()">
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>GST / Non GST</label>
+                    <select class="form-control" name="gstNonGst" id="gstNonGst" style="height: 48px;" onChange="calculateGstPrice()" required>
+                      <option selected disabled="disabled" value="">Select Type</option>
+                      <option th:selected="${channelPackage?.gstNonGst=='GST'}">GST</option>
+                      <option th:selected="${channelPackage?.gstNonGst=='Non GST'}">Non GST</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Final Price</label>
+                    <input type="number" min="0"  step="0.0001" class="form-control" name="price" id="price" th:value="${channelPackage.price}" readonly>
+                  </div>
+                </div>
+			<input th:if="${channelPackage.id}" type="hidden" name="id" th:value="${channelPackage.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

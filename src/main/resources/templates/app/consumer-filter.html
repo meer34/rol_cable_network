@@ -21,7 +21,7 @@
 							<label>Minimum Due Amount</label>
 						</div>
 						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
-							<input type="text" name="filterAmount" th:value="${filterAmount}" placeholder="Minimum Due" >
+							<input type="number" step=".0001" name="filterAmount" th:value="${filterAmount}" placeholder="Minimum Due" required>
 						</div>
 						<div class="col-lg-1 col-md-1 col-sm-1 col-xs-12">
 							<div style="padding-top: 5px;">
@@ -51,7 +51,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr style="background-color: #FFF" th:each="consumer : ${listOfConsumers}">
+                        <tr style="background-color: #FFF" th:each="consumer : ${listPage.content}">
                           <td class="noPrint" ><input type='checkbox' name='consumerIds' th:value="${consumer.id}"></td>
 						  <td th:text="${consumer.fullName}" />
 						  <td th:text="${consumer.phoneNo}" />
@@ -63,6 +63,8 @@
                       </tbody>
                     </table>
                   </form>
+				  
+				  <div th:replace="fragments :: pagination"></div>
 				  
                 </div>
               </div>

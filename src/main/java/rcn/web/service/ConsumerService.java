@@ -1,17 +1,17 @@
 package rcn.web.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import rcn.web.model.Consumer;
-import rcn.web.model.ConsumerBalanceDTO;
+import rcn.web.model.ConsumerDTO;
 import rcn.web.repo.ConsumerRepo;
 import rcn.web.specification.EntitySpecification;
 
@@ -20,8 +20,13 @@ public class ConsumerService {
 
 	@Autowired private ConsumerRepo consumerRepo;
 
-	public Consumer save(Consumer admin) {
-		return consumerRepo.save(admin);
+	public Consumer save(Consumer consumer) {
+		return consumerRepo.save(consumer);
+	}
+	
+	public boolean existsByStbAccountNo(String stbAccountNo, Long consumerId) {
+	    Consumer existingConsumer = consumerRepo.findByStbAccountNo(stbAccountNo);
+	    return existingConsumer != null && !existingConsumer.getId().equals(consumerId);
 	}
 	
 	public Consumer getById(Long id) {
@@ -33,9 +38,9 @@ public class ConsumerService {
 	}
 
 	public Page<Consumer> getAll(Integer pageNo, Integer pageSize) {
-		return consumerRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").ascending()));
+		return consumerRepo.findAll(PageRequest.of(pageNo, pageSize, Sort.by("id").descending()));
 	}
-
+	
 	public void deleteById(Long id) {
 		consumerRepo.deleteById(id);
 	}
@@ -61,14 +66,14 @@ public class ConsumerService {
 		consumerRepo.deductFromAdvanceAmountForId(id, -addAmount);
 	}
 	
-	public List<Consumer> getFilteredConsumers(Double filterAmount) {
-		System.out.println(filterAmount);
-		List<ConsumerBalanceDTO> listOfConsumerBalanceDTO = consumerRepo.findFilteredConsumers(filterAmount);
-		System.out.println("After query!");
+	public Page<Consumer> getFilteredConsumers(Double filterAmount, Integer pageNo, Integer pageSize) {
+		Page<ConsumerDTO> consumerDTOPage  = consumerRepo.findFilteredConsumers(filterAmount, PageRequest.of(pageNo, pageSize));
 		
-        return listOfConsumerBalanceDTO.stream()
+		List<Consumer> consumers = consumerDTOPage .stream()
         		.map(dto -> dto.getConsumer())
         		.toList();
+		
+        return new PageImpl<>(consumers, PageRequest.of(pageNo, pageSize), consumerDTOPage.getTotalElements());
     }
-
+	
 }

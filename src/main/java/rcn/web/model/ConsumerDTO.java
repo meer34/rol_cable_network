@@ -1,6 +1,6 @@
 package rcn.web.model;
 
-public interface ConsumerBalanceDTO {
+public interface ConsumerDTO {
     Consumer getConsumer();
     Double getRemainingBalance();
 }

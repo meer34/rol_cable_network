@@ -24,6 +24,15 @@
 })();
 
 function printData() {
+    var printContent = document.getElementById('printTable').innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = '<div style="margin:20px;">' + printContent + '</div>';
+    window.print();
+    document.body.innerHTML = originalContent;
+    location.reload();
+}
+
+function printData1() {
 	var printWindow = window.open("Print");
 	printWindow.document.write('<head>')
 	printWindow.document.write('<meta name="description" content="">');

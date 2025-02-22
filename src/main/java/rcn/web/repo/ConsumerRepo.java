@@ -13,9 +13,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import rcn.web.model.Consumer;
-import rcn.web.model.ConsumerBalanceDTO;
+import rcn.web.model.ConsumerDTO;
 
 public interface ConsumerRepo extends JpaRepository<Consumer, Long>, JpaSpecificationExecutor<Consumer> {
+	
+	Consumer findByStbAccountNo(String stbAccountNo);
 	
 	@Query("FROM Consumer consumer where consumer.area = (FROM Area area where area.name = :area)")
 	Page<Consumer> findConsumerByArea(String area, PageRequest pageRequest);
@@ -49,7 +51,7 @@ public interface ConsumerRepo extends JpaRepository<Consumer, Long>, JpaSpecific
 		       "(COALESCE(SUM(b.billAmount), 0) - COALESCE(SUM(bp.amount), 0)) DESC")
 		List<Consumer> findFilteredConsumers2(@Param("filterAmount") Double filterAmount);
 	
-	@Query("SELECT c AS consumer, " +
+	@Query(value="SELECT c AS consumer, " +
 		       "((SELECT COALESCE(SUM(d.dueAmount), 0) FROM Due d WHERE d.consumer = c) - " +
 		       "(SELECT COALESCE(SUM(dp.amount), 0) FROM DuePayment dp WHERE dp.due.consumer = c) + " +
 		       "(SELECT COALESCE(SUM(b.billAmount), 0) FROM Bill b WHERE b.connection.consumer = c) - " +
@@ -59,7 +61,13 @@ public interface ConsumerRepo extends JpaRepository<Consumer, Long>, JpaSpecific
 		       "(SELECT COALESCE(SUM(dp.amount), 0) FROM DuePayment dp WHERE dp.due.consumer = c) + " +
 		       "(SELECT COALESCE(SUM(b.billAmount), 0) FROM Bill b WHERE b.connection.consumer = c) - " +
 		       "(SELECT COALESCE(SUM(bp.amount), 0) FROM BillPayment bp WHERE bp.bill.connection.consumer = c)) >= :filterAmount " +
-		       "ORDER BY remainingBalance DESC")
-		List<ConsumerBalanceDTO> findFilteredConsumers(@Param("filterAmount") Double filterAmount);
-	
+		       "ORDER BY remainingBalance DESC",
+		       countQuery="SELECT COUNT(DISTINCT c) FROM Consumer c " +
+				       "WHERE ((SELECT COALESCE(SUM(d.dueAmount), 0) FROM Due d WHERE d.consumer = c) - " +
+				       "(SELECT COALESCE(SUM(dp.amount), 0) FROM DuePayment dp WHERE dp.due.consumer = c) + " +
+				       "(SELECT COALESCE(SUM(b.billAmount), 0) FROM Bill b WHERE b.connection.consumer = c) - " +
+				       "(SELECT COALESCE(SUM(bp.amount), 0) FROM BillPayment bp WHERE bp.bill.connection.consumer = c)) >= :filterAmount ")
+		Page<ConsumerDTO> findFilteredConsumers(@Param("filterAmount") Double filterAmount, PageRequest pageRequest);
+
+
 }

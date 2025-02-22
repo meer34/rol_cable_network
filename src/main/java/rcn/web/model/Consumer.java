@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.BatchSize;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,13 +51,16 @@ public class Consumer {
 	private Area area;
 	
 	@OneToMany(mappedBy="consumer")
+	@BatchSize(size = 5)
 	private List<Connection> connections;
 	
 	@OneToMany(mappedBy="consumer")
 	@OrderBy("dateOfDueEntry DESC")
+	@BatchSize(size = 50)
 	private List<Due> dues;
 	
 	@OneToMany(mappedBy="consumer")
+	@BatchSize(size = 25)
 	private List<Collection> collections;
 	
 	public void calculateTotalSubscriptionBill() {
@@ -86,14 +91,6 @@ public class Consumer {
 		return this.totalPending;
 	}
 	
-	public double getTotalPaid() {
-		totalPaid= 0;
-		for (Collection collection : collections) {
-			totalPaid += collection.getNetAmount();
-		}
-		return totalPaid;
-	}
-	
 	public void calculateAllBillAndTotalPaid() {
 		calculateAllPendingBill();
 		calculateTotalSubscriptionBill();
@@ -101,6 +98,7 @@ public class Consumer {
 		calculateTotalPaid();
 	}
 	
+	//PendingOnly
 	public void calculateTotalSubscriptionPendingBill() {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {
@@ -123,6 +121,7 @@ public class Consumer {
 		this.totalPending= subscriptionBill + otherDueBill;
 	}
 	
+	//Year
 	public void calculateTotalSubscriptionBillForYear(Date yearStartDate, Date yearEndDate) {
 		subscriptionBill = 0;
 		for (Connection connection : connections) {

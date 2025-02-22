@@ -81,6 +81,12 @@ public class ConsumerController {
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
 	public String save(Model model, Consumer consumer, RedirectAttributes redirectAttributes) throws Exception{
+		// Check if the STB Account Number already exists
+	    if (consumer.getStbAccountNo() != null && consumerService.existsByStbAccountNo(consumer.getStbAccountNo(), consumer.getId())) {
+	        redirectAttributes.addFlashAttribute("errorMessage", "STB Account No '" + consumer.getStbAccountNo() + "' already exists for another consumer!");
+	        redirectAttributes.addFlashAttribute("consumer", consumer);
+	        return "redirect:/consumer/add";
+	    }
 		consumer = consumerService.save(consumer);
 		redirectAttributes.addFlashAttribute("successMessage", "Consumer " + consumer.getFullName() + " saved successfully!");
 		return "redirect:/consumer";
@@ -192,9 +198,11 @@ public class ConsumerController {
 	public String filter(Model model,
 			@RequestParam(value="filterType", required = false) String filterType,
 			@RequestParam(value="filterAmount", required = false) Double filterAmount,
-			@RequestParam(value="consumerId", required = false) String consumerId) throws ParseException {
+			@RequestParam(value="consumerId", required = false) String consumerId,
+			@RequestParam("page") Optional<Integer> page,
+			@RequestParam("size") Optional<Integer> size) throws ParseException {
 
-		System.out.println("Consumer filter page");
+		System.out.println("Consumer filter page. Filter Amount - " + filterAmount);
 		
 		
 		/*
@@ -207,12 +215,20 @@ public class ConsumerController {
 		
 		listOfConsumers = listOfConsumers.stream().filter(consumer -> consumer.getTotalPending() >= (filterAmount!=null? filterAmount: 0.0 )).collect(Collectors.toList());
 		*/
-		
-		List<Consumer> listOfConsumers = consumerService.getFilteredConsumers(filterAmount!=null? filterAmount: 0.0);
+		if(filterAmount == null) filterAmount = 0.0;
+		Page<Consumer> listOfConsumers = consumerService.getFilteredConsumers(filterAmount, page.orElse(1) - 1, size.orElse(initialPageSize));
 		System.out.println("Got it");
-		model.addAttribute("listOfConsumers", listOfConsumers);
+		model.addAttribute("listPage", listOfConsumers);
 		model.addAttribute("filterType", filterType);
 		model.addAttribute("filterAmount", filterAmount);
+		
+		int totalPages = listOfConsumers.getTotalPages();
+		if (totalPages > 0) {
+			List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+					.boxed()
+					.collect(Collectors.toList());
+			model.addAttribute("pageNumbers", pageNumbers);
+		}
 
 		return "app/consumer-filter";
 

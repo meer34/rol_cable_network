@@ -14,8 +14,7 @@
               <input type="button" class="submit action-button" value="Area Management" th:attr="onclick=|location.href='@{/consumer/area}'|" >
               <input type="button" class="submit action-button" value="Due Consumers" th:attr="onclick=|location.href='@{/consumer/filter}'|" >
               
-              <div th:if="${successMessage}" th:text="${successMessage}"
-                class="alert alert-success" role="alert"></div>
+              <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
               <div class="tile">
                 <h3 class="tile-title"></h3>
                 

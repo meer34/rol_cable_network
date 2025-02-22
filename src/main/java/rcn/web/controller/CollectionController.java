@@ -199,7 +199,13 @@ public class CollectionController {
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
 		System.out.println("Got view request for collection id " + id);
-		model.addAttribute("collection", collectionService.getById(Long.parseLong(id)));
+		
+		Collection collection = collectionService.getById(Long.parseLong(id));
+		model.addAttribute("collection", collection);
+		model.addAttribute("consumerList", consumerService.getAll());
+		model.addAttribute("users", appUserService.getAllAppUsers());
+		model.addAttribute("consumerId", collection.getConsumer().getId());
+		model.addAttribute("billType", collection.getBillType());
 		return "app/collection-view";
 	}
 	

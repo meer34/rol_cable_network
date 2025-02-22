@@ -221,7 +221,7 @@ public class BillController {
 
 
 //	@Scheduled(cron = "0 30 9 * * *")
-//	@Scheduled(fixedRate = 30000)
+	@Scheduled(fixedRate = 30000)
 	public void autoRenewTask() throws ParseException{
 //		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
 //		System.out.println("Bill scheduler: Job running at - " + strDate);

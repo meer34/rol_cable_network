@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+	<div class="row">
+		<div class="col-lg-5 col-md-5 col-xs-12 col-sm-6 col-lg-offset-3 col-sm-offset-3 col-xs-offset-0  marginl">
+            <div class="tile" id="printTable">
+               <h1 class="tile-title text-center" style="font-size: 16px;">View Reminder</h1>
+               <div class="card-body">
+                            <div id="printTable">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Name:</strong> <span th:text="${reminder?.name}"></span></li>
+                                    <li class="list-group-item"><strong>Phone:</strong> <span th:text="${reminder?.phone}"></span></li>
+                                    <li class="list-group-item"><strong>Message:</strong> <p class="mb-0 text-muted" th:text="${reminder?.message}"></p></li>
+                                    <li class="list-group-item"><strong>Date:</strong> <span th:text="${#dates.format(reminder?.date, 'dd MMM yyyy')}"></span></li>
+                                    <li class="list-group-item"><strong>Status:</strong> 
+                                        <span class="badge" th:text="${reminder?.status}" 
+                                              th:classappend="${reminder?.status == 'Completed' ? 'badge-success' : 'badge-warning'}">
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button class="btn btn-secondary" onclick="window.history.back()">Back</button>
+                            <button class="btn btn-primary" onclick="printData()">Print</button>
+                        </div>
+            </div>
+         </div>
+		</div>
+    </div>
+    </main>
+
+
+	<div th:replace="fragments :: main_scripts"></div>
+</body>
+</html>

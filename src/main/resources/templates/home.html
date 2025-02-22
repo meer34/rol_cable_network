@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+		<div class="row">
+			<div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
+			<div th:if="${errorMessage}" th:text="${errorMessage}" class="alert alert-danger" role="alert"></div>
+			<div class="col-lg-12">
+				<div class="tile" style="border: 1px solid black !important;">
+					<div class="dashboardicon2">
+						<a th:href="@{/consumer}"><input type="button" name="consumer" class="submit action-button" value="Consumer"></a>
+						<a th:href="@{/connection}"><input type="button" name="consumer" class="submit action-button" value="Connection"></a>
+						<a th:href="@{/bill}"><input type="button" name="consumer" class="submit action-button" value="Consumer Bill"></a>
+						<a th:href="@{/channelPackage}"><input type="button" name="package" class="submit action-button" value="Package"></a>
+						<a th:href="@{/bouquet}"><input type="button" class="submit action-button" value="Bouquet"></a>
+						<a th:href="@{/channel}"><input type="button" class="submit action-button" value="Channel"></a>
+						<a th:href="@{/collection}"><input type="button" class="submit action-button" value="Collection"></a>
+						<a th:href="@{/settlement}"><input type="button" class="submit action-button" value="Settlement"></a>
+						<a th:href="@{/income}"><input type="button" class="submit action-button" value="Income"></a>
+						<a th:href="@{/expense}"><input type="button" class="submit action-button" value="Expense"></a>
+					</div>
+				</div>
+			</div>
+         </div>
+      <div class="row">
+      <div class="col-lg-12">
+		<div class="tile">
+                <h3 class="tile-title">User Settlement Status</h3>
+                <div class="table-responsive table_size" style="margin-top: 20px; border: 1px solid black !important;">
+                  <form th:action="@{/}" method="get">
+                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;" id="printTable" >
+                      <thead class="thead-inverse"
+                        style="background-color: #06697e; color: #FFF;">
+                        <tr>
+                          <th class="table_heading noPrint"></th>
+                          <th class="table_heading">App User</th>
+						  <th class="table_heading">Address</th>
+						  <th class="table_heading">Pending Settlement</th>
+                          <th class="table_heading">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color: #FFF" th:each="appUser : ${appUserList}">
+                          <td class="noPrint" ><input type='radio' th:value="${appUser.id}" class="radioBtn" name='id'></td>
+                          <td th:text="${appUser.name}" />
+                          <td th:text="${appUser.address}" />
+                          <td th:text="${appUser.getPendingSettlementAmount()}" />
+                          <td>
+							<input type="button" class="submit action-button" value="Collections" th:attr="onclick=|location.href='/collection?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Settlements" th:attr="onclick=|location.href='/settlement?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Incomes" th:attr="onclick=|location.href='/income?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Expenses" th:attr="onclick=|location.href='/expense?appUserId=${appUser.id}'|" >
+						  </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                  
+                </div>
+              </div>
+		</div>
+		</div>
+		
+		<div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <h3 class="tile-title">Account Summary</h3>
+			<form class="dashboardicon" th:action="@{/home}" method="get" >
+				<div class="col-lg-12 flexdisplay">
+					<div class="col-lg-6 col-xs-12">
+						<label>From Date</label>
+						<input type="date" name="fromDate" >
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						<label>To Date</label>
+						<input type="date" name="toDate" style="animation-delay: .2s">
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						<label>Search</label>
+						<input type="text" name="category" placeholder="Category">
+					</div>
+				</div>
+				<input type="button" name="cancel" class="previous action-button-previous" value="Cancel">
+				<input type="submit" name="submit" class="submit action-button" value="Search">
+			</form>
+			<div class="table-responsive table_size" style="margin-top: 12px; border: 1px solid black !important;">          
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Collection By User</th>
+						<th class="table_heading">Total Collection</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="collectionReport : ${collectionReportList}" >
+							<td th:text="${collectionReport.category}" />
+							<td th:text="${collectionReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/collection?appUserName=${collectionReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Users</td>
+							<td th:text="${#aggregates.sum(collectionReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/collection}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="table-responsive table_size" style="margin-top: 12px;border: 1px solid black !important;">          
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Income Category</th>
+						<th class="table_heading">Total Income</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="incomeReport : ${incomeReportList}" >
+							<td th:text="${incomeReport.category}" />
+							<td th:text="${incomeReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/income?category=${incomeReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(incomeReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/income}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="table-responsive table_size" style="margin-top: 12px;border: 1px solid black !important;">
+				<table class="table table-bordered table-responsive table-hover" style="width: 100%;margin-bottom: 0px !important;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Expense Category</th>
+						<th class="table_heading">Total Expense</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="expenseReport : ${expenseReportList}" >
+							<td th:text="${expenseReport.category}" />
+							<td th:text="${expenseReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/expense?category=${expenseReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(expenseReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/expense}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    </main>
+	
+	
+    <div th:replace="fragments :: main_scripts"></div>
+    <div th:replace="fragments :: table_search_script"></div>
+  </body>
+</html>

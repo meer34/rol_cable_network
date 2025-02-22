@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{saveExpense}" method="post" enctype="multipart/form-data">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-bottom: 60px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Expense Category</label>
+                    <select class="form-control" name="expenseType" id="expenseType" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select Expense Category</option>
+                      <option style="color: #333;" th:each="expenseType : ${expenseTypes}" 
+										th:text="${expenseType.name}" th:value="${expenseType.id}" th:selected="${expenseType.id==expense?.expenseType?.id}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Amount</label>
+                    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount" th:value="${expense?.amount}" onChange="calculateTotalIncExp()">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Tax (%)</label>
+                    <input type="number" class="form-control" name="tax" id="tax" placeholder="Tax" th:value="${expense?.tax}" onChange="calculateTotalIncExp()">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Total</label>
+                    <input type="number" class="form-control" name="totalAmount" id="totalAmount" placeholder="Total" th:value="${expense?.totalAmount}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Payment Mode</label>
+                    <select class="form-control" name="paymentMode" id="paymentMode" style="height: 48px;" >
+                      <option selected disabled="disabled" value="">Select Payment Mode</option>
+                      <option th:selected="${expense?.paymentMode=='Cash'}">Cash</option>
+                      <option th:selected="${expense?.paymentMode=='Account Pay'}">Account Pay</option>
+                      <option th:selected="${expense?.paymentMode=='Check'}">Check</option> 
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expense Date</label>
+					<input type="date" class="form-control" name="date" placeholder="Date" th:value="${expense?.date}" required th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+                    <input th:if="${expense?.id}" type="date" class="form-control" name="date" placeholder="Date" th:value="${expense?.date}" required sec:authorize="!hasAuthority('ADMIN')">
+                    <input th:if="${expense?.id==null}" type="date" class="form-control" name="date" id="defaultDate" readonly required sec:authorize="!hasAuthority('ADMIN')">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expense By</label>
+                    <select class="form-control" name="spentBy" style="height: 48px;" required >
+                      <option selected disabled="disabled" value="">Select Expense By</option>
+							<option style="color: #333;" th:each="user : ${users}" 
+								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==expense?.spentBy?.id}"></option>
+							<!--dropdown managed by admin and appUser--> 
+                    </select>
+                  </div>
+                  <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" id="remarks" placeholder="Remarks" th:value="${expense?.remarks}">
+                  </div>
+                </div>
+			<input th:if="${expense?.id}" type="hidden" name="id" th:value="${expense?.id}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

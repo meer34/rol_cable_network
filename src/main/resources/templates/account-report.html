@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <h3 class="tile-title">View Account Report</h3>
+			<div class="table-responsive table_size" style="margin-top: 12px;">          
+				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Total Collection</th>
+						<th class="table_heading">Total Income</th>
+						<th class="table_heading">Total Expense</th>
+						<th class="table_heading">Profit</th>
+						<th class="table_heading">Profit (%)</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" >
+							<td th:text="${totalCollection}"/>
+							<td th:text="${totalIncome}"/>
+							<td th:text="${totalExpense}"/>
+							<td th:text="${totalCollection + totalIncome - totalExpense}"/>
+							<td th:if="${totalExpense != 0}" th:text="${100*(totalCollection + totalIncome - totalExpense)/totalExpense}"/>
+							<td th:if="${totalExpense == 0}" >-</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<form class="dashboardicon" th:action="@{/account-report}" method="get" >
+				<div class="col-lg-12 flexdisplay">
+					<div class="col-lg-6 col-xs-12">
+						<label>From Date</label>
+						<input type="date" name="fromDate" >
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						<label>To Date</label>
+						<input type="date" name="toDate" style="animation-delay: .2s">
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						<label>Search</label>
+						<input type="text" name="category" placeholder="Category">
+					</div>
+				</div>
+				<input type="button" name="cancel" class="previous action-button-previous" value="Cancel">
+				<input type="submit" name="submit" class="submit action-button" value="Search">
+			</form>
+			<div class="table-responsive table_size" style="margin-top: 12px;">          
+				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Collection By</th>
+						<th class="table_heading">Total Collection</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="collectionReport : ${collectionReportList}" >
+							<td th:text="${collectionReport.category}" />
+							<td th:text="${collectionReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/collection?appUserName=${collectionReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(collectionReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/collection}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="table-responsive table_size" style="margin-top: 12px;">          
+				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Income Category</th>
+						<th class="table_heading">Total Income</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="incomeReport : ${incomeReportList}" >
+							<td th:text="${incomeReport.category}" />
+							<td th:text="${incomeReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/income?category=${incomeReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(incomeReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/income}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="table-responsive table_size" style="margin-top: 12px;">          
+				<table class="table table-bordered table-responsive table-hover" style=" width: 100%;">
+					<thead class="thead-inverse" style="background-color:#06697e; color:#FFF;">
+					<tr>
+						<th class="table_heading">Expense Category</th>
+						<th class="table_heading">Total Expense</th>
+						<th class="table_heading" style="width: 15%;">Action</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr style="background-color:#FFF" th:each="expenseReport : ${expenseReportList}" >
+							<td th:text="${expenseReport.category}" />
+							<td th:text="${expenseReport.totalAmount}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='/expense?category=${expenseReport.category}'|">
+								</div>
+							</td>
+						</tr>
+						<tr style="background-color:#9ca4bf" >
+							<td>All Category</td>
+							<td th:text="${#aggregates.sum(expenseReportList.![totalAmount])}" />
+							<td>
+								<div class="dashboardicon2" style="text-align: left;">
+									<input type="button"  name="action" class="submit action-button" value="View Records" th:attr="onclick=|location.href='@{/expense}'|">
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </main>
+	
+	
+    <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

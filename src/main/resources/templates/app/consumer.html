@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dashboardicon2" style="text-align: left;">
+              <input type="button" class="submit action-button" value="Add New Consumer" th:attr="onclick=|location.href='@{/consumer/add}'|" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_CONSUMER'')')}">
+              <input type="button" class="submit action-button" value="Area Management" th:attr="onclick=|location.href='@{/consumer/area}'|" >
+              <input type="button" class="submit action-button" value="Due Consumers" th:attr="onclick=|location.href='@{/consumer/filter}'|" >
+              
+              <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
+              <div class="tile">
+                <h3 class="tile-title"></h3>
+                
+                <form class="dashboardicon" th:action="@{/consumer}" method="get">
+					<div class="col-lg-12 flexdisplay">
+						<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+							<label>Area</label>
+							<select class="form-control" name="area" id="area" style="height: 40px !important;">
+                      			<option selected disabled="disabled" value="">Select Area</option>
+                      			<option style="color: #333;" th:each="areaOption : ${areaList}" 
+										th:text="${areaOption.name}" th:value="${areaOption.name}" th:selected="${area==areaOption.name}"></option>
+                    		</select>
+						</div>
+						<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+							<label>Search</label>
+							<input type="text" name="keyword" id="keyWord" placeholder="Enter keyword" th:value="${keyword}" style="animation-delay: .2s">
+						</div>
+						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+							<div style="padding-top: 20px;">
+								<input type="button" name="clear" class="previous action-button-previous" value=" Clear "
+									onClick="document.getElementById('fromDate').value='';document.getElementById('toDate').value='';document.getElementById('keyWord').value='';">
+								<input type="submit" class="submit action-button" value="Search">
+							</div>
+						</div>
+					</div>
+                </form>
+                
+                <div class="table-responsive table_size" style="margin-top: 50px;">
+                  <form th:action="@{/}" method="get">
+                    <div class="dashboardicon2" style="text-align: left;" th:if="${listPage.content.size() > 0}" >
+                      <input type="submit" th:formaction="@{/consumer/view}" class="submit action-button" value="View">
+                      <input type="submit" th:formaction="@{/consumer/edit}" class="submit action-button" value="Edit" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+					  <input type="submit" th:formaction="@{/connection}" class="submit action-button" value="Connection">
+					  <input type="submit" th:formaction="@{/bill/getSubscriptionBillRecordsForConsumer}" class="submit action-button" value="Billing">
+					  <input type="submit" th:formaction="@{/due/add}" class="submit action-button" value="Add Due" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_CONSUMER_DUE'')')}">
+                      <input type="button" class="submit action-button" value="Download Excel" onclick="exportTableToExcel()">
+                      <input type="submit" th:formaction="@{/consumer/delete}" class="submit action-button2" value="Delete" onClick="return confirmDelete()" th:disabled="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+                    </div>
+                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+                      <thead class="thead-inverse"
+                        style="background-color: #06697e; color: #FFF;">
+                        <tr>
+                          <th class="table_heading noPrint"></th>
+                          <th class="table_heading">Consumer Id</th>
+                          <th class="table_heading">Acct No</th>
+                          <th class="table_heading">Full Name</th>
+                          <th class="table_heading">Nick Name</th>
+                          <th class="table_heading">Area</th>
+                          <th class="table_heading">Village</th>
+                          <th class="table_heading">Phone No</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color: #FFF" th:each="consumer : ${listPage.content}">
+                          <td class="noPrint" ><input type='radio' th:value="${consumer.id}" class="radioBtn" name='consumerId'></td>
+                          <td th:text="${consumer.id}" />
+                          <td th:text="${consumer.stbAccountNo}" />
+                          <td th:text="${consumer.fullName}" />
+						  <td th:text="${consumer.nickName}" />
+                          <td th:text="${consumer.area?.name}" />
+                          <td th:text="${consumer.landmark}" />
+                          <td th:text="${consumer.phoneNo}" />
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                  
+                  <div th:replace="fragments :: pagination"></div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </body>
+</html>

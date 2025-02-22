@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/due/save}" method="post">
+              <fieldset style="margin-top: 0;">
+				<legend style="text-align:center; padding-top: 50px;" th:text="${header}"></legend>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Due Type</label>
+                    <input type="text" class="form-control" name="dueType" placeholder="Enter Due Type" th:value="${due.dueType}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Created By</label>
+                    <select class="form-control" name="createdBy" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select User</option>
+							<option style="color: #333;" th:each="user : ${users}" 
+								th:text="${user.name}" th:value="${user.id}" th:selected="${user.id==due.createdBy?.id}"></option>
+                    </select>
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Date Of Entry</label>
+                    <input type="date" class="form-control" name="dateOfDueEntry" id="dateOfDueEntry" placeholder="Entry Date" 
+						th:value="${due.dateOfDueEntry}" required>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Due Amount</label>
+                    <input type="number" min="0" step=".01" class="form-control" name="dueAmount" placeholder="Enter Due Amount" th:value="${due.dueAmount}">
+                  </div>
+                  <div th:if="${due.id}" class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label>Paid Amount</label>
+                    <input type="number" min="0" step=".01" class="form-control" name="paidAmount" placeholder="Enter Due Amount" th:value="${due.paidAmount}" readonly>
+                  </div>
+                  <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" placeholder="Remarks" th:value="${due.remarks}">
+                  </div>
+                </div>
+			<input th:if="${due.id}" type="hidden" name="id" th:value="${due.id}">
+			<input type="hidden" name="consumer" th:value="${consumerId}">
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

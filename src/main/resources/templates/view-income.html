@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+                   <div class="col-md-12 dashboardicon">
+              <legend style="text-align:center; padding-top: 0px;" >View Income</legend>
+              <fieldset style="margin-top: 0;" id="printTable">
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Income Category</label>
+                    <input type="text" class="form-control" name="incomeType" th:value="${income.incomeType?.name}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Amount</label>
+                    <input type="number" class="form-control" name="amount" placeholder="0.0" th:value="${income.amount}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Tax (%)</label>
+                    <input type="number" class="form-control" name="tax" placeholder="0.0" th:value="${income.tax}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Total</label>
+                    <input type="number" class="form-control" name="totalAmount" placeholder="0.0" th:value="${income.totalAmount}" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Payment Mode</label>
+                    <input type="text" class="form-control" name="paymentMode" th:value="${income.paymentMode}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Income Date</label>
+                    <input type="date" class="form-control" name="date" th:value="${income.date}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Received By</label>
+                    <input type="text" class="form-control" name="receivedBy" th:value="${income.receivedBy?.name}" readonly>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3  col-xs-12">
+                    <label>Received From</label>
+                    <input type="text" class="form-control" name="receivedFrom" th:value="${income.receivedFrom}" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-12">
+                    <label>Remarks</label>
+                    <input type="text" class="form-control" name="remarks" th:value="${income.remarks}" readonly>
+                  </div>
+                </div>
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="button" name="submit" class="submit action-button" value="print" onclick="printData()">
+            </fieldset>
+          </div> 
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

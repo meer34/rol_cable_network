@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dashboardicon2" style="text-align: left;">
+              <input type="button" class="submit action-button" value="All Settlements" th:attr="onclick=|location.href='@{/settlement}'|" >
+              <div th:if="${successMessage}" th:text="${successMessage}"
+                class="alert alert-success" role="alert"></div>
+              <div class="tile">
+                <h3 class="tile-title"></h3>
+                
+                <div class="table-responsive table_size" style="margin-top: 50px;">
+                  <form th:action="@{/}" method="get">
+                    <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+                      <thead class="thead-inverse"
+                        style="background-color: #06697e; color: #FFF;">
+                        <tr>
+                          <th class="table_heading noPrint"></th>
+                          <th class="table_heading">App User</th>
+						  <th class="table_heading">Address</th>
+						  <th class="table_heading">Pending Settlement</th>
+                          <th class="table_heading">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color: #FFF" th:each="appUser : ${appUserList}">
+                          <td class="noPrint" ><input type='radio' th:value="${appUser.id}" class="radioBtn" name='id'></td>
+                          <td th:text="${appUser.name}" />
+                          <td th:text="${appUser.address}" />
+                          <td th:text="${appUser.getPendingSettlementAmount()}" />
+                          <td>
+							<input type="button" class="submit action-button" value="Collections" th:attr="onclick=|location.href='/collection?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Settlements" th:attr="onclick=|location.href='/settlement?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Incomes" th:attr="onclick=|location.href='/income?appUserId=${appUser.id}'|" >
+							<input type="button" class="submit action-button" value="Expenses" th:attr="onclick=|location.href='/expense?appUserId=${appUser.id}'|" >
+						  </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

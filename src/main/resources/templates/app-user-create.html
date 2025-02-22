@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: html_head" />
+<body class="app sidebar-mini rtl">
+	<div th:replace="fragments :: app-layout"></div>
+
+
+	<main class="app-content">
+      <div class="container-fluid">
+		<div class="row">
+			<div
+				class="col-lg-5 col-md-5 col-xs-12 col-sm-6 col-lg-offset-3 col-sm-offset-3 col-xs-offset-0  marginl">
+				<div class="tile">
+					<h1 class="tile-title text-center" style="font-size: 16px;" th:text="${header}" ></h1>
+					<div class="dashboardicon">
+					  <form th:action="@{createAppUser}" method="post" onsubmit="return checkIfNumberExistForOthers()" >
+						<input type="text" name="name" placeholder="Name" th:value="${appUser.name}" required >
+						<input type="number" name="phone" id="phone" placeholder="Phone" th:value="${appUser.phone}" required >
+						<input type="text" name="address" placeholder="Address" th:value="${appUser.address}" >
+						<input type="hidden" name="id" id="userId" th:value="${appUser.id}">
+						
+						<select class="form-control" name="addItem" id="addItem" style="height: 48px;" >
+							<option selected disabled="disabled" value="">Select Role</option>
+							<option value="ADD_CONSUMER">Add Consumer</option>
+							<option value="ADD_CONNECTION">Add Connection</option>
+							<option value="ADD_INCOME">Add Income</option>
+							<option value="ADD_EXPENSE">Add Expense</option>
+							<option value="ADD_PACKAGE">Add Package</option>
+							<option value="ADD_BUCKET">Add Bouquet</option>
+							<option value="ADD_CHANNEL">Add Channel</option>
+							<option value="COLLECT_SUBSCRIPTION_DUE">Collect Subscription Due</option>
+							<option value="COLLECT_OTHER_DUE">Collect Other Due</option>
+							<option value="ADD_REMINDER">Add Reminder</option>
+							<option value="RENEW_CONNECTION">Renew Connection</option>
+							<option value="ADD_CONSUMER_DUE">Add Consumer Due</option>
+						</select>
+						<input type="button" id="rowAdder" value = "Add Role">
+						<div id="newinput"></div>
+						
+						<div id="row" th:each="role : ${appUser.user?.roles}">
+							<div class="input-group add-item-group">
+								<div class="input-group-prepend"><button class="btn btn-danger" id="DeleteRow" type="button"><i class="bi bi-trash"></i> Delete</button></div>
+								<input type="text" name="roles" class="form-control m-input add-item" th:value="${role.name}" readonly>
+							</div>
+						</div>
+						
+						<input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()">
+						<input type="submit" name="save" class="submit action-button" value="Save">
+					  </form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    </main>
+
+
+	<div th:replace="fragments :: main_scripts"></div>
+	<div th:replace="fragments :: add_item_script"></div>
+</body>
+</html>

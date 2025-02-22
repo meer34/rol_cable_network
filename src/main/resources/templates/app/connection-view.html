@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments :: html_head" />
+<body class="app sidebar-mini rtl">
+<div th:replace="fragments :: app-layout"></div>
+
+<main class="app-content">
+      <div class="container-fluid">
+        <!-- Connection Details Section -->
+        <div class="tile mb-4">
+            <div class="tile-title" style="background: linear-gradient(to bottom left, #4ac0c4 40%, #1D2951  100%); color: white; padding: 10px 20px; border-radius: 3px;">
+                Connection Details
+            </div>
+            
+            <div class="tile-body" style="padding: 0px 20px;">
+				<div class="row">
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Consumer Name:</strong> <span th:text="${connection.consumer.fullName}"></span>
+						</div>
+						<div>
+							<strong>Phone No:</strong> <span th:text="${connection.consumer.phoneNo}"></span>
+						</div>
+						<div>
+							<strong>STB Account No:</strong> <span th:text="${connection.consumer?.stbAccountNo}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						
+						<div>
+							<strong>Connection Type:</strong> <span th:text="${connection.connectionType}"></span>
+						</div>
+						<div>
+							<strong>Connection Charge:</strong> ₹<span th:text="${connection.connectionCharge}"></span>
+						</div>
+						<div>
+							<strong>Previous Due:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.previousDue, 1, 2)}"></span>
+						</div>
+						<div>
+							<strong>Subscription Amount:</strong> ₹<span th:text="${#numbers.formatDecimal(connection?.subscriptionAmount, 1, 2)}"></span>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-12">
+						<div>
+							<strong>Date of Joining:</strong> <span th:text="${{connection.date}}"></span>
+						</div>
+						<div>
+							<strong>Start Date:</strong> <span th:text="${{connection.dateOfConnStart}}"></span>
+						</div>
+						<div>
+							<strong>Expiry Date:</strong> <span th:text="${{connection.dateOfConnExpiry}}"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+        </div>
+
+        <!-- Subscriptions -->
+        <div class="tile">
+			<div class="tile-title bg-gradient text-white py-2 px-3 rounded">
+				Subscriptions
+			</div>
+		
+			<div class="tile-body" style="padding: 0px 20px;">
+				<div class="row">
+					<!-- Column 1: Base Package -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Base Package:</strong>
+						<span th:text="${connection.channelPackage?.name + ' - ₹' + connection.channelPackage?.price}"></span>
+					</div>
+		
+					<!-- Column 2: Bouquets -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Bouquets:</strong>
+						<div>
+							<ul style="list-style: none; padding: 0; margin: 0;">
+								<li th:each="bouquet : ${connection.bouquets}">
+									<span th:text="${bouquet.name + ' - ₹' + bouquet.price}"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+		
+					<!-- Column 3: Channels -->
+					<div class="col-lg-4 col-md-12">
+						<strong>Channels:</strong>
+						<div>
+							<ul style="list-style: none; padding: 0; margin: 0;">
+								<li th:each="channel : ${connection.channels}">
+									<span th:text="${channel.name + ' - ₹' + channel.price}"></span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+        
+        <!-- Bills -->
+        <div class="tile">
+            <div class="tile-title bg-gradient text-white py-2 px-3 rounded">
+                Latest Bills
+            </div>
+            
+            <div class="tile-body" style="padding: 0px 20px;">
+                <table class="table table-bordered table-responsive table-hover" style="width: 100%;" id="printTable" >
+                  <thead class="thead-inverse"
+                    style="background-color: #06697e; color: #FFF;">
+                    <tr>
+                      <th class="table_heading">SL. No</th>
+                      <th class="table_heading">Start Date</th>
+                      <th class="table_heading">End Date</th>
+                      <th class="table_heading">Subscription Charge</th>
+					  <th class="table_heading">Paid Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- <tr style="background-color: #FFF" th:each="bills, iter : ${connection.bills}"> -->
+                    <tr style="background-color: #FFF" th:each="i, iter : ${#numbers.sequence(connection.bills.size() - 1, 0, -1)}"
+     												th:with="bills=${connection.bills[i]}">
+                      <td th:text="${iter.count}" />
+                      <td th:text="${{bills?.startDate}}" />
+                      <td th:text="${{bills?.endDate}}" />
+                      <td th:text="${#numbers.formatDecimal(bills?.billAmount, 1, 2)}" />
+					  <td th:text="${#numbers.formatDecimal(bills?.paidAmount, 1, 2)}" />
+                    </tr>
+                  </tbody>
+                </table>
+                <button type="button" class="btn btn-secondary mt-3" style="background: #6c757d; color: white; margin-top: 5px;" onclick="window.history.back()">Back</button>
+            </div>
+        </div>
+        
+      </div>
+    </main>
+
+<div th:replace="fragments :: main_scripts"></div>
+</body>
+</html>

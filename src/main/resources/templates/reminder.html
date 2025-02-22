@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="dashboardicon2" style="text-align: left;">
+              <input type="button" name="addCustomer" class="submit action-button" value="Add New Reminder" th:attr="onclick=|location.href='@{/addNewReminderPage}'|" th:disabled="${!#authorization.expression('hasAnyAuthority(''ADMIN'',''ADD_REMINDER'')')}">
+            </div>
+            <div th:if="${successMessage}" th:text="${successMessage}" class="alert alert-success" role="alert"></div>
+            <div class="alert alert-danger"><h4>Message from Mir: This feature won't work as of now since not having SMS API subscription!</h4></div>
+            <div class="tile">
+              <h3 class="tile-title">Reminder List</h3>
+              
+              <form class="dashboardicon" th:action="@{/reminder}" method="get">
+              	<div th:replace="fragments :: search_bar"></div>
+              </form>
+              
+              <div class="table-responsive table_size" style="margin-top: 50px;">
+                <table class="table table-bordered table-responsive table-hover" style="width: 100%;">
+                  <thead class="thead-inverse" style="background-color: #06697e; color: #FFF;">
+                    <tr>
+                      <th class="table_heading">Sl No</th>
+                      <th class="table_heading">Name</th>
+                      <th class="table_heading">Phone</th>
+                      <th class="table_heading">Message</th>
+                      <th class="table_heading">Message Delivery Date</th>
+                      <th class="table_heading">Status</th>
+                      <th class="table_heading" style="width: 22%;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="background-color:#FFF" th:each="reminder, iterator: ${listPage}">
+                      <td th:text="${iterator.count}" />
+                      <td th:text="${reminder.name}" />
+                      <td th:text="${reminder.phone}" />
+                      <td th:text="${reminder.message}" />
+                      <td th:text="${{reminder.date}}" />
+                      <td th:text="${reminder.status}" />
+                      <td>
+                        <div class="dashboardicon2" style="text-align: left;">
+                          <form th:action="@{/party}" method="get">
+                            <input type="hidden" th:value="${reminder.id}" id="id" name='id'>
+                            <input type="submit" th:formaction="@{/viewReminder}" name="action" class="submit action-button" value="View">
+                            <input type="submit" th:formaction="@{/editReminder}" name="action" class="submit action-button" value="Edit">
+                            <input type="submit" th:formaction="@{/deleteReminder}" name="action" class="submit action-button2" value="Delete" onClick="return confirmDelete()" >
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+  </body>
+</html>

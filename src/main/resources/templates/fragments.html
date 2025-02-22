@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="html_head" id="html_head">
+    <meta name="description" content="">
+    <title>ROL CABLE NETWORK</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/icon" href="/images/favicon.jpeg" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="app sidebar-mini rtl">
+	<div th:fragment="app-layout">
+		<!-- Navbar-->
+      <header class="app-header">
+        <a class="app-header__logo" th:href="@{/home}">ROL CABLE NETWORK</a>
+        <!-- Sidebar toggle button-->
+        <a class="app-sidebar__toggle" href="#" data-toggle="sidebar"
+          aria-label="Hide Sidebar"></a>
+        <!-- Navbar Right Menu-->
+        <ul class="app-nav" style="margin-right:40px;">
+          <li><a class="app-nav__product" th:href="@{/logout}"><i
+            class="fa fa-sign-out fa-lg" title="LOG OUT"></i>Logout</a></li>
+        </ul>
+      </header>
+      <!-- Sidebar menu-->
+      <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+      <aside class="app-sidebar">
+        <div class="app-sidebar__user">
+          <img class="app-sidebar__user-avatar" src="/images/favicon.jpeg"
+            alt="Logo">
+          <div sec:authorize="isAuthenticated()">
+            <p class="app-sidebar__user-name">
+              <span sec:authentication="principal.user.username">User</span>
+            </p>
+            <p class="app-sidebar__user-name">
+              <span style="white-space: normal;" sec:authentication="principal.authorities" sec:authorize="hasAuthority('ADMIN')">Role</span>
+              <span style="white-space: normal;" sec:authorize="!hasAuthority('ADMIN')">[APP USER]</span>
+            </p>
+          </div>
+        </div>
+        <ul class="app-menu">
+          <li><a class="app-menu__product" th:href="@{/home}"><i
+            class="app-menu__icon fa fa-square"></i><span
+            class="app-menu__label">Dashboard</span></a>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/consumer}"><i
+            class="app-menu__icon fa fa-users"></i><span
+            class="app-menu__label">Consumers</span></a>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/connection}"><i
+            class="app-menu__icon fa fa-plug"></i><span
+            class="app-menu__label">Connections</span></a>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/bill}"><i
+            class="app-menu__icon fa fa-credit-card"></i><span
+            class="app-menu__label">Consumer Bills</span></a>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/collection}"><i
+            class="app-menu__icon fa fa-file-text-o"></i><span
+            class="app-menu__label">Collections</span></a>
+          </li>
+          <li class="treeview"> <!-- th:disabled="${!#authorization.expression('hasAnyAuthority('ADMIN', 'Accounts'')')}" -->
+            <a class="app-menu__product" href="#"
+              data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span
+              class="app-menu__label">Account Management</span><i
+              class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+              <li><a class="treeview-product" th:href="@{/settlement}"><i
+                class="icon fa fa-file-text-o"></i>Settlement </a></li>
+              <li><a class="treeview-product" th:href="@{/income}"><i
+                class="icon fa fa-file-text-o"></i>Income</a></li>
+              <li><a class="treeview-product" th:href="@{/expense}"><i
+                class="icon fa fa-file-text-o"></i>Expense </a></li>
+              <li><a class="treeview-product" th:href="@{/account-report}"><i
+                class="icon fa fa-file-text-o"></i>Account Report </a></li>
+            </ul>
+          </li>
+          <li><a class="app-menu__product" th:href="@{/reminder}"><i
+            class="app-menu__icon fa fa-bell"></i><span
+            class="app-menu__label">Reminder</span></a>
+          </li>
+          <li class="treeview"> <!-- th:disabled="${!#authorization.expression('hasAnyAuthority('ADMIN', 'Package'')')}" -->
+            <a class="app-menu__product" href="#"
+              data-toggle="treeview"><i class="app-menu__icon fa fa-book"></i><span
+              class="app-menu__label">Package Management</span><i
+              class="treeview-indicator fa fa-angle-right"></i></a>
+			<ul class="treeview-menu">
+              <li><a class="treeview-product" th:href="@{/channelPackage}"><i
+                class="icon fa fa-tag"></i>Package</a></li>
+              <li><a class="treeview-product" th:href="@{/bouquet}"><i
+                class="icon fa fa-tag"></i>Bouquet </a></li>
+              <li><a class="treeview-product" th:href="@{/channel}"><i
+                class="icon fa fa-tag"></i>Channel </a></li>
+            </ul>
+          </li>
+          <li class="treeview">
+            <a class="app-menu__product" href="#"
+              data-toggle="treeview"><i class="app-menu__icon fa fa-user"></i><span
+              class="app-menu__label">User Management</span><i
+              class="treeview-indicator fa fa-angle-right"></i></a>
+            <ul class="treeview-menu">
+              <li><a class="treeview-product" th:href="@{/admin}"><i
+                class="icon fa fa-user-circle"></i> Admin</a></li>
+              <li><a class="treeview-product" th:href="@{/appUser}"><i
+                class="icon fa fa-user-plus"></i>App User </a></li>
+              <li><a class="treeview-product" th:href="@{/disabledAppUser}"><i
+                class="icon fa fa-user-times"></i>Disabled App Users </a></li>
+            </ul>
+          </li>
+		  <li><a class="app-menu__product" th:href="@{'/change-password?phone=' + ${#authentication.name}}"><i
+            class="app-menu__icon fa fa-exchange"></i><span
+            class="app-menu__label">Change Password</span></a>
+          </li>
+        </ul>
+      </aside>
+	</div>
+
+	<div th:fragment="search_bar">
+		<div class="col-lg-12 flexdisplay">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<label>From Date</label> <input type="date" name="fromDate" id="fromDate" placeholder="From Date" th:value="${fromDate}">
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<label>To Date</label> <input type="date" name="toDate" id="toDate" placeholder="To Date" th:value="${toDate}" style="animation-delay: .2s">
+			</div>
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<label>Search</label> <input type="text" name="keyword" id="keyWord" placeholder="Search" th:value="${keyword}" style="animation-delay: .2s">
+			</div>
+		</div>
+		<div class="col-lg-12">
+			<input type="button" name="clear" class="previous action-button-previous" value=" Clear " 
+				onClick="document.getElementById('fromDate').value='';document.getElementById('toDate').value='';document.getElementById('keyWord').value='';">
+			<input type="submit" class="submit action-button" value="Search">
+			<input type="submit" class="submit action-button" value="Search Today" style="background:#4a598d;" onClick="document.getElementById('fromDate').valueAsDate = new Date();document.getElementById('toDate').valueAsDate = new Date();document.getElementById('keyWord').valueAsDate = new Date();">
+		</div>
+	</div>
+	
+	<div th:fragment="keyword_search_bar">
+		<div class="col-lg-12 flexdisplay">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<label>Search</label> <input type="text" name="keyword" id="keyWord" placeholder="Search" th:value="${keyword}" style="animation-delay: .2s">
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+				<div style="padding-top: 20px;">
+					<input type="button" name="clear" class="previous action-button-previous" value=" Clear "
+							onClick="document.getElementById('keyWord').value='';">
+					<input type="submit" class="submit action-button" value="Search">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div th:fragment="keyup_search_bar">
+		<div class="col-lg-12 flexdisplay">
+			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+				<input type="text" name="keyword" id="keyupInput" onkeyup="keyUpSearchFunction()" placeholder="Search">
+			</div>
+		</div>
+		<script>
+			function keyUpSearchFunction() {
+			  var input, filter, table, tr, td, i, j, txtValue, tdLength;
+			  input = document.getElementById("keyupInput");
+			  filter = input.value.toUpperCase();
+			  table = document.getElementById("printTable");
+			  tr = table.getElementsByTagName("tr");
+			  for (i = 0; i < tr.length; i++) {
+				  tdLength = tr[i].getElementsByTagName("td").length;
+				  for (j = 0; j < tdLength; j++) {
+					  td = tr[i].getElementsByTagName("td")[j];
+					    if (td) {
+					      txtValue = td.textContent || td.innerText;
+					      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+					        tr[i].style.display = "";
+					        break;
+					      } else {
+					        tr[i].style.display = "none";
+					      }
+					    }
+				  }
+			  }
+			}
+</script>
+	</div>
+
+	<div th:fragment="pagination" id="footer">
+		<div class="col-lg-1 col-xs-4" style="display: flex; float: right;" th:if="${listPage.totalPages > 0 && pageNumbers != null}">
+			<label style="margin-top: 10px; margin-right: 10px; margin-left: 2px;">View</label>
+			<select id="pageSize" style="height: 41px; background-color: #fff;"
+				class="pageSizeChange">
+				<option style="color: #333;" th:selected="${listPage.size == 10}">10</option>
+				<option style="color: #333;" th:selected="${listPage.size == 25}">25</option>
+				<option style="color: #333;" th:selected="${listPage.size == 50}">50</option>
+				<option style="color: #333;" th:selected="${listPage.size == 250}">250</option>
+			</select>
+		</div>
+		<nav class="pagination-outer" aria-label="Page navigation">
+			<input type="hidden" id="navUrl" th:value="${navigationUrl}">
+			<ul class="pagination" th:if="${listPage.totalPages > 0 && pageNumbers != null}">
+				<li class="page-item"><a href="#" class="page-link-prev"
+					aria-label="Previous"> <span aria-hidden="true">&lt;&lt;Previous</span>
+				</a></li>
+				<li th:each="pageNumber : ${pageNumbers}"
+					th:class="${pageNumber==listPage.number + 1} ? 'page-item active' : 'page-item'">
+
+					<a
+					th:class="${pageNumber==listPage.number + 1} ? 'pageElement active' : 'pageElement'"
+					th:text=${pageNumber}></a>
+				</li>
+				<li class="page-item"><a href="#" class="page-link-next"
+					aria-label="Next"> <span aria-hidden="true">Next&gt;&gt;</span>
+`				</a></li>
+				<li><input type="text" id="goToPageNo" placeholder="Go To"
+					class="goTo"></li>
+			</ul>
+		</nav>
+	</div>
+
+
+	<!-- Essential javascripts for application to work-->
+	<script th:fragment="main_scripts" src="/js/jquery.min.js"></script>
+	<script th:fragment="main_scripts" src="/js/jquery-ui.min.js"></script>
+	<script th:fragment="main_scripts" src="/js/bootstrap.min.js"></script>
+	<script th:fragment="main_scripts" src="/js/popper.min.js"></script>
+	<script th:fragment="main_scripts" src="/js/main.js"></script>
+	<script th:fragment="main_scripts" src="/js/pace.min.js"></script>
+	
+	<script th:fragment="main_scripts" src="/js/calculate.js"></script>
+	<script th:fragment="add_edit_scripts" src="/js/dynaDrop.js"></script>
+	<script th:fragment="add_edit_scripts" src="/js/html5-qrcode.js"></script>
+	<script th:fragment="add_edit_scripts" src="/js/select2.min.js"></script>
+	<script th:fragment="add_edit_scripts">
+		$("#mahajan").select2();
+	</script>
+	
+	<script th:fragment="main_scripts" >
+		document.addEventListener("DOMContentLoaded", function() {
+			var radio = document.querySelectorAll('.radioBtn'),
+			checked = false;
+			if(radio){
+				for (var i = 0; i < radio.length; i++) {
+					if (radio[i].checked) {
+						checked = true;
+						break;
+					}
+				}
+				if (!checked) radio[0].checked = true;
+			}
+		});
+	</script>
+	
+	<script th:fragment="otp_generate_script">
+		function generatePin(phone) {
+			$.ajax({
+			url : 'generatePin',
+			data : { "phone" : phone },
+			success : function(result) {
+				if(result == 'Success'){
+					document.querySelector("p[name=status]").innerHTML = `OTP Sent successfully!`;
+					$('#errorMessage').removeClass('alert');
+					$('#errorMessage').removeClass('alert-dismissible');
+					$('#errorMessage').removeClass('alert-danger error');
+					
+				} else if(result == 'User Not Found'){
+					$('#errorMessage').html(`The entered number is not registered!`);
+					$('#errorMessage').addClass('alert');
+					$('#errorMessage').addClass('alert-dismissible');
+					$('#errorMessage').addClass('alert-danger error');
+					
+				} else {
+					$('#errorMessage').html(`OTP request failed!`);
+					$('#errorMessage').addClass('alert');
+					$('#errorMessage').addClass('alert-dismissible');
+					$('#errorMessage').addClass('alert-danger error');
+				}
+			}
+			});
+		}
+
+		$(window).on('load', function(){
+			$('#errorMessage').html('');
+			$('#errorMessage').removeClass('alert');
+			$('#errorMessage').removeClass('alert-dismissible');
+			$('#errorMessage').removeClass('alert-danger error');
+		});
+		
+	</script>
+	
+	<script th:fragment="table_search_script">
+		$("#searchTable").on("keyup", function() {
+		var value = $(this).val();
+	
+		$("table tr").each(function(index) {
+			if (index !== 0) {
+	
+				$row = $(this);
+	
+				var id = $row.text();
+	
+				if (!id.toLowerCase().includes(value.toLowerCase())) {
+					$row.hide();
+				}
+				else {
+					$row.show();
+				}
+			}
+		});
+		});
+	</script>
+	
+	<script th:fragment="add_item_script">
+		$("#rowAdder").click(function () {
+				addItem = document.getElementById("addItem").value;
+				newRowAdd =
+				'<div id="row">' +
+				'	<div class="input-group add-item-group">' +
+				'		<div class="input-group-prepend">' +
+				'			<button class="btn btn-danger" id="DeleteRow" type="button">' +
+				'				<i class="bi bi-trash"></i> Delete</button>' +
+				'		</div>' +
+				'		<input type="text" name="roles" class="form-control m-input add-item" value="' + addItem +'" readonly>' +
+				'	</div>' +
+				'</div>';
+	
+				$('#newinput').append(newRowAdd);
+				$('#addItem').val('');
+			});
+	
+			$("body").on("click", "#DeleteRow", function () {
+				$(this).parents("#row").remove();
+			})
+			
+	</script>
+
+</body>
+</html>

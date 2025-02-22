@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments :: html_head" />
+  <body class="app sidebar-mini rtl">
+    <div th:replace="fragments :: app-layout"></div>
+	
+    <main class="app-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <form class="dashboardicon" style="margin-top: 0; text-align: left;" th:action="@{/connection/save}" method="post" enctype="multipart/form-data">
+              <legend style="text-align:center; padding-top: 0px;" th:text="${header}"></legend>
+              <fieldset style="margin-top: 0;">
+				<div class="col-lg-12 flexdisplay" th:if="${connection.id}">
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <label style="color:#780c2a;">Change Connection State</label>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    <select class="form-control" name="state" style="height: 30px !important;  width: 120px; border: 1px solid black;" onChange="return openRenew()" required>
+             	      <option selected disabled="disabled" value="">Select Type</option>
+                	  <option class="btn btn-success" th:selected="${connection?.state=='Connected'}">Connected</option>
+					  <option class="btn btn-warning" th:selected="${connection?.state=='Suspended'}">Suspended</option>
+                      <option class="btn btn-danger" th:selected="${connection?.state=='Disconnected'}">Disconnected</option>
+                    </select>
+                  </div>
+				  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <!-- Start Renew Date Picker -->
+               	 	<div class="displayNone" id="renewConnection" style="border: 1px;">
+  						<label style="color: #0f0c78; height:30px;">State Change Date</label>
+  						<select name="stateChangeDate" id="stateChangeDate" style="width:120px;height: 30px;border: 1px solid black;">
+    						<option value="Today" id="todayRenew">Today</option>
+    						<option type="date" value="Specific date" id="specificDayRenew">
+    							Specific Date
+    							<input type="date" id="js_datePickerToggle" class="displayNone" style="margin-left:10px; width:120px;height: 30px;border: 1px solid black;" onChange="setStateChangeValue()">
+    						</option>
+  						</select>
+				</div>
+                <!-- End Renew Date Picker -->
+                  </div>
+				</div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+					<label>Consumer</label>
+                    <select class="form-control multiple-select-pillbox" name="consumer" style="height: 48px;" required>
+                      <option selected disabled="disabled" value="">Select Consumer</option>
+                      <option style="color: #333;" th:each="consumer : ${consumerList}" 
+										th:text="${consumer.stbAccountNo + ' : ' + consumer.fullName}" th:value="${consumer.id}" th:selected="${consumer.id==connection.consumer?.id}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Connection Type</label>
+                    <select class="form-control" name="connectionType" style="height: 48px;" required>
+             	      <option selected disabled="disabled" value="">Select Type</option>
+                	  <option th:selected="${connection?.connectionType=='Cable'}">Cable</option>
+                      <option th:selected="${connection?.connectionType=='Internet'}">Internet</option>
+                    </select>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Date of Joining</label>
+                    <input type="date" class="form-control" name="date" placeholder="Enter Joining Date" th:value="${connection.date}">
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Start Date</label>
+                    <input type="date" class="form-control" name="dateOfConnStart" id="dateOfConnStart" placeholder="Start Date" 
+						th:value="${connection.dateOfConnStart}" th:onchange="'updateExpiryDate(' + ${renewalCycle} + ');'" required>
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Expiry Date</label>
+                    <input type="date" class="form-control" name="dateOfConnExpiry" id="dateOfConnExpiry" placeholder="Expiry Date" 
+						th:value="${connection.dateOfConnExpiry}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Select Base Package</label>
+                    <select class="form-control" name="channelPackage" id="channelPackage" style="height: 48px !important;" required onChange="calculateSubscriptionAmount()">
+                      <option selected disabled="disabled" value="">Select Package</option>
+                      <option style="color: #333;" th:each="channelPackage : ${packageList}" 
+										th:text="${channelPackage.name + '&nbsp&nbsp&nbsp₹' + channelPackage.price}" th:value="${channelPackage.id}"
+										th:selected="${channelPackage.id == connection.channelPackage?.id}"></option>
+                    </select>
+                  </div>
+                </div>
+				
+				<div class="col-lg-12 flexdisplay">
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Subscription Amount</label>
+                    <input type="number" class="form-control" name="subscriptionAmount" id="subscriptionAmount" placeholder="0" th:value="${connection?.subscriptionAmount}" readonly>
+                  </div>
+				  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                    <label>Connection Charge</label>
+                    <input type="number" class="form-control" name="connectionCharge" placeholder="Connection Charge" th:value="${connection?.connectionCharge}">
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:if="${connection.id}">
+                    <label>Previous Due</label>
+                    <input type="number" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}" readonly>
+                  </div>
+                  <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" th:unless="${connection.id}">
+                    <label>Previous Due</label>
+                    <input type="number" step=".01" class="form-control" name="previousDue" id="previousDue" placeholder="0" th:value="${connection?.previousDue}">
+                  </div>
+                </div>
+				
+				<div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Select Bouquets</label>
+                    <select class="form-control multiple-select-pillbox" name="bouquets" id="bouquets" style="height: 48px !important;" multiple onChange="calculateSubscriptionAmount()">
+                      <option style="color: #333;" th:each="bouquet : ${bouquetList}" 
+										th:text="${bouquet.name + '&nbsp&nbsp&nbsp₹' + bouquet.price}" th:value="${bouquet.id}"
+										th:selected="${connection.bouquets?.contains(bouquet)}"></option>
+                    </select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <label>Select Channels</label>
+                    <select class="form-control multiple-select-pillbox" name="channels" id="channels" style="height: 48px !important;" multiple onChange="calculateSubscriptionAmount()">
+                      <option style="color: #333;" th:each="channel : ${channelList}" 
+										th:text="${channel.name + '&nbsp&nbsp&nbsp₹' + channel.price}" th:value="${channel.id}"
+										th:selected="${connection.channels?.contains(channel)}"></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    	<label style="color: #0f0c78;">Auto Renewal</label>
+                  </div>
+                </div>
+                <div class="col-lg-12 flexdisplay">
+                  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+                    <input type="checkbox" name="autoRenewal" id="autoRenewal" th:checked="${connection.autoRenewal}">
+                  </div>
+                </div>
+			<input th:if="${connection.id}" type="hidden" name="id" th:value="${connection.id}">
+			<!--<input type="hidden" name="currentBill" th:value="${connection.currentBill?.id}">-->
+            <input type="button" name="cancel" class="previous action-button-previous" value="Cancel" onclick="window.history.back()" >
+            <input type="submit" name="submit" class="submit action-button" value="Save">
+            </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+      <div th:replace="fragments :: main_scripts"></div>
+	  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	  <script>
+		$(document).ready(function() {
+			$('.multiple-select-pillbox').select2();
+		});
+		$("#autoRenewal").on('change', function() {
+			  if ($(this).is(':checked')) {
+			    $(this).attr('value', 'true');
+			  } else {
+			    $(this).attr('value', 'false');
+			  }
+		});
+	  </script>
+	  <script>
+                const datePickerEl = document.getElementById("js_datePickerToggle");
+
+                const hideDatePicker = () => {
+                  datePickerEl.classList.add("displayNone");
+                };
+
+                const getstateChangeDate = (option) => {
+                  if (option === 'Today') {
+                    hideDatePicker();
+                  } else {
+                    // display datepicker
+                    datePickerEl.classList.remove("displayNone");
+
+                    /*
+                      * Below is what I have tried to open the date picker calendar
+                      * datePickerEl.focus();
+                      * datePickerEl.click();
+                      * datePickerEl.select();
+                    */
+                  }
+                }
+
+                const dateOptionEls = document.getElementsByName("stateChangeDate");
+
+                dateOptionEls[0].addEventListener('change', (event) => {
+                  const optionValue = dateOptionEls[0].options[dateOptionEls[0].selectedIndex].text;
+                  var selectedDate = getstateChangeDate(optionValue);
+                });
+         </script>
+  </body>
+</html>

@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.security.User;
 import rcn.security.UserRepo;
 import rcn.web.model.AppUser;
 import rcn.web.service.AppUserService;
 
 @Controller
+@Slf4j
 public class AdminController {
 
 	@Autowired AppUserService appUserService;
@@ -27,6 +29,7 @@ public class AdminController {
 
 	@GetMapping("/admin")
 	public String showAdminPage(Model model) {
+		log.info("Admin home page");
 		model.addAttribute("adminList", 
 				appUserService.getAllAppUsers().stream()
 				.filter(appUser -> "ADMIN".equals(appUser.getUserType()))
@@ -37,6 +40,7 @@ public class AdminController {
 	@GetMapping("/addAdminPage")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddAdminPage(Model model) {
+		log.info("Add admin page");
 		model.addAttribute("admin", new AppUser());
 		model.addAttribute("header", "Create Admin");
 		return "admin-create";
@@ -47,16 +51,19 @@ public class AdminController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String createAdmin(Model model, AppUser appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
+		log.info("Saving admin data");
 
 		if(appUser.getId() == null) {
+			log.info("New admin being created");
 			User user = new User(appUser.getName(), appUser.getPhone(), true, "ADMIN");
 			user.setPassword(new BCryptPasswordEncoder().encode("Rcnuser@1234"));
 			appUser.setUser(user);
 			appUser.setUserType("ADMIN");
 			appUser = appUserService.saveAppUserToDB(appUser);
-			redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as Admin User! Default password:Rcnuser@1234");
+			redirectAttributes.addFlashAttribute("successMessage", "New Admin " + appUser.getName() + " created successfully! Please login and change password. Default password generated:Rcnuser@1234");
 			
 		} else {
+			log.info("Admin data being updated for id - " + appUser.getId());
 			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
 
 			tempAppUser.setName(appUser.getName());
@@ -82,7 +89,7 @@ public class AdminController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got view request for admin id " + id);
+		log.info("View request for admin id " + id);
 
 		model.addAttribute("admin", appUserService.findAppUserById(Long.parseLong(id)));
 		return "view-admin";
@@ -95,7 +102,7 @@ public class AdminController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got edit request for admin id " + id);
+		log.info("Edit request for admin id " + id);
 
 		model.addAttribute("admin", appUserService.findAppUserById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit Admin Details");
@@ -109,7 +116,7 @@ public class AdminController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for admin id " + id);
+		log.info("Delete request for admin id " + id);
 
 		appUserService.deleteAppUserById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Admin with id " + id + " deleted successfully!");
@@ -119,7 +126,7 @@ public class AdminController {
 	@GetMapping("/checkIfNumberExistsForOtherAppUsers")
 	@ResponseBody
 	public String checkIfNumberExistsForOtherAppUsers(@RequestParam String phone, @RequestParam Long id) {
-		
+		log.info("Checking if number exists for other app users - " + phone);
 		if(id == 0L) {
 			if(appUserService.getAppUsersByPhoneNumber(phone).size() > 0) {
 				return "Exist";

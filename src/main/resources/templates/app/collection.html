@@ -35,7 +35,6 @@
                         style="background-color: #06697e; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
-                          <th class="table_heading">ID</th>
 						  <th class="table_heading">Date</th>
                           <th class="table_heading">Consumer Name</th>
                           <th class="table_heading">Bill Type</th>
@@ -48,7 +47,6 @@
                       <tbody>
                         <tr style="background-color: #FFF" th:each="collection : ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${collection.id}" class="radioBtn" name='id'></td>
-                          <td th:text="${collection.id}" />
                           <td th:text="${{collection.date}}" />
                           <td th:text="${collection?.consumer?.fullName}" />
                           <td th:text="${collection?.billType}" />

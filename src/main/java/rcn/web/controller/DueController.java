@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Consumer;
 import rcn.web.model.Due;
 import rcn.web.service.AppUserService;
@@ -19,6 +20,7 @@ import rcn.web.service.DueService;
 
 @Controller
 @RequestMapping("/due")
+@Slf4j
 public class DueController {
 
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
@@ -30,9 +32,10 @@ public class DueController {
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CONSUMER_DUE')")
 	public String add(Model model, 
 			@RequestParam(value="consumerId", required = false) String consumerId, Due due) {
+		log.info("Due add page for consumer id - " + consumerId);
+		
 		Consumer consumer = consumerService.getById(Long.parseLong(consumerId));
-		model.addAttribute("header", "Add Due for " 
-		+ consumer.getFullName() + ", Consumer Id: " + consumerId);
+		model.addAttribute("header", "Add Due for " + consumer.getFullName() + ", Consumer Id: " + consumerId);
 		model.addAttribute("consumerId", consumerId);
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		return "app/due-create";
@@ -41,7 +44,11 @@ public class DueController {
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
 	public String save(Model model, Due due, RedirectAttributes redirectAttributes) throws Exception{
+		log.info("Saving due data");
+		
 		due = dueService.saveDue(due);
+		log.info("Due amount of " + due.getDueAmount() + " saved successfully for consumer: " + due.getConsumer().getFullName());
+		
 		redirectAttributes.addFlashAttribute("successMessage", "Due amount of " + due.getDueAmount() 
 		+ " saved successfully for consumer: " + due.getConsumer().getFullName());
 		redirectAttributes.addAttribute("consumerId", due.getConsumer().getId());
@@ -55,7 +62,7 @@ public class DueController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="dueId", required = false) String dueId) throws Exception{
 
-		System.out.println("Got edit request for dueId " + dueId);
+		log.info("Edit request for dueId " + dueId);
 		Due due = dueService.getDueById(Long.parseLong(dueId));
 		model.addAttribute("due", due);
 		model.addAttribute("consumerId", due.getConsumer().getId());
@@ -70,7 +77,7 @@ public class DueController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("dueId") String dueId) throws Exception{
 
-		System.out.println("Got delete request for dueId: " + dueId);
+		log.info("Delete request for dueId: " + dueId);
 		Long consumerId = dueService.getDueById(Long.parseLong(dueId))
 				.getConsumer()
 				.getId();

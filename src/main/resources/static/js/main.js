@@ -214,7 +214,7 @@ function performRenewal() {
 	
 	if(dateRangeSelection.value == "Today"){
 		if(confirm('Sure you want to renew this connection for Today?')){
-			window.open(btoa('/connection/renew') + '?id=' + connId + '&date=' + new Date().toISOString().split('T')[0],"_self");
+			window.open('/connection/renew' + '?id=' + connId + '&date=' + new Date().toISOString().split('T')[0],"_self");
 			alert("Sent Request for " + new Date().toISOString().split('T')[0]);
 		}
 	} else{
@@ -224,7 +224,7 @@ function performRenewal() {
 			return false;
 		}
 		if(confirm('Sure you want to renew this connection for ' + specificDayRenew.value + '?')){
-			window.open(btoa('/connection/renew') + '?id=' + connId + '&date=' + specificDayRenew.value,"_self");
+			window.open('/connection/renew' + '?id=' + connId + '&date=' + specificDayRenew.value,"_self");
 			alert("Sent Request for " + specificDayRenew.value);
 		}
 	}

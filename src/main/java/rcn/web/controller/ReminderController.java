@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Consumer;
 import rcn.web.model.Reminder;
 import rcn.web.service.ConsumerService;
@@ -31,6 +32,7 @@ import rcn.web.util.AppUtility;
 
 @Controller
 @PropertySource("classpath:rol_cable_network.properties")
+@Slf4j
 public class ReminderController {
 
 	@Autowired ReminderService reminderService;
@@ -51,11 +53,11 @@ public class ReminderController {
 		Page<Reminder> listPage = null;
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Reminder home page");
+			log.info("Reminder home page");
 			listPage = reminderService.getAllReminders(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Reminder for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			log.info("Searching Reminder for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
 			listPage = reminderService.searchReminderByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("fromDate", fromDate);
@@ -80,11 +82,12 @@ public class ReminderController {
 	@RequestMapping("/add-reminder-queue")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String addReminderQueue(RedirectAttributes redirectAttributes, @RequestParam("consumerIds") Long[] consumerIds) {
-
+		log.info("Adding reminders to queue");
 		Reminder reminder = null;
 		
 		for (Long consumerId : consumerIds) {
 			try {
+				log.info("Adding reminder for consumerId" + consumerId);
 				Consumer consumer = consumerService.getById(consumerId);
 				
 		        String fullName = consumer.getFullName();
@@ -108,7 +111,7 @@ public class ReminderController {
 
 				reminder = new Reminder();
 				reminder.setPhone(consumer.getPhoneNo());
-				reminder.setMessage(message);
+				reminder.setMessage(encodedMessage);
 				reminder.setName(consumer.getFullName());
 				reminder.setStatus("Pending");
 				reminder.setDate(utility.getTodaysDateWithoutTime());
@@ -116,9 +119,10 @@ public class ReminderController {
 				reminderService.saveReminderToDB(reminder);
 
 			} catch (Exception e) {
-				System.out.println("Failed to add reminder for consumerId: " + consumerId);
+				log.error("Failed to add reminder for consumerId: " + consumerId, e);
 			}
 		}
+		log.info("Reminders added successfully!");
 		redirectAttributes.addFlashAttribute("successMessage", "Reminders added successfully!");
 		return "redirect:/consumer/filter";
 
@@ -127,6 +131,7 @@ public class ReminderController {
 	@RequestMapping("/addNewReminderPage")
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_REMINDER')")
 	public String addNewReminderPage(Model model) {
+		log.info("Add reminder page");
 		model.addAttribute("header", "Add Reminder");
 		return "reminder-create";
 	}
@@ -134,9 +139,13 @@ public class ReminderController {
 	@RequestMapping("/addReminder")
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_REMINDER')")
 	public String addReminder(Model model, Reminder reminder, RedirectAttributes redirectAttributes) {
-
+		log.info("Saving reminder data");
+		
 		reminderService.saveReminderToDB(reminder);
+		
+		log.info("Reminder added successfully!");
 		redirectAttributes.addFlashAttribute("successMessage", "Reminder added successfully!");
+		
 		return "redirect:/reminder";
 
 	}
@@ -146,7 +155,7 @@ public class ReminderController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editReminder(Model model, @RequestParam("id") Long id) throws Exception{
 
-		System.out.println("Got edit request for reminder with id " + id);
+		log.info("Edit request for reminder with id " + id);
 
 		model.addAttribute("header", "Edit Reminder");
 		model.addAttribute("reminder", reminderService.findReminderById(id));
@@ -159,7 +168,7 @@ public class ReminderController {
 			method = RequestMethod.GET)
 	public String viewReminder(Model model, @RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got view request for reminder id " + id);
+		log.info("View request for reminder id " + id);
 		model.addAttribute("reminder", reminderService.findReminderById(Long.parseLong(id)));
 		return "view-reminder";
 
@@ -170,7 +179,7 @@ public class ReminderController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteReminder(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
 
-		System.out.println("Got delete request for reminder id " + id);
+		log.info("Delete request for reminder id " + id);
 		reminderService.deleteReminderById(id);
 		redirectAttributes.addFlashAttribute("successMessage", "Reminder record deleted successfully!");
 		return "redirect:/reminder";
@@ -181,10 +190,10 @@ public class ReminderController {
 //	@Scheduled(fixedRate = 5000)
 	public void scheduleTask(){
 		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-		System.out.println("Reminder scheduler: Job running at - " + strDate);
+		log.info("Reminder scheduler: Job running at - " + strDate);
 		
 		List<Reminder> listOfReminders = reminderService.getAllPendingRemindersForToday();
-		System.out.println("Size is - " + listOfReminders.size());
+		log.info("Size is - " + listOfReminders.size());
 		Reminder tempReminder = null;
 		for (Reminder reminder : listOfReminders) {
 			try {
@@ -192,10 +201,10 @@ public class ReminderController {
 					tempReminder = reminderService.findReminderById(reminder.getId());
 					tempReminder.setStatus("Sent");
 					reminderService.saveReminderToDB(tempReminder);
-					System.out.println("Reminder sent to - " + reminder.getName() + " in number - " + reminder.getPhone());
+					log.info("Reminder sent to - " + reminder.getName() + " in number - " + reminder.getPhone());
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Exception in reminder scheduler job", e);
 			}
 			
 		}

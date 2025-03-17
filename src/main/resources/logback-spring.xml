@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Enable Spring Profile Support -->
+    <springProperty name="LOG_DIR" source="LOG_DIR" defaultValue="/prod/rolcable/logs" />
+
+    <!-- Console Appender (Common for All Environments) -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Development Profile -->
+    <springProfile name="dev">
+        <logger name="rcn.web" level="DEBUG"/>
+        <root level="DEBUG">
+            <appender-ref ref="Console"/>
+        </root>
+    </springProfile>
+
+    <!-- Production Profile -->
+    <springProfile name="prod">
+    <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Set all Spring Framework logs to INFO -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="INFO"/>
+    <logger name="org.springframework.web.servlet" level="INFO"/>
+    <logger name="org.springframework.web.filter" level="INFO"/>
+    <logger name="org.springframework.security" level="INFO"/>
+
+    <!-- Ensure Hibernate and SQL logging is also at INFO -->
+    <logger name="org.hibernate.SQL" level="INFO"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="INFO"/>
+    <logger name="org.apache" level="INFO"/>
+
+    <!-- Your application logs -->
+    <logger name="rcn.web" level="INFO"/>
+
+    <root level="INFO">
+        <appender-ref ref="FileAppender"/>
+    </root>
+</springProfile>
+
+
+</configuration>

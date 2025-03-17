@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Income;
 import rcn.web.model.IncomeType;
 import rcn.web.repo.IncomeTypeRepo;
@@ -36,6 +37,7 @@ import rcn.web.service.IncomeService;
 
 @Controller
 @PropertySource("classpath:rol_cable_network.properties")
+@Slf4j
 public class IncomeController {
 
 	@Autowired IncomeService incomeService;
@@ -69,7 +71,7 @@ public class IncomeController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editIncomeTypePage(Model model, @RequestParam("id") Long id) throws Exception{
 
-		System.out.println("Got edit request for income type with id " + id);
+		log.info("Got edit request for income type with id " + id);
 
 		model.addAttribute("header", "Edit Income Category");
 		model.addAttribute("incomeType", incomeTypeRepo.findById(id).get());
@@ -103,14 +105,14 @@ public class IncomeController {
 		Page<Income> listPage = null;
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Income home page");
+			log.info("Income home page");
 			if(incomeTypeId != null) listPage = incomeService.getAllIncomesForTypeId(incomeTypeId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(incomeType != null) listPage = incomeService.getAllIncomesForTypeName(incomeType, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(appUserId != null) listPage = incomeService.getAllIncomesForAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = incomeService.getAllIncomes(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Income for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			log.info("Searching Income for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
 			listPage = incomeService.searchIncomeByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("fromDate", fromDate);
@@ -149,7 +151,7 @@ public class IncomeController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editIncomePage(Model model, @RequestParam("id") Long id) throws Exception{
 
-		System.out.println("Got edit request for income with id " + id);
+		log.info("Got edit request for income with id " + id);
 
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("incomeTypes", incomeTypeRepo.findAll());
@@ -175,7 +177,7 @@ public class IncomeController {
 			method = RequestMethod.GET)
 	public String viewIncome(Model model, @RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got view request for income id " + id);
+		log.info("Got view request for income id " + id);
 		model.addAttribute("income", incomeService.findIncomeById(Long.parseLong(id)));
 		return "view-income";
 
@@ -185,7 +187,7 @@ public class IncomeController {
 			method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteIncome(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
-		System.out.println("Got delete request for income id " + id);
+		log.info("Got delete request for income id " + id);
 		incomeService.deleteIncomeById(id);
 		redirectAttributes.addFlashAttribute("successMessage", "Income record deleted successfully!");
 		return "redirect:/income";
@@ -194,7 +196,7 @@ public class IncomeController {
 
 	@GetMapping("/download/{type1}/{type2}/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFileFromLocal(@PathVariable String type1, @PathVariable String type2, @PathVariable String fileName) {
-		System.out.println("Received download request for " + type1 + " " + type2 + " - " + fileName);
+		log.info("Received download request for " + type1 + " " + type2 + " - " + fileName);
 
 		String fileBasePath = downloadBasePath + type1 + "/" + type2 + "/";
 		Path path = Paths.get(fileBasePath + fileName);
@@ -202,7 +204,7 @@ public class IncomeController {
 		try {
 			resource = new UrlResource(path.toUri());
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			log.error("Exception while downloading from local.", e);
 		}
 
 		return ResponseEntity.ok()

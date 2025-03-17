@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Bouquet;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.SubscriptionService;
 
 @Controller
 @RequestMapping("/bouquet")
+@Slf4j
 public class BouquetController {
 
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
@@ -38,11 +40,11 @@ public class BouquetController {
 		Page<Bouquet> listPage = null;
 
 		if(keyword == null) {
-			System.out.println("Bouquet home page");
+			log.info("Bouquet home page");
 			listPage = subscriptionService.getAllBouquets(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Bouquet for keyword:" + keyword);
+			log.info("Searching Bouquet for keyword:" + keyword);
 			listPage = subscriptionService.searchBouquetByKeyword(keyword, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("keyword", keyword);
@@ -65,6 +67,7 @@ public class BouquetController {
 	@GetMapping("/add")
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_BOUQUET')")
 	public String add(Model model, Bouquet bouquet) {
+		log.info("Add bouquet page");
 		model.addAttribute("header", "Create Bouquet");
 		return "app/bouquet-create";
 	}
@@ -72,8 +75,12 @@ public class BouquetController {
 	@RequestMapping(value = "/save",
 			method = RequestMethod.POST)
 	public String save(Model model, Bouquet bouquet, RedirectAttributes redirectAttributes) throws Exception{
+		
 		bouquet = subscriptionService.saveBouquet(bouquet);
+		
 		redirectAttributes.addFlashAttribute("successMessage", "Bouquet " + bouquet.getName() + " saved successfully!");
+		log.info("Bouquet " + bouquet.getName() + " saved successfully!");
+		
 		return "redirect:/bouquet";
 
 	}
@@ -83,7 +90,7 @@ public class BouquetController {
 	public String view(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got view request for connection id " + id);
+		log.info("View request for bouquet id " + id);
 		model.addAttribute("bouquet", subscriptionService.getBouquetById(Long.parseLong(id)));
 		return "app/bouquet-view";
 	}
@@ -94,7 +101,7 @@ public class BouquetController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got edit request for connection id " + id);
+		log.info("Edit request for bouquet id " + id);
 		model.addAttribute("bouquet", subscriptionService.getBouquetById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit Bouquet");
 		return "app/bouquet-create";
@@ -106,7 +113,7 @@ public class BouquetController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for connection id " + id);
+		log.info("Delete request for bouquet id " + id);
 
 		subscriptionService.deleteBouquetById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Bouquet with id " + id + " deleted successfully!");

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Expense;
 import rcn.web.model.ExpenseType;
 import rcn.web.repo.ExpenseTypeRepo;
@@ -27,6 +28,7 @@ import rcn.web.service.ExpenseService;
 
 @Controller
 @PropertySource("classpath:rol_cable_network.properties")
+@Slf4j
 public class ExpenseController {
 
 	@Autowired ExpenseService expenseService;
@@ -56,7 +58,7 @@ public class ExpenseController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editExpenseTypePage(Model model, @RequestParam("id") Long id) throws Exception{
 
-		System.out.println("Got edit request for expense type with id " + id);
+		log.info("Got edit request for expense type with id " + id);
 
 		model.addAttribute("header", "Edit Expense Category");
 		model.addAttribute("expenseType", expenseTypeRepo.findById(id).get());
@@ -90,14 +92,14 @@ public class ExpenseController {
 		Page<Expense> listPage = null;
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Expense home page");
+			log.info("Expense home page");
 			if(expenseTypeId != null) listPage = expenseService.getAllExpensesForType(expenseTypeId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(expenseType != null) listPage = expenseService.getAllExpensesForTypeName(expenseType, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else if(appUserId != null) listPage = expenseService.getAllExpensesForAppUser(appUserId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = expenseService.getAllExpenses(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Expense for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			log.info("Searching Expense for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
 			listPage = expenseService.searchExpenseByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("fromDate", fromDate);
@@ -136,7 +138,7 @@ public class ExpenseController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String editExpensePage(Model model, @RequestParam("id") Long id) throws Exception{
 
-		System.out.println("Got edit request for expense with id " + id);
+		log.info("Got edit request for expense with id " + id);
 
 		model.addAttribute("users", appUserService.getAllAppUsers());
 		model.addAttribute("expenseTypes", expenseTypeRepo.findAll());
@@ -160,7 +162,7 @@ public class ExpenseController {
 	@RequestMapping(value = "/viewExpense",
 			method = RequestMethod.GET)
 	public String viewIncome(Model model, @RequestParam("id") Long id) throws Exception{
-		System.out.println("Got view request for expense id " + id);
+		log.info("Got view request for expense id " + id);
 		model.addAttribute("expense", expenseService.findExpenseById(id));
 		return "view-expense";
 
@@ -170,7 +172,7 @@ public class ExpenseController {
 			method = RequestMethod.GET)
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String deleteIncome(RedirectAttributes redirectAttributes, @RequestParam("id") Long id) throws IOException {
-		System.out.println("Got delete request for expense id " + id);
+		log.info("Got delete request for expense id " + id);
 		expenseService.deleteExpenseById(id);
 		redirectAttributes.addFlashAttribute("successMessage", "Expense record deleted successfully!");
 		return "redirect:/expense";

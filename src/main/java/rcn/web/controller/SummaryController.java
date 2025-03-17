@@ -10,11 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.service.AppUserService;
 import rcn.web.service.SummaryService;
 
 @Controller
 @PropertySource("classpath:rol_cable_network.properties")
+@Slf4j
 public class SummaryController {
 
 	@Autowired SummaryService summaryService;
@@ -29,7 +31,7 @@ public class SummaryController {
 			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="category", required = false) String category) throws ParseException {
 
-		System.out.println("Settlement user page");
+		log.info("Home/Landing page");
 
 		model.addAttribute("appUserList", 
 				appUserService.getAllAppUsers().stream()
@@ -60,6 +62,8 @@ public class SummaryController {
 			@RequestParam(value="fromDate", required = false) String fromDate,
 			@RequestParam(value="toDate", required = false) String toDate,
 			@RequestParam(value="category", required = false) String category) throws ParseException {
+		
+		log.info("Account report page.");
 
 		model.addAttribute("totalCollection", summaryService.getTotalCollection());
 		model.addAttribute("totalIncome", summaryService.getTotalIncome());

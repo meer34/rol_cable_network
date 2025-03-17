@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Bill;
 import rcn.web.model.Collection;
 import rcn.web.model.Consumer;
@@ -30,6 +31,7 @@ import rcn.web.service.DueService;
 
 @Controller
 @RequestMapping("/collection")
+@Slf4j
 public class CollectionController {
 
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
@@ -56,7 +58,7 @@ public class CollectionController {
 		model.addAttribute("searchDisabled", false);
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Collection home page");
+			log.info("Collection home page");
 			if(consumerId == null && appUserId == null && appUserName == null) {
 				listPage = collectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
 			}
@@ -74,7 +76,7 @@ public class CollectionController {
 			}
 
 		} else {
-			System.out.println("Searching Collection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			log.info("Searching Collection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
 			listPage = collectionService.searchCollectionByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("fromDate", fromDate);
@@ -104,6 +106,8 @@ public class CollectionController {
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
 		
+		log.info("Collect subscription due for consumerId - " + consumerId);
+		
 		model.addAttribute("header", "Collect Subscription Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("users", appUserService.getAllAppUsers());
@@ -130,6 +134,8 @@ public class CollectionController {
 	public String collectOtherDue(Model model, Collection collection,
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="action", required = true) String action) {
+		
+		log.info("Collect other due for consumerId - " + consumerId);
 		
 		model.addAttribute("header", "Collect Other Due, Pending Amount: ");
 		model.addAttribute("consumerList", consumerService.getAll());
@@ -158,6 +164,8 @@ public class CollectionController {
 	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_SUBSCRIPTION_DUE')")
 	public String saveSubscriptionCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
 		
+		log.info("Saving subscription due for consumerId - " + collection.getConsumer().getId());
+		
 		collection.setBillType("Subscription");
 		
 		List<Bill> bills = collection.getBills()
@@ -177,8 +185,9 @@ public class CollectionController {
 	@PreAuthorize("hasAnyAuthority('ADMIN','COLLECT_OTHER_DUE')")
 	public String saveOtherDueCollection(Model model, Collection collection, RedirectAttributes redirectAttributes) throws Exception{
 		
-		collection.setBillType("Other Due");
+		log.info("Saving other due for consumerId - " + collection.getConsumer().getId());
 		
+		collection.setBillType("Other Due");
 		
 		List<Due> dues = collection.getDues()
 				.stream()
@@ -198,7 +207,7 @@ public class CollectionController {
 	public String view(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got view request for collection id " + id);
+		log.info("View request for collection id " + id);
 		
 		Collection collection = collectionService.getById(Long.parseLong(id));
 		model.addAttribute("collection", collection);
@@ -215,7 +224,7 @@ public class CollectionController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got edit request for collection id " + id);
+		log.info("Edit request for collection id " + id);
 		Collection collection = collectionService.getById(Long.parseLong(id));
 		
 		if(collection.getBillType().equals("Subscription")) {
@@ -240,7 +249,7 @@ public class CollectionController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for collection id " + id);
+		log.info("Delete request for collection id " + id);
 
 		collectionService.deleteById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Collection with id " + id + " deleted successfully!");

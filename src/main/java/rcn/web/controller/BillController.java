@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Bill;
 import rcn.web.model.Connection;
 import rcn.web.model.Consumer;
@@ -34,6 +35,7 @@ import rcn.web.util.AppUtility;
 
 @Controller
 @RequestMapping("/bill")
+@Slf4j
 public class BillController {
 
 	@Autowired BillService billService;
@@ -53,7 +55,7 @@ public class BillController {
 
 		Page<Consumer> listPage = null;
 
-		System.out.println("Bill home page");
+		log.info("Bill home page");
 		if(year == null || year.equals("All Years")) {
 			listPage = consumerService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
 			for (Consumer consumer : listPage) {
@@ -92,9 +94,15 @@ public class BillController {
 			method = RequestMethod.POST)
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String save(Model model, Bill bill, RedirectAttributes redirectAttributes) throws Exception{
+		log.info("Saving bill data");
 		bill = billService.save(bill);
+		
 		redirectAttributes.addFlashAttribute("successMessage", "Bill amount of " + bill.getBillAmount() 
 		+ " saved successfully for consumer: " + bill.getConnection().getConsumer().getFullName());
+		
+		log.info("Bill amount of " + bill.getBillAmount() 
+		+ " saved successfully for consumer: " + bill.getConnection().getConsumer().getFullName());
+		
 		redirectAttributes.addAttribute("consumerId", bill.getConnection().getConsumer().getId());
 		return "redirect:/bill/getSubscriptionBillRecordsForConsumer";
 
@@ -106,7 +114,7 @@ public class BillController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="billId", required = false) String billId) throws Exception{
 
-		System.out.println("Got edit request for dueId " + billId);
+		log.info("Edit request for billId " + billId);
 		Bill bill = billService.getById(Long.parseLong(billId));
 		model.addAttribute("bill", bill);
 		model.addAttribute("connectionId", bill.getConnection().getId());
@@ -120,7 +128,7 @@ public class BillController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("billId") String billId) throws Exception{
 
-		System.out.println("Got delete request for billId: " + billId);
+		log.info("Delete request for billId: " + billId);
 		Long consumerId = billService.getById(Long.parseLong(billId))
 				.getConnection()
 				.getConsumer()
@@ -146,7 +154,8 @@ public class BillController {
 		List<Consumer> listOfConsumers = new ArrayList<>();
 		Consumer consumer = null;
 
-		System.out.println("Bill home page");
+		log.info("Bill page for consumer id - " + consumerId);
+		
 		if(consumerId != null) {
 			consumer = consumerService.getById(consumerId);
 			consumer.calculateTotalSubscriptionBill();
@@ -175,7 +184,7 @@ public class BillController {
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="showAll", required = false) boolean showAll) throws ParseException {
 
-		System.out.println("Get Subscription Bill Page for consumerId: " + consumerId);
+		log.info("Subscription Bill Page for consumerId: " + consumerId);
 
 		List<Bill> listOfBills = new ArrayList<>();
 		Consumer consumer = consumerService.getById(consumerId);
@@ -201,7 +210,7 @@ public class BillController {
 			@RequestParam(value="consumerId", required = true) Long consumerId,
 			@RequestParam(value="showAll", required = false) boolean showAll) throws ParseException {
 
-		System.out.println("Get due records page for consumerId: " + consumerId);
+		log.info("Due records page for consumerId: " + consumerId);
 
 		Consumer consumer = consumerService.getById(consumerId);
 		List<Due> listOfDues = consumer.getDues(); 
@@ -224,17 +233,17 @@ public class BillController {
 	@Scheduled(fixedRate = 30000)
 	public void autoRenewTask() throws ParseException{
 //		String strDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-//		System.out.println("Bill scheduler: Job running at - " + strDate);
+//		log.info("Bill scheduler: Job running at - " + strDate);
 
 		List<Consumer> listOfConsumers = consumerService.getAll();
-//		System.out.println("Calculatng bill for consumer size - " + listOfConsumers.size());
+//		log.info("Calculatng bill for consumer size - " + listOfConsumers.size());
 		for (Consumer consumer : listOfConsumers) {
 			List<Connection> listOfConnection = connectionService.getByConsumerId(consumer.getId());
 			for(Connection connection : listOfConnection) {
 				//generate new bill if auto renew able and connection expired
 				if(connection.isAutoRenewal() && !"Disconnected".equals(connection.getState())) {
 					if(connection.getDateOfConnExpiry().before(utility.getTodaysDateWithoutTime())) {
-						System.out.println("Connection Expired and disconnected for consumer: " 
+						log.info("Connection Expired and disconnected for consumer: " 
 								+ connection.getConsumer().getFullName());
 						renewConnectionAndGenerateBill(connection);
 					}
@@ -244,9 +253,9 @@ public class BillController {
 	}
 
 	public void renewConnectionAndGenerateBill(Connection connection) {
-		System.out.println("Generating bill for connection id " + connection.getId());
+		log.info("Generating bill for connection id " + connection.getId());
 		
-		connection.setDateOfConnStart(connection.getDateOfConnExpiry());
+		connection.setDateOfConnStart(utility.getOneDayAheadDate(connection.getDateOfConnExpiry()));
 		connection.setDateOfConnExpiry(utility.getOneMonthAheadDate(connection.getDateOfConnStart()));
 		
 		Bill bill = new Bill();
@@ -258,7 +267,7 @@ public class BillController {
 		
 		billService.save(bill);
 		connectionService.save(connection);
-		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
+		log.info("Bill with id: " + bill.getId() + " generated for consumer: " 
 									+ connection.getConsumer().getFullName());
 //		billService.save(bill);//TODOO
 	}

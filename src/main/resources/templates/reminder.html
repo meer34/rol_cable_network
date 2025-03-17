@@ -25,7 +25,6 @@
                 <table class="table table-bordered table-responsive table-hover" style="width: 100%;">
                   <thead class="thead-inverse" style="background-color: #06697e; color: #FFF;">
                     <tr>
-                      <th class="table_heading">Sl No</th>
                       <th class="table_heading">Name</th>
                       <th class="table_heading">Phone</th>
                       <th class="table_heading">Message</th>
@@ -36,7 +35,6 @@
                   </thead>
                   <tbody>
                     <tr style="background-color:#FFF" th:each="reminder, iterator: ${listPage}">
-                      <td th:text="${iterator.count}" />
                       <td th:text="${reminder.name}" />
                       <td th:text="${reminder.phone}" />
                       <td th:text="${reminder.message}" />

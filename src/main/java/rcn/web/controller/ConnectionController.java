@@ -1,7 +1,5 @@
 package rcn.web.controller;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Bill;
 import rcn.web.model.BillPayment;
 import rcn.web.model.Connection;
@@ -36,6 +35,7 @@ import rcn.web.util.AppUtility;
 
 @Controller
 @RequestMapping("/connection")
+@Slf4j
 public class ConnectionController {
 
 	@Value("${INITIAL_PAGE_SIZE}")
@@ -64,12 +64,12 @@ public class ConnectionController {
 		Page<Connection> listPage = null;
 
 		if(keyword == null && fromDate == null && toDate == null) {
-			System.out.println("Connection home page");
+			log.info("Connection home page");
 			if(consumerId != null) listPage = connectionService.getPageByConsumerId(consumerId, page.orElse(1) - 1, size.orElse(initialPageSize));
 			else listPage = connectionService.getAll(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Connection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
+			log.info("Searching Connection for fromDate:" + fromDate + " and toDate:" +toDate +" and keyword:" + keyword);
 			listPage = connectionService.searchByDateAndKeyword(keyword, fromDate, toDate, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("fromDate", fromDate);
@@ -94,6 +94,8 @@ public class ConnectionController {
 	@GetMapping("/add")
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CONNECTION')")
 	public String add(Model model, Connection connection) {
+		log.info("Add connection page");
+		
 		model.addAttribute("header", "Create Connection");
 		model.addAttribute("consumerList", consumerService.getAll());
 		model.addAttribute("packageList", subscriptionService.getAllPackages());
@@ -109,6 +111,8 @@ public class ConnectionController {
 			@RequestParam(value="stateChangeDate", required=false) String stateChangeDate) throws Exception{
 		
 		if(connection.getId() == null) {
+			log.info("Saving new connection");
+			
 			connection.setState("Connected");
 			
 			connection = connectionService.save(connection);
@@ -135,9 +139,13 @@ public class ConnectionController {
 			}
 			
 		} else {
+			log.info("Saving updated connection with id - " + connection.getId());
+			
 			Connection savedConn = connectionService.getById(connection.getId());
 			
 			if(connection.getState().equals("Disconnected") & !savedConn.getState().equals("Disconnected")) {
+				log.info("Connection got disconnected!");
+				
 				Date disconnectedDate = null;
 
 				if("Today".equals(stateChangeDate)) {
@@ -147,7 +155,7 @@ public class ConnectionController {
 				}
 				Bill oldBill = billService.getBillForPeriod(connection, connection.getDateOfConnStart(), connection.getDateOfConnExpiry());
 				billService.deleteById(oldBill.getId());
-				System.out.println("Old Bill with id: " + oldBill.getId() + " deleted!" );
+				log.info("Old Bill with id: " + oldBill.getId() + " deleted!" );
 				
 				double paidAmountReturn = oldBill.getPaidAmount();
 				paidAmountReturn = generateBillForPeriod(connection, connection.getSubscriptionAmount(), paidAmountReturn, connection.getDateOfConnStart(), disconnectedDate);
@@ -158,6 +166,8 @@ public class ConnectionController {
 				connection.setDateOfConnExpiry(disconnectedDate);
 
 			} else if(!connection.getState().equals("Disconnected") & savedConn.getState().equals("Disconnected")) {
+				log.info("Connection got re-connected!");
+				
 				Date reConnectedDate = null;
 
 				if("Today".equals(stateChangeDate)) reConnectedDate = utility.getTodaysDateWithoutTime();
@@ -174,8 +184,9 @@ public class ConnectionController {
 				generateBill(connection);
 				
 			} else if(connection.getSubscriptionAmount() != savedConn.getSubscriptionAmount()){
+				log.info("Detected change in subscription amount!");
 				double subscriptionAnountDifference = connection.getSubscriptionAmount() - savedConn.getSubscriptionAmount();
-				System.out.println("Subscript amount differece is: " + subscriptionAnountDifference);
+				log.info("Subscript amount differece is: " + subscriptionAnountDifference);
 				
 				if(subscriptionAnountDifference > 0) {
 					generateBillForPeriod(connection, subscriptionAnountDifference, 0.0, utility.getTodaysDateWithoutTime(), connection.getDateOfConnExpiry());
@@ -195,7 +206,7 @@ public class ConnectionController {
 	}
 
 	private double generateBillForPeriod(Connection connection, double subscriptionAmount, double paidAmount, Date billStartDate, Date billEndDate) {
-		System.out.println("Generating bill for disconnected connection id " + connection.getId());
+		log.info("Generating bill for disconnected connection id " + connection.getId());
 
 		double billAmount = subscriptionAmount*utility.getDifferenceDays(billStartDate, billEndDate)/renewalCycle;
 		billAmount = utility.roundDecimal(billAmount);
@@ -225,7 +236,7 @@ public class ConnectionController {
 		}
 
 		billService.save(bill);
-		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
+		log.info("Bill with id: " + bill.getId() + " generated for consumer: " 
 				+ connection.getConsumer().getFullName());
 		return extraAmount;
 	}
@@ -236,7 +247,8 @@ public class ConnectionController {
 			@RequestParam(value="id", required = false) String id,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
 
-		System.out.println("Got view request for connection id " + id);
+		log.info("View request for connection id " + id);
+		
 		if(consumerId != null) {
 			model.addAttribute("connection", connectionService.getByConsumerId(Long.parseLong(consumerId)));
 		} else {
@@ -258,7 +270,7 @@ public class ConnectionController {
 			@RequestParam(value="id", required = false) String id,
 			@RequestParam(value="consumerId", required = false) String consumerId) throws Exception{
 
-		System.out.println("Got edit request for connection id " + id);
+		log.info("Edit request for connection id " + id);
 		if(consumerId != null) {
 			model.addAttribute("connection", connectionService.getByConsumerId(Long.parseLong(consumerId)));
 		} else {
@@ -280,7 +292,7 @@ public class ConnectionController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for connection id " + id);
+		log.info("Delete request for connection id " + id);
 		
 		List<Bill> listOfBills = connectionService.getById(Long.parseLong(id)).getBills();
 		if(listOfBills != null & listOfBills.size() >0) {
@@ -300,7 +312,7 @@ public class ConnectionController {
 			@RequestParam("id") String id,
 			@RequestParam("date") String date) throws Exception{
 		
-		System.out.println("Got renew request for connection id - " + id + ", renewal date - " + date);
+		log.info("Renew request for connection id - " + id + ", renewal date - " + date);
 		Connection connection = connectionService.getById(Long.parseLong(id));
 		
 		connection.setDateOfConnStart( utility.formatStringToDate(date));
@@ -318,7 +330,7 @@ public class ConnectionController {
 	}
 	
 	private void generateBill(Connection connection) {
-		System.out.println("Generating bill for connection id " + connection.getId());
+		log.info("Generating bill for connection id " + connection.getId());
 		
 		Bill bill = new Bill();
 		bill.setConnection(connection);
@@ -328,7 +340,7 @@ public class ConnectionController {
 		bill.setPaidAmount(0.0);
 		
 		billService.save(bill);
-		System.out.println("Bill with id: " + bill.getId() + " generated for consumer: " 
+		log.info("Bill with id: " + bill.getId() + " generated for consumer: " 
 									+ connection.getConsumer().getFullName());
 	}
 

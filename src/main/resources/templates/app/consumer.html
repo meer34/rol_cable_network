@@ -20,7 +20,7 @@
                 
                 <form class="dashboardicon" th:action="@{/consumer}" method="get">
 					<div class="col-lg-12 flexdisplay">
-						<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 							<label>Area</label>
 							<select class="form-control" name="area" id="area" style="height: 40px !important;">
                       			<option selected disabled="disabled" value="">Select Area</option>
@@ -28,11 +28,11 @@
 										th:text="${areaOption.name}" th:value="${areaOption.name}" th:selected="${area==areaOption.name}"></option>
                     		</select>
 						</div>
-						<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<label>Search</label>
 							<input type="text" name="keyword" id="keyWord" placeholder="Enter keyword" th:value="${keyword}" style="animation-delay: .2s">
 						</div>
-						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
 							<div style="padding-top: 20px;">
 								<input type="button" name="clear" class="previous action-button-previous" value=" Clear "
 									onClick="document.getElementById('fromDate').value='';document.getElementById('toDate').value='';document.getElementById('keyWord').value='';">

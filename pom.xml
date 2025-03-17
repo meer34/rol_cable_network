@@ -80,6 +80,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>rol_cable_network</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

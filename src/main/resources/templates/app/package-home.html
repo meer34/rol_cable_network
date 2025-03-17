@@ -33,7 +33,6 @@
                         style="background-color: #06697e; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
-                          <th class="table_heading">ID</th>
                           <th class="table_heading">Package Name</th>
                           <th class="table_heading">Price</th>
                           <th class="table_heading">GST / Non GST</th>
@@ -42,7 +41,6 @@
                       <tbody>
                         <tr style="background-color: #FFF" th:each="channelPackage : ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${channelPackage.id}" class="radioBtn" name='id'></td>
-                          <td th:text="${channelPackage.id}" />
                           <td th:text="${channelPackage.name}" />
                           <td th:text="${#numbers.formatDecimal(channelPackage.price, 1, 2)}" />
                           <td th:text="${channelPackage.gstNonGst}" />

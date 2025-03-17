@@ -16,12 +16,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import lombok.extern.slf4j.Slf4j;
+
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages = "rcn")
 @PropertySource("classpath:auth_mapper.properties")
 @EnableMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired private Environment environment;
@@ -75,7 +78,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		/*
 		for (String restrictedUrl : restrictedUrls) {
-			System.out.println("###############" + restrictedUrl);
+			log.info("###############" + restrictedUrl);
 
 			String[] authorities = environment.getProperty(restrictedUrl).split(",");
 			if(authorities == null) continue;

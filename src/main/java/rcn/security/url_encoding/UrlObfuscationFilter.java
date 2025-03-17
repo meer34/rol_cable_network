@@ -13,6 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class UrlObfuscationFilter implements Filter {
 
 	// Pattern to match URIs starting with /css, /js, or /images
@@ -29,10 +32,10 @@ public class UrlObfuscationFilter implements Filter {
 			public String getRequestURI() {
 				// Rewrite the URL
 				String requestURI = httpRequest.getRequestURI();
-				System.out.println("##################Normal URL is: " + requestURI);
+				log.info("##################Normal URL is: " + requestURI);
 				if (!EXCLUDED_PATTERN.matcher(requestURI).matches()) {
 					requestURI = decode(requestURI.substring(1));
-					System.out.println("##################Encoded URL is: " + requestURI);
+					log.info("##################Encoded URL is: " + requestURI);
 				}
 				return requestURI;
 			}

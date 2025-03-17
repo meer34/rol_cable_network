@@ -10,12 +10,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Consumer;
 import rcn.web.model.ConsumerDTO;
 import rcn.web.repo.ConsumerRepo;
 import rcn.web.specification.EntitySpecification;
 
 @Service
+@Slf4j
 public class ConsumerService {
 
 	@Autowired private ConsumerRepo consumerRepo;
@@ -62,7 +64,7 @@ public class ConsumerService {
 	}
 
 	public void addToAdvanceAmount(Long id, double addAmount) {
-		System.out.println("Adding " + addAmount + " rupees to consumer for id: " + id);
+		log.info("Adding " + addAmount + " rupees to consumer for id: " + id);
 		consumerRepo.deductFromAdvanceAmountForId(id, -addAmount);
 	}
 	

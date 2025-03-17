@@ -15,8 +15,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
 @PropertySource("classpath:rol_cable_network.properties")
+@Slf4j
 public class AppUtility {
 
 	@Value("${fast2sms.api.url}")
@@ -62,6 +65,13 @@ public class AppUtility {
 		return formatter.parse(stateChangeDate);
 	}
 
+	public Date getOneDayAheadDate(Date currentDate) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(currentDate);
+		c.add(Calendar.DATE, 1);
+		return c.getTime();
+	}
+	
 	public Date getOneMonthAheadDate(Date currentDate) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(currentDate);
@@ -71,7 +81,7 @@ public class AppUtility {
 
 	public String sendSMS(String phone, String message) throws Exception {
 
-		System.out.println("Sending message to - " + phone);
+		log.info("Sending message to - " + phone);
 
 		String requestBody = new StringBuilder("sender_id=")
 				.append("FTWSMS")
@@ -97,12 +107,12 @@ public class AppUtility {
 
 		int responseCode = con.getResponseCode();
 
-		System.out.println("Received Response Code for Fast2SMS Server :: " + con.getResponseMessage());
+		log.info("Received Response Code for Fast2SMS Server :: " + con.getResponseMessage());
 
 		if (responseCode == HttpURLConnection.HTTP_OK) {
 			return "Success";
 		} else {
-			System.out.println("OTP request did not work!");
+			log.info("OTP request did not work!");
 			return "Request Failed";
 		}
 

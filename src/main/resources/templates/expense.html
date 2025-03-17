@@ -34,7 +34,6 @@
                         style="background-color: #06697e; color: #FFF;">
                         <tr>
                           <th class="table_heading noPrint"></th>
-                          <th class="table_heading">ID</th>
                           <th class="table_heading">Expense Category</th>
                           <th class="table_heading">Account / Cash</th>
                           <!--if account = enter account number-->
@@ -48,7 +47,6 @@
                       <tbody>
                         <tr style="background-color: #FFF" th:each="expense: ${listPage.content}">
                           <td class="noPrint" ><input type='radio' th:value="${expense.id}" class="radioBtn" name='id'></td>
-                          <td th:text="${expense.id}" />
                           <td th:text="${expense.expenseType?.name}" />
                           <td th:text="${expense.paymentMode}" />
                           <td th:text="${{expense.date}}" />

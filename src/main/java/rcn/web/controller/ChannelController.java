@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.web.model.Channel;
 import rcn.web.service.ConsumerService;
 import rcn.web.service.SubscriptionService;
 
 @Controller
 @RequestMapping("/channel")
+@Slf4j
 public class ChannelController {
 
 	@Value("${INITIAL_PAGE_SIZE}") private Integer initialPageSize;
@@ -38,11 +40,11 @@ public class ChannelController {
 		Page<Channel> listPage = null;
 
 		if(keyword == null) {
-			System.out.println("Channel home page");
+			log.info("Channel home page");
 			listPage = subscriptionService.getAllChannels(page.orElse(1) - 1, size.orElse(initialPageSize));
 
 		} else {
-			System.out.println("Searching Channel for keyword:" + keyword);
+			log.info("Searching Channel for keyword:" + keyword);
 			listPage = subscriptionService.searchChannelByKeyword(keyword, page.orElse(1) - 1, size.orElse(initialPageSize));
 
 			model.addAttribute("keyword", keyword);
@@ -65,6 +67,7 @@ public class ChannelController {
 	@GetMapping("/add")
 	@PreAuthorize("hasAnyAuthority('ADMIN','ADD_CHANNEL')")
 	public String add(Model model, Channel channel) {
+		log.info("Channel add page");
 		model.addAttribute("header", "Create Channel");
 		return "app/channel-create";
 	}
@@ -74,6 +77,7 @@ public class ChannelController {
 	public String save(Model model, Channel channel, RedirectAttributes redirectAttributes) throws Exception{
 		channel = subscriptionService.saveChannel(channel);
 		redirectAttributes.addFlashAttribute("successMessage", "Channel " + channel.getName() + " saved successfully!");
+		log.info("Channel " + channel.getName() + " saved successfully!");
 		return "redirect:/channel";
 
 	}
@@ -83,7 +87,7 @@ public class ChannelController {
 	public String view(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got view request for connection id " + id);
+		log.info("View request for channel id " + id);
 		model.addAttribute("channel", subscriptionService.getChannelById(Long.parseLong(id)));
 		return "app/channel-view";
 	}
@@ -94,7 +98,7 @@ public class ChannelController {
 	public String edit(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam(value="id", required = false) String id) throws Exception{
 
-		System.out.println("Got edit request for connection id " + id);
+		log.info("Edit request for channel id " + id);
 		model.addAttribute("channel", subscriptionService.getChannelById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit Channel");
 		return "app/channel-create";
@@ -106,7 +110,7 @@ public class ChannelController {
 	public String delete(RedirectAttributes redirectAttributes, Model model,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request for connection id " + id);
+		log.info("Delete request for channel id " + id);
 
 		subscriptionService.deleteChannelById(Long.parseLong(id));
 		redirectAttributes.addFlashAttribute("successMessage", "Channel with id " + id + " deleted successfully!");

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.extern.slf4j.Slf4j;
 import rcn.security.Role;
 import rcn.security.User;
 import rcn.web.model.AppUser;
@@ -21,6 +22,7 @@ import rcn.web.repo.RoleRepo;
 import rcn.web.service.AppUserService;
 
 @Controller
+@Slf4j
 public class AppUserController {
 
 	@Autowired AppUserService appUserService;
@@ -28,6 +30,7 @@ public class AppUserController {
 
 	@GetMapping("/appUser")
 	public String showAppUserPage(Model model) {
+		log.info("App User home page");
 		model.addAttribute("appUserList", 
 				appUserService.getAllAppUsers().stream()
 				.filter(appUser -> "APP_USER".equals(appUser.getUserType()) & appUser.getUser().getEnabled())
@@ -37,6 +40,7 @@ public class AppUserController {
 	
 	@GetMapping("/disabledAppUser")
 	public String showDisabledAppUserPage(Model model) {
+		log.info("Disable App User");
 		model.addAttribute("appUserList", 
 				appUserService.getAllAppUsers().stream()
 				.filter(appUser -> "APP_USER".equals(appUser.getUserType()) & !appUser.getUser().getEnabled())
@@ -47,6 +51,7 @@ public class AppUserController {
 	@GetMapping("/addAppUserPage")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String showAddAppUserPage(Model model) {
+		log.info("Create App User page");
 		model.addAttribute("appUser", new AppUser());
 		model.addAttribute("header", "Create App User");
 		return "app-user-create";
@@ -57,8 +62,11 @@ public class AppUserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public String createAppUser(Model model, AppUser appUser, 
 			RedirectAttributes redirectAttributes) throws Exception{
-
+		
+		log.info("Saving admin data");
+		
 		if(appUser.getId() == null) {
+			log.info("New App User being created");
 			User user = new User(appUser.getName(), appUser.getPhone(), true, null);
 			user.setPassword(new BCryptPasswordEncoder().encode("Rcnuser@1234"));
 			appUser.setUser(user);
@@ -71,9 +79,11 @@ public class AppUserController {
 			appUser.setUserType("APP_USER");
 			appUser = appUserService.saveAppUserToDB(appUser);
 			
-			redirectAttributes.addFlashAttribute("successMessage", "New user " + appUser.getName() + " added successfully as App User! Default password:Rcnuser@1234");
+			log.info("New App User " + appUser.getName() + " created successfully!");
+			redirectAttributes.addFlashAttribute("successMessage", "New App User " + appUser.getName() + " created successfully! Please login and change password. Default password generated:Rcnuser@1234");
 
 		} else {
+			log.info("App User data being updated for id - " + appUser.getId());
 			AppUser tempAppUser = appUserService.findAppUserById(appUser.getId());
 
 			tempAppUser.setName(appUser.getName());
@@ -98,6 +108,7 @@ public class AppUserController {
 			appUser = appUserService.saveAppUserToDB(tempAppUser);
 			roleRepo.deleteAllById(roleIds);
 			
+			log.info("Edited details for App User " + appUser.getName() + " saved successfully!");
 			redirectAttributes.addFlashAttribute("successMessage", "Edited details for App User " + appUser.getName() + " saved successfully!");
 		}
 
@@ -111,7 +122,7 @@ public class AppUserController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got view request for appUser id " + id);
+		log.info("View request for appUser id " + id);
 		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		return "view-app-user";
 
@@ -124,7 +135,7 @@ public class AppUserController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got edit request for appUser id " + id);
+		log.info("Edit request for appUser id " + id);
 		model.addAttribute("appUser", appUserService.findAppUserById(Long.parseLong(id)));
 		model.addAttribute("header", "Edit App User");
 		return "app-user-create";
@@ -138,7 +149,7 @@ public class AppUserController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request appUser for id " + id);
+		log.info("Disable request for appUser id " + id);
 		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
 		appUser.getUser().setEnabled(false);
 		appUserService.saveAppUserToDB(appUser);
@@ -154,7 +165,7 @@ public class AppUserController {
 			@RequestParam("action") String action,
 			@RequestParam("id") String id) throws Exception{
 
-		System.out.println("Got delete request appUser for id " + id);
+		log.info("Enable request for appUser id " + id);
 		AppUser appUser = appUserService.findAppUserById(Long.parseLong(id));
 		appUser.getUser().setEnabled(true);
 		appUserService.saveAppUserToDB(appUser);
@@ -163,6 +174,4 @@ public class AppUserController {
 
 	}
 	
-	
-
 }

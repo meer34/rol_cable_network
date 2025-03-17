@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class SearchSpecificationBuilder {
 
 	private static List<SearchCriteria> listOfCriteria;
@@ -60,7 +63,7 @@ public class SearchSpecificationBuilder {
 
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | 
 				InvocationTargetException | NoSuchMethodException | SecurityException | ClassNotFoundException | ParseException e) {
-			e.printStackTrace();
+			log.error("Exception occured", e);
 		}
 
 		return null;

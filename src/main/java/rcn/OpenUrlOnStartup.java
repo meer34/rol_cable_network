@@ -4,7 +4,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class OpenUrlOnStartup implements 
 ApplicationListener<ContextRefreshedEvent> {
 
@@ -17,11 +20,11 @@ ApplicationListener<ContextRefreshedEvent> {
 		try{
 			if (os.indexOf( "win" ) >= 0) {
 //				rt.exec( "rundll32 url.dll,FileProtocolHandler " + url);
-				System.out.println("Local website opened in default Browser!");
+				log.info("Local website opened in default Browser!");
 
 			} else if (os.indexOf( "mac" ) >= 0) {
 				rt.exec( "open " + url);
-				System.out.println("Local website opened in default Browser!");
+				log.info("Local website opened in default Browser!");
 
 			}
 			/*else if (os.indexOf( "nix") >=0 || os.indexOf( "nux") >=0) {
